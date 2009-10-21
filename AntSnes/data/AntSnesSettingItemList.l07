@@ -1,0 +1,55 @@
+/* AntSnes
+ *
+ * Copyright (C) 2009 Summeli <summeli@summeli.fi>
+ *
+ * Dette program er fri software. Du kan redistribuere og/eller
+ * modificere det under de betingelserne som er angivet i GNU General Public License,
+ * som er udgivet af Free Software Foundation; Enten version 2 af licensen,
+ * eller (efter eget valg) enhver senere version.
+ *
+ * Dette program distribueres i hÃ¥b om at det vil vise sig nyttigt,
+ * men UDEN NOGEN GARANTI; uden selv den underforstÃ¥ede garantieromkring
+ * SALGSBARGED eller EGNETHED TIL ET BESTEMT FORMÃ…L.  Se GNU
+ * General Public License for flere detaljer.
+ *
+ * Du skulle have modtaget en kopi af GNU General Public License
+ * sammen med dette program; hvis ikke, skriv til Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ */
+
+#define STR_AntSnesAppUi_40 "Til"
+#define STR_AntSnesAppUi_41 "Slå popup tekst til"
+#define STR_AntSnesAppUi_42 "Vis FPS"
+#define STR_AntSnesAppUi_10 "Portræt"
+#define STR_AntSnesAppUi_11 "Portræt"
+#define STR_AntSnesAppUi_12 "Landskab"
+#define STR_AntSnesAppUi_13 "Landskab"
+#define STR_AntSnesAppUi_14 "N-Gage"
+#define STR_AntSnesAppUi_15 "N-Gage"
+#define STR_AntSnesAppUi_17 "DirekteSkærmAdgang"
+#define STR_AntSnesAppUi_18 "DirekteSkærmAdgang"
+#define STR_AntSnesAppUi_19 "OpenGL ES 1.1"
+#define STR_AntSnesAppUi_20 "OpenGL ES 1.1"
+#define STR_AntSnesAppUi_1 "Indstillinger"
+#define STR_AntSnesAppUi_2 "Skærmorientering"
+#define STR_AntSnesAppUi_3 "Video Renderer"
+#define STR_AntSnesAppUi_38 "Fra"
+#define STR_AntSnesAppUi_39 "Slå Popup tekst fra"
+#define STR_AntSnesAppUi_108 "1"
+#define STR_AntSnesAppUi_109 "1"
+#define STR_AntSnesAppUi_110 "2"
+#define STR_AntSnesAppUi_111 "2"
+#define STR_AntSnesAppUi_112 "3"
+#define STR_AntSnesAppUi_113 "3"
+#define STR_AntSnesAppUi_114 "4"
+#define STR_AntSnesAppUi_115 "4"
+#define STR_AntSnesAppUi_116 "5"
+#define STR_AntSnesAppUi_117 "5"
+#define STR_AntSnesAppUi_84 "Frame Hop"
+#define STR_AntSnesAppUi_88 "Automatisk"
+#define STR_AntSnesAppUi_89 "Automatisk"
+#define STR_AntSnesAppUi_207 "6"
+#define STR_AntSnesAppUi_208 "6"
+#define STR_AntSnesAppUi_209 "7"
+#define STR_AntSnesAppUi_210 "7"
+

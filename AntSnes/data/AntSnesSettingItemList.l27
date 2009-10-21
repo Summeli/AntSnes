@@ -1,0 +1,54 @@
+/* AntSnes
+ *
+ * Copyright (C) 2009 Summeli <summeli@summeli.fi>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ */
+ 
+#define STR_AntSnesAppUi_40 "W³¹czone"
+#define STR_AntSnesAppUi_41 "Popup text for On"
+#define STR_AntSnesAppUi_42 "Poka¿ iloœæ FPS"
+#define STR_AntSnesAppUi_10 "Pionowa"
+#define STR_AntSnesAppUi_11 "Pionowa"
+#define STR_AntSnesAppUi_12 "Pozioma"
+#define STR_AntSnesAppUi_13 "Pozioma"
+#define STR_AntSnesAppUi_14 "N-Gage"
+#define STR_AntSnesAppUi_15 "N-Gage"
+#define STR_AntSnesAppUi_17 "DirectScreenAccess"
+#define STR_AntSnesAppUi_18 "DirectScreenAccess"
+#define STR_AntSnesAppUi_19 "OpenGL ES 1.1"
+#define STR_AntSnesAppUi_20 "OpenGL ES 1.1"
+#define STR_AntSnesAppUi_1 "Ustawienia"
+#define STR_AntSnesAppUi_2 "Orientacja ekranu"
+#define STR_AntSnesAppUi_3 "Render obrazu"
+#define STR_AntSnesAppUi_38 "Wy³¹czone"
+#define STR_AntSnesAppUi_39 "Popup text for Off"
+#define STR_AntSnesAppUi_108 "1"
+#define STR_AntSnesAppUi_109 "1"
+#define STR_AntSnesAppUi_110 "2"
+#define STR_AntSnesAppUi_111 "2"
+#define STR_AntSnesAppUi_112 "3"
+#define STR_AntSnesAppUi_113 "3"
+#define STR_AntSnesAppUi_114 "4"
+#define STR_AntSnesAppUi_115 "4"
+#define STR_AntSnesAppUi_116 "5"
+#define STR_AntSnesAppUi_117 "5"
+#define STR_AntSnesAppUi_84 "Pomijanie klatek"
+#define STR_AntSnesAppUi_88 "Auto"
+#define STR_AntSnesAppUi_89 "Auto"
+#define STR_AntSnesAppUi_207 "6"
+#define STR_AntSnesAppUi_208 "6"
+#define STR_AntSnesAppUi_209 "7"
+#define STR_AntSnesAppUi_210 "7"

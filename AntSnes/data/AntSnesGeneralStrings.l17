@@ -1,0 +1,94 @@
+/* AntSnes
+ *
+ * Copyright (C) 2009 Summeli <summeli@summeli.fi>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ */
+
+//  LOCALISATION STRINGS
+// localized strings for language: Hungarian (17)
+
+#define qtn_caption_string "AntSnes"
+#define qtn_continue "Játék folytatása"
+#define qtn_loadrom "ROM betöltése"
+#define qtn_savestate "Helyzet mentése"
+#define qtn_loadstate "Helyzet betöltése"
+#define qtn_resetgame "Játék újraindítása"
+#define qtn_about "Névjegy"
+#define qtn_settings "Beállitások"
+#define qtn_exit "Kilépés"
+#define qtn_about_dialog_title "Névjegy"
+
+#define qtn_choose_memory_q "Memória:"
+#define qtn_accept "Elfogad"
+#define qtn_cancel "Mégse"
+
+#define qtn_key_config "Bill. beáll."
+#define qtn_video_settings "Video beáll."
+#define qtn_audio_settings "Hang beáll."
+#define qtn_default_settings "Alapért. visszaáll."
+        
+#define qtn_load_rom "ROM betöltése"
+#define qtn_restart_required_note "Beállítások elmentve. A változások az AntSnes újraindítása után lépnek érvénybe."
+#define qtn_default_settings_set "Az alapértelmezett beállítások az AntSnes újraindítása után lépnek érvénybe."
+#define qtn_set_default_settings_q "Minden beállítás visszaáll az alapértelmezett értékre, rendben?"
+
+#define qtn_select_resolution "Válassz felbontást"
+
+#define qtn_press_up_button "Nyomd meg a FEL gombot, vagy 'C'-t a kihagyáshoz"
+#define qtn_press_down_button "Nyomd meg a LE gombot, vagy 'C'-t a kihagyáshoz"
+#define qtn_press_left_button "Nyomd meg a BALRA gombot, vagy 'C'-t a kihagyáshoz"
+#define qtn_press_right_button "Nyomd meg a JOBBRA gombot, vagy 'C'-t a kihagyáshoz"
+#define qtn_press_x_button "Nyomd meg az X gombot, vagy 'C'-t a kihagyáshoz"
+#define qtn_press_y_button "Nyomd meg az Y gombot, vagy 'C'-t a kihagyáshoz"
+#define qtn_press_a_button "Nyomd meg az A gombot, vagy 'C'-t a kihagyáshoz"
+#define qtn_press_b_button "Nyomd meg a B gombot, vagy 'C'-t a kihagyáshoz"
+#define qtn_press_start_button "Nyomd meg a START gombot, vagy 'C'-t a kihagyáshoz"
+#define qtn_press_select_button "Nyomd meg a SELECT gombot, vagy 'C'-t a kihagyáshoz"
+#define qtn_press_tl_button "Nyomd meg a TL gombot, vagy 'C'-t a kihagyáshoz"
+#define qtn_press_tr_button "Nyomd meg a TR gombot, vagy 'C'-t a kihagyáshoz"
+#define qtn_key_config_done "Bill. beállítás befejezõdött."
+
+// no proper word for slot...
+#define qtn_slot1 "#1"
+#define qtn_slot2 "#2"
+#define qtn_slot3 "#3"
+#define qtn_slot4 "#4"
+#define qtn_slot5 "#5"
+
+#define qtn_about_dialog_text "Az AntSnes egy Snes9x emulátor S60-ra. "\
+"Alapja az OpenSnes9xGP, mely egy módosított Snes9x a GP32 kézikonzolra, ami" \
+"át lett alakítva / teljesen újra lett írva a GP32-re (C-ben vagy ASM-ben). Mivel a GP32-ben ARM processzor"\
+"van (hasonlóan az S60 telefonokhoz), ezeket az optimalizációkat használta fel"\
+"ez az átirat is.\n"\
+"Az emulátor a következõ emberek/projektek kódját használja:\n"\
+"Snes9x csapat:\n"\
+"Gary Henderson, Jerremy Koot, John Weidman és a többiek (lásd alább)\n"\
+"* Az emulátor maga\n"\
+"Weboldal: http://www.snes9x.com/ \n"\
+"Yoyofr és Laxer3a\n"\
+"* Minden munkájuk az OpenSnes9xGP-vel: asm CPU core, új PPU kód,\n"\
+"  különféle trükkök\n"\
+"Weboldal: http://yoyofr92.free.fr/\n"\
+"notaz:\n"\
+"* SPC700 assembly kód\n"\
+"* sok kisebb kód változtatás.\n"\
+"Weboldal: http://notaz.atspace.com/ \n"\
+"E-mail: notasas(kukac)gmail.com\n"\
+"Summeli:\n"\
+"* AntSnes, az S60 átirat\n "\
+"* kisebb kód változtatások.\n"\
+"Weboldal: www.summeli.fi\n"\
+"E-mail summeli@summeli.fi\n"

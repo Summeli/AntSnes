@@ -1,0 +1,98 @@
+/* AntSnes
+ *
+ * Copyright (C) 2009 Summeli <summeli@summeli.fi>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ */
+
+//  LOCALISATION STRINGS
+
+// localized strings for language: RU Russian (16)
+
+#define qtn_caption_string "AntSnes"
+
+#define qtn_continue "Продолжить игру"
+
+#define qtn_loadrom "Загрузить ROM"
+	
+#define qtn_savestate "Сохранить"
+
+#define qtn_loadstate "Загрузить"
+
+#define qtn_resetgame "Сброс"
+
+#define qtn_about "О программе"
+
+#define qtn_settings "Настройки"
+
+#define qtn_exit "Выход"
+
+#define qtn_about_dialog_title "О программе"
+
+#define qtn_choose_memory_q "Выбирите память:"
+#define qtn_accept "Принять"
+#define qtn_cancel "Отмена"
+
+#define qtn_key_config "Конф. клавиш"
+#define qtn_video_settings "Настройки Видео"
+#define qtn_audio_settings "Настройки Звука"
+#define qtn_default_settings "Стандартные настр."
+        
+#define qtn_load_rom "Загрузить Rom:"
+
+#define qtn_restart_required_note "Настройки сохранены. AntSnes необходимо перезапустить."
+
+#define qtn_default_settings_set "Настройки восстановены, \n перезапустие AntSnes чтобы применить изменения"
+#define qtn_set_default_settings_q "Восстановить исходные настройки?"
+
+#define qtn_select_resolution "Выберите разрешение"
+
+#define qtn_press_up_button "Нажмите UP, или Нажмите 'C' чтобы пропустить"
+#define qtn_press_down_button "Нажмите DOWN, или Нажмите 'C' чтобы пропустить"
+#define qtn_press_left_button "Нажмите LEFT, или Нажмите 'C' чтобы пропустить"
+#define qtn_press_right_button "Нажмите RIGHT, или Нажмите 'C' чтобы пропустить"
+#define qtn_press_x_button "Нажмите X, или Нажмите 'C' чтобы пропустить"
+#define qtn_press_y_button "Нажмите Y, или Нажмите 'C' чтобы пропустить"
+#define qtn_press_a_button "Нажмите A, или Нажмите 'C' чтобы пропустить"
+#define qtn_press_b_button "Нажмите B, или Нажмите 'C' чтобы пропустить"
+#define qtn_press_start_button "Нажмите START, или Нажмите 'C' чтобы пропустить"
+#define qtn_press_select_button "Нажмите SELECT, или Нажмите 'C' чтобы пропустить"
+#define qtn_press_tl_button "Нажмите TL, или Нажмите 'C' чтобы пропустить"
+#define qtn_press_tr_button "Нажмите TR, или Нажмите 'C' чтобы пропустить"
+#define qtn_key_config_done "Настройка клавиш завершена!"
+
+#define qtn_slot1 "Slot #1"
+#define qtn_slot2 "Slot #2"
+#define qtn_slot3 "Slot #3"
+#define qtn_slot4 "Slot #4"
+#define qtn_slot5 "Slot #5"
+
+#define qtn_about_dialog_text "AtnSnes это Snes9x эмулятор для S60. Он основан на "\
+"OpenSnes9xGP, модифицированном Snes9x для консолей GP32, из частей" \
+"адаптированных / полностью переписаных для GP32 (в C или ASM). Поскольку  GP32 "\
+"базируется на процессоре АРМ (как в S60 смартфонах), появилась возможность сделать на смартфоны"\
+"портирование.\n"\
+"Этот эмулятор основан на исходниках проектов/людей:\n"\
+"команда Snes9x:\n"\
+"Gary Henderson, Jerremy Koot, John Weidman and others (см. ниже)\n"\
+"* Непосредственно сам эмулятор!\n"\
+"Yoyofr and Laxer3a\n"\
+"* Все работы связанные с OpenSnes9xGP: ядро asm CPU, новый PPU код,\n"\
+"  различные улучшения.\n"\
+"notaz:\n"\
+"* SPC700 собраный код\n"\
+"Summeli:\n"\
+" Дом. Стр.: www.summeli.fi\n"
+

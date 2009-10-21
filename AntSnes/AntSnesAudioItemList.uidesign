@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<designerData version="1.1.0">
+  <componentManifest>
+    <manifestEntry id="com.nokia.sdt.series60.DefaultAppUi" version="1.0.0"/>
+    <manifestEntry id="com.nokia.sdt.series60.DesignTimeContainer" version="1.0.0"/>
+    <manifestEntry id="com.nokia.sdt.series60.CommonBase" version="1.0.0"/>
+    <manifestEntry id="com.nokia.sdt.series60.CAknSettingItemList" version="1.1.0"/>
+    <manifestEntry id="com.nokia.sdt.series60.ContainerBase" version="1.0.0"/>
+    <manifestEntry id="com.nokia.sdt.series60.CAknBinaryPopupSettingItem" version="1.0.0"/>
+    <manifestEntry id="com.nokia.sdt.series60.EnumeratedTextPopupBase" version="1.0.0"/>
+    <manifestEntry id="com.nokia.sdt.series60.CCoeControlBase" version="1.0.0"/>
+    <manifestEntry id="com.nokia.sdt.series60.ControlBase" version="1.0.0"/>
+    <manifestEntry id="com.nokia.sdt.series60.CAknEnumeratedTextPopupSettingItem" version="1.0.0"/>
+    <manifestEntry id="com.nokia.sdt.series60.CAknVolumeSettingItem" version="1.0.0"/>
+  </componentManifest>
+  <property id="com.nokia.sdt.symbian.dm.RESOURCE_DIRECTORY_ID">data</property>
+  <property id="com.nokia.sdt.component.symbian.vendor">com.nokia.series60</property>
+  <property id="com.nokia.sdt.component.symbian.version">3.0.1</property>
+  <property id="com.nokia.sdt.symbian.dm.COMPONENT_PROVIDER">com.nokia.sdt.component.symbian.Symbian-Provider</property>
+  <property id="com.nokia.sdt.symbian.dm.INCLUDE_DIRECTORY_ID">inc</property>
+  <property id="com.nokia.sdt.symbian.dm.SOURCE_DIRECTORY_ID">src</property>
+  <property id="com.nokia.sdt.symbian.dm.SOURCEGEN_PROVIDER">com.nokia.sdt.sourcegen.Symbian-Provider</property>
+  <property id="com.nokia.sdt.symbian.dm.BUILD_DIRECTORY_ID">group</property>
+  <component id="com.nokia.sdt.series60.DefaultAppUi">
+    <property id="className">CAntSnesAppUi</property>
+    <compoundProperty id="location">
+      <property id="x">52</property>
+      <property id="y">45</property>
+    </compoundProperty>
+    <property id="name">AntSnesAppUi</property>
+    <compoundProperty id="size">
+      <property id="width">240</property>
+      <property id="height">320</property>
+    </compoundProperty>
+    <component id="com.nokia.sdt.series60.CAknSettingItemList">
+      <property id="title" type="i18n">STR_AntSnesAppUi_1</property>
+      <compoundProperty id="location">
+        <property id="y">66</property>
+      </compoundProperty>
+      <property id="className">CAntSnesAudioItemList</property>
+      <property id="name">AntSnesAudioItemList</property>
+      <compoundProperty id="size">
+        <property id="width">240</property>
+        <property id="height">222</property>
+      </compoundProperty>
+      <component id="com.nokia.sdt.series60.CAknBinaryPopupSettingItem">
+        <sequenceProperty id="items">
+          <compoundElement>
+            <property id="settingText" type="i18n">STR_AntSnesAppUi_2</property>
+            <property id="popupText" type="i18n">STR_AntSnesAppUi_3</property>
+            <property id="value">0</property>
+          </compoundElement>
+          <compoundElement>
+            <property id="settingText" type="i18n">STR_AntSnesAppUi_4</property>
+            <property id="popupText" type="i18n">STR_AntSnesAppUi_5</property>
+            <property id="value">1</property>
+          </compoundElement>
+        </sequenceProperty>
+        <compoundProperty id="location">
+          <property id="x">0</property>
+          <property id="y">0</property>
+        </compoundProperty>
+        <property id="name">binarySetting1</property>
+        <property id="itemTitle" type="i18n">STR_AntSnesAppUi_6</property>
+        <compoundProperty id="size">
+          <property id="height">42</property>
+          <property id="width">240</property>
+        </compoundProperty>
+      </component>
+      <component id="com.nokia.sdt.series60.CAknEnumeratedTextPopupSettingItem">
+        <sequenceProperty id="items">
+          <compoundElement>
+            <property id="settingText" type="i18n">STR_AntSnesAppUi_54</property>
+            <property id="popupText" type="i18n">STR_AntSnesAppUi_55</property>
+            <property id="value">8000</property>
+          </compoundElement>
+          <compoundElement>
+            <property id="settingText" type="i18n">STR_AntSnesAppUi_56</property>
+            <property id="popupText" type="i18n">STR_AntSnesAppUi_57</property>
+            <property id="value">11025</property>
+          </compoundElement>
+          <compoundElement>
+            <property id="settingText" type="i18n">STR_AntSnesAppUi_58</property>
+            <property id="popupText" type="i18n">STR_AntSnesAppUi_59</property>
+            <property id="value">16000</property>
+          </compoundElement>
+          <compoundElement>
+            <property id="settingText" type="i18n">STR_AntSnesAppUi_60</property>
+            <property id="popupText" type="i18n">STR_AntSnesAppUi_61</property>
+            <property id="value">22050</property>
+          </compoundElement>
+          <compoundElement>
+            <property id="settingText" type="i18n">STR_AntSnesAppUi_62</property>
+            <property id="popupText" type="i18n">STR_AntSnesAppUi_63</property>
+            <property id="value">44100</property>
+          </compoundElement>
+        </sequenceProperty>
+        <compoundProperty id="location">
+          <property id="x">0</property>
+          <property id="y">42</property>
+        </compoundProperty>
+        <property id="name">enumeratedTextPopup1</property>
+        <property id="itemTitle" type="i18n">STR_AntSnesAppUi_40</property>
+        <compoundProperty id="size">
+          <property id="height">42</property>
+          <property id="width">240</property>
+        </compoundProperty>
+      </component>
+      <component id="com.nokia.sdt.series60.CAknBinaryPopupSettingItem">
+        <sequenceProperty id="items">
+          <compoundElement>
+            <property id="settingText" type="i18n">STR_AntSnesAppUi_74</property>
+            <property id="popupText" type="i18n">STR_AntSnesAppUi_75</property>
+            <property id="value">0</property>
+          </compoundElement>
+          <compoundElement>
+            <property id="settingText" type="i18n">STR_AntSnesAppUi_76</property>
+            <property id="popupText" type="i18n">STR_AntSnesAppUi_77</property>
+            <property id="value">1</property>
+          </compoundElement>
+        </sequenceProperty>
+        <compoundProperty id="location">
+          <property id="x">0</property>
+          <property id="y">84</property>
+        </compoundProperty>
+        <property id="name">binarySetting2</property>
+        <property id="itemTitle" type="i18n">STR_AntSnesAppUi_78</property>
+        <compoundProperty id="size">
+          <property id="height">42</property>
+          <property id="width">240</property>
+        </compoundProperty>
+      </component>
+      <component id="com.nokia.sdt.series60.CAknVolumeSettingItem">
+        <compoundProperty id="location">
+          <property id="x">0</property>
+          <property id="y">126</property>
+        </compoundProperty>
+        <property id="value">4</property>
+        <property id="name">volumeSetting1</property>
+        <property id="itemTitle" type="i18n">STR_AntSnesAppUi_116</property>
+        <compoundProperty id="size">
+          <property id="height">42</property>
+          <property id="width">240</property>
+        </compoundProperty>
+      </component>
+      <component id="com.nokia.sdt.series60.CAknBinaryPopupSettingItem">
+        <sequenceProperty id="items">
+          <compoundElement>
+            <property id="settingText" type="i18n">STR_AntSnesAppUi_118</property>
+            <property id="popupText" type="i18n">STR_AntSnesAppUi_119</property>
+            <property id="value">1</property>
+          </compoundElement>
+          <compoundElement>
+            <property id="settingText" type="i18n">STR_AntSnesAppUi_120</property>
+            <property id="popupText" type="i18n">STR_AntSnesAppUi_121</property>
+          </compoundElement>
+        </sequenceProperty>
+        <compoundProperty id="location">
+          <property id="x">0</property>
+          <property id="y">168</property>
+        </compoundProperty>
+        <property id="name">binarySetting3</property>
+        <property id="itemTitle" type="i18n">STR_AntSnesAppUi_122</property>
+        <compoundProperty id="size">
+          <property id="height">42</property>
+          <property id="width">240</property>
+        </compoundProperty>
+      </component>
+    </component>
+  </component>
+  <stringBundle>
+    <stringTable language="LANG_English">
+      <string id="STR_AntSnesAppUi_1">Settings</string>
+      <string id="STR_AntSnesAppUi_2">Off</string>
+      <string id="STR_AntSnesAppUi_3">Popup text for Off</string>
+      <string id="STR_AntSnesAppUi_4">On</string>
+      <string id="STR_AntSnesAppUi_5">Popup text for On</string>
+      <string id="STR_AntSnesAppUi_6">Enable Audio</string>
+      <string id="STR_AntSnesAppUi_40">Sample Rate</string>
+      <string id="STR_AntSnesAppUi_54">8000Hz</string>
+      <string id="STR_AntSnesAppUi_55">8000Hz</string>
+      <string id="STR_AntSnesAppUi_56">11025Hz</string>
+      <string id="STR_AntSnesAppUi_57">11025Hz</string>
+      <string id="STR_AntSnesAppUi_58">16000Hz</string>
+      <string id="STR_AntSnesAppUi_59">16000Hz</string>
+      <string id="STR_AntSnesAppUi_60">22050Hz</string>
+      <string id="STR_AntSnesAppUi_61">22050Hz</string>
+      <string id="STR_AntSnesAppUi_62">44100Hz</string>
+      <string id="STR_AntSnesAppUi_63">44100Hz</string>
+      <string id="STR_AntSnesAppUi_74">Off</string>
+      <string id="STR_AntSnesAppUi_75">Popup text for Off</string>
+      <string id="STR_AntSnesAppUi_76">On</string>
+      <string id="STR_AntSnesAppUi_77">Popup text for On</string>
+      <string id="STR_AntSnesAppUi_78">Stereo</string>
+      <string id="STR_AntSnesAppUi_116">Volume</string>
+      <string id="STR_AntSnesAppUi_118">On</string>
+      <string id="STR_AntSnesAppUi_119">Popup text for On</string>
+      <string id="STR_AntSnesAppUi_120">Off</string>
+      <string id="STR_AntSnesAppUi_121">Popup text for Off</string>
+      <string id="STR_AntSnesAppUi_122">Enable SpeedHack</string>
+    </stringTable>
+  </stringBundle>
+  <macroTable/>
+  <sourceMappingState>
+    <resourceMappings>
+      <resourceMapping instanceName="AntSnesAudioItemList">r_ant_snes_audio_item_list_ant_snes_audio_item_list</resourceMapping>
+      <resourceMapping instanceName="enumeratedTextPopup1">r_ant_snes_audio_item_list_enumerated_text_popup1_editor_resource_id</resourceMapping>
+      <resourceMapping instanceName="binarySetting1" rsrcId="member$setting_page_resource">r_ant_snes_audio_item_list_binary_setting1_setting_page_resource</resourceMapping>
+      <resourceMapping instanceName="binarySetting1" rsrcId="setting">r_ant_snes_audio_item_list_binary_setting1_setting_texts_resource</resourceMapping>
+      <resourceMapping instanceName="binarySetting2" rsrcId="associated">r_ant_snes_audio_item_list_binary_setting2</resourceMapping>
+      <resourceMapping instanceName="enumeratedTextPopup1" rsrcId="member$setting_page_resource">r_ant_snes_audio_item_list_enumerated_text_popup1_setting_page_resource</resourceMapping>
+      <resourceMapping instanceName="binarySetting2">r_ant_snes_audio_item_list_binary_setting2_editor_resource_id</resourceMapping>
+      <resourceMapping instanceName="binarySetting1" rsrcId="associated">r_ant_snes_audio_item_list_binary_setting1</resourceMapping>
+      <resourceMapping instanceName="binarySetting2" rsrcId="popup">r_ant_snes_audio_item_list_binary_setting2_popped_up_texts_resource</resourceMapping>
+      <resourceMapping instanceName="binarySetting2" rsrcId="member$setting_page_resource">r_ant_snes_audio_item_list_binary_setting2_setting_page_resource</resourceMapping>
+      <resourceMapping instanceName="enumeratedTextPopup1" rsrcId="popup">r_ant_snes_audio_item_list_enumerated_text_popup1_popped_up_texts_resource</resourceMapping>
+      <resourceMapping instanceName="enumeratedTextPopup1" rsrcId="setting">r_ant_snes_audio_item_list_enumerated_text_popup1_setting_texts_resource</resourceMapping>
+      <resourceMapping instanceName="volumeSetting1">r_ant_snes_audio_item_list_volume_setting1_editor_resource_id</resourceMapping>
+      <resourceMapping instanceName="binarySetting3" rsrcId="member$setting_page_resource">r_ant_snes_audio_item_list_binary_setting3_setting_page_resource</resourceMapping>
+      <resourceMapping instanceName="enumeratedTextPopup1" rsrcId="associated">r_ant_snes_audio_item_list_enumerated_text_popup1</resourceMapping>
+      <resourceMapping instanceName="binarySetting1">r_ant_snes_audio_item_list_binary_setting1_editor_resource_id</resourceMapping>
+      <resourceMapping instanceName="binarySetting1" rsrcId="popup">r_ant_snes_audio_item_list_binary_setting1_popped_up_texts_resource</resourceMapping>
+      <resourceMapping instanceName="volumeSetting1" rsrcId="member$setting_page_resource">r_ant_snes_audio_item_list_volume_setting1_setting_page_resource</resourceMapping>
+      <resourceMapping instanceName="binarySetting2" rsrcId="setting">r_ant_snes_audio_item_list_binary_setting2_setting_texts_resource</resourceMapping>
+      <resourceMapping instanceName="binarySetting3" rsrcId="popup">r_ant_snes_audio_item_list_binary_setting3_popped_up_texts_resource</resourceMapping>
+      <resourceMapping instanceName="binarySetting3" rsrcId="associated">r_ant_snes_audio_item_list_binary_setting3</resourceMapping>
+      <resourceMapping instanceName="binarySetting3">r_ant_snes_audio_item_list_binary_setting3_editor_resource_id</resourceMapping>
+      <resourceMapping instanceName="binarySetting3" rsrcId="setting">r_ant_snes_audio_item_list_binary_setting3_setting_texts_resource</resourceMapping>
+    </resourceMappings>
+    <enumMappings>
+      <enumMapping instanceName="enumeratedTextPopup1" propertyId="" nameAlgorithm="com.nokia.sdt.component.symbian.NAME_ALG_SETTING_ITEM_ID">EAntSnesAppUiEnumeratedTextPopup13</enumMapping>
+      <enumMapping instanceName="binarySetting1" propertyId="" nameAlgorithm="com.nokia.sdt.component.symbian.NAME_ALG_SETTING_ITEM_ID">EAntSnesAppUiBinarySetting13</enumMapping>
+      <enumMapping instanceName="binarySetting3" propertyId="" nameAlgorithm="com.nokia.sdt.component.symbian.NAME_ALG_SETTING_ITEM_ID">EAntSnesAppUiBinarySetting32</enumMapping>
+      <enumMapping instanceName="volumeSetting1" propertyId="" nameAlgorithm="com.nokia.sdt.component.symbian.NAME_ALG_SETTING_ITEM_ID">EAntSnesAppUiVolumeSetting12</enumMapping>
+      <enumMapping instanceName="volumeSetting1" propertyId="" nameAlgorithm="com.nokia.sdt.component.symbian.NAME_ALG_CONTROL_TYPE">EAknCtVolumeControl</enumMapping>
+      <enumMapping instanceName="enumeratedTextPopup1" propertyId="" nameAlgorithm="com.nokia.sdt.component.symbian.NAME_ALG_CONTROL_TYPE">EAknCtPopupSettingList</enumMapping>
+      <enumMapping instanceName="binarySetting2" propertyId="" nameAlgorithm="com.nokia.sdt.component.symbian.NAME_ALG_CONTROL_TYPE">EAknCtPopupSettingList</enumMapping>
+      <enumMapping instanceName="binarySetting2" propertyId="" nameAlgorithm="com.nokia.sdt.component.symbian.NAME_ALG_SETTING_ITEM_ID">EAntSnesAppUiBinarySetting22</enumMapping>
+      <enumMapping instanceName="binarySetting1" propertyId="" nameAlgorithm="com.nokia.sdt.component.symbian.NAME_ALG_CONTROL_TYPE">EAknCtPopupSettingList</enumMapping>
+      <enumMapping instanceName="binarySetting3" propertyId="" nameAlgorithm="com.nokia.sdt.component.symbian.NAME_ALG_CONTROL_TYPE">EAknCtPopupSettingList</enumMapping>
+    </enumMappings>
+    <arrayMappings/>
+  </sourceMappingState>
+  <generatedFiles>
+    <file>inc/antsnesaudioitemlistsettings.h</file>
+    <file>src/antsnesaudioitemlistsettings.cpp</file>
+    <file>inc/antsnesaudioitemlist.h</file>
+    <file>src/antsnesaudioitemlist.cpp</file>
+    <file>data/antsnes.rss</file>
+    <file>data/antsnesaudioitemlist.rssi</file>
+    <file>inc/antsnes.hrh</file>
+    <file>data/antsnes.rls</file>
+    <file>data/antsnessettingitemlist.rssi</file>
+    <file>inc/antsnessettingitemlist.hrh</file>
+    <file>data/antsnessettingitemlist.loc</file>
+    <file>data/antsnesaudioitemlist.loc</file>
+    <file>data/antsnesaudioitemlist.l01</file>
+  </generatedFiles>
+</designerData>

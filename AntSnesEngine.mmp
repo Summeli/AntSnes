@@ -1,0 +1,86 @@
+/* AntSnes
+ *
+ * Copyright (C) 2009 Summeli <summeli@summeli.fi>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ */
+ 
+TARGET			antsnes.lib
+TARGETTYPE 		LIB
+
+EPOCHEAPSIZE 6000000 64000000
+EPOCSTACKSIZE   0x8000
+//lol, we have to use 0 optimizations and then manually put all optimizations back on :D 
+//othervise the stack will be misaligned
+OPTION GCCE -march=armv5t -O0 -fexpensive-optimizations -finline -finline-function -ffast-math -msoft-float -falign-functions=32 -falign-loops -falign-labels -falign-jumps -fomit-frame-pointer
+
+//#define CPU_ASM //ASM optimnized CPU
+
+EPOCALLOWDLLDATA
+
+USERINCLUDE     .
+USERINCLUDE		AntSnes\inc\
+
+SYSTEMINCLUDE	\epoc32\include
+SYSTEMINCLUDE	\epoc32\include\libc
+
+SOURCEPATH      .
+//SNES stuff (c-based)
+SOURCE			apu.cpp
+SOURCE			c4emu.cpp
+SOURCE			c4.cpp
+SOURCE		 	clip.cpp
+SOURCE			cpu.cpp
+#ifdef CPU_ASM
+SOURCE			cpuexec.cpp
+SOURCE			os9x_65c816.s spc700a.s spc_decode.s
+#else
+SOURCE			cpuexec_cpp.cpp
+SOURCE			cpuops.cpp
+SOURCE			sa1.cpp
+SOURCE			sa1cpu.cpp
+#endif
+SOURCE			data.cpp
+SOURCE			dma.cpp
+SOURCE			gfx.cpp
+SOURCE			soundux.cpp
+SOURCE			spc700.cpp
+SOURCE			srtc.cpp
+SOURCE			globals.cpp
+SOURCE			memmap.cpp
+SOURCE			ppu.cpp
+SOURCE			tile.cpp
+SOURCE			dsp1.cpp
+SOURCE			sdd1.cpp
+SOURCE			sdd1emu.cpp
+SOURCE			snapshot.cpp
+SOURCE			m3d_func.s 
+//if GCCE4 is used, division.c is required
+//SOURCE			division.c
+
+#ifdef CPU_ASM
+SOURCE			os9x_asm_cpu.cpp
+#endif
+
+// Super FX
+SOURCE		  fxinst.cpp
+SOURCE		  fxemu.cpp
+
+// zlib and unzip , TODO: can use platform components also
+SOURCE		 zlib\gzio.c
+SOURCE		 unzip.c
+
+// and Symbian stuff
+SOURCE		symb_debug.cpp

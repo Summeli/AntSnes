@@ -1,0 +1,105 @@
+/* AntSnes
+ *
+ * Copyright (C) 2009 Summeli <summeli@summeli.fi>
+ *
+ * Dette program er fri software. Du kan redistribuere og/eller
+ * modificere det under de betingelserne som er angivet i GNU General Public License,
+ * som er udgivet af Free Software Foundation; Enten version 2 af licensen,
+ * eller (efter eget valg) enhver senere version.
+ *
+ * Dette program distribueres i håb om at det vil vise sig nyttigt,
+ * men UDEN NOGEN GARANTI; uden selv den underforståede garantieromkring
+ * SALGSBARGED eller EGNETHED TIL ET BESTEMT FORMÅL.  Se GNU
+ * General Public License for flere detaljer.
+ *
+ * Du skulle have modtaget en kopi af GNU General Public License
+ * sammen med dette program; hvis ikke, skriv til Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ */
+
+//  LOCALISATION STRINGS
+
+// localized strings for language: Danish (07)
+
+#define qtn_caption_string "AntSnes"
+
+#define qtn_continue "Fortsæt Spil"
+
+#define qtn_loadrom "Åben ROM"
+	
+#define qtn_savestate "Gem Tilstand"
+
+#define qtn_loadstate "Åben Tilstand"
+
+#define qtn_resetgame "Genstart Spil"
+
+#define qtn_about "Om"
+
+#define qtn_settings "Indstillinger"
+
+#define qtn_exit "Luk"
+
+#define qtn_about_dialog_title "Om"
+
+#define qtn_choose_memory_q "Vælg hukommelse:"
+#define qtn_accept "Accepter"
+#define qtn_cancel "Annuler"
+
+#define qtn_key_config "Tast Indstillinger"
+#define qtn_video_settings "Videoindstillinger"
+#define qtn_audio_settings "Lydindstillinger"
+#define qtn_default_settings "Standardinstillinger"
+        
+#define qtn_load_rom "Åben Rom:"
+
+#define qtn_restart_required_note "Indstillinger gemt. AntSnes skal genstartes før de tager effekt"
+
+#define qtn_default_settings_set "Standardinstillinger gemt, \n genstart AntSnes for at få dem til at virke"
+#define qtn_set_default_settings_q "Sæt Standardindstillinger?"
+
+#define qtn_select_resolution "Vælg Opløsning"
+
+#define qtn_press_up_button "Tryk OP Knappen, eller tryk 'C' for at hoppe over"
+#define qtn_press_down_button "Tryk NED Knappen, eller tryk 'C' for at hoppe over"
+#define qtn_press_left_button "Tryk VENSTRE Knappen, eller tryk 'C' for at hoppe over"
+#define qtn_press_right_button "Tryk HØJRE Knappen, eller tryk 'C' for at hoppe over"
+#define qtn_press_x_button "Tryk X Knappen, eller tryk 'C' for at hoppe over"
+#define qtn_press_y_button "Tryk Y Knappen, eller tryk 'C' for at hoppe over"
+#define qtn_press_a_button "Tryk A Knappen, eller tryk 'C' for at hoppe over"
+#define qtn_press_b_button "Tryk B Knappen, eller tryk 'C' for at hoppe over"
+#define qtn_press_start_button "Tryk START Knappen, eller tryk 'C' for at hoppe over"
+#define qtn_press_select_button "Tryk SELECT Knappen, eller tryk 'C' for at hoppe over"
+#define qtn_press_tl_button "Tryk TL Knappen, eller tryk 'C' for at hoppe over"
+#define qtn_press_tr_button "Tryk TR Knappen, eller tryk 'C' for at hoppe over"
+#define qtn_key_config_done "Tastaturindstillinger gemt!"
+
+#define qtn_slot1 "Slot #1"
+#define qtn_slot2 "Slot #2"
+#define qtn_slot3 "Slot #3"
+#define qtn_slot4 "Slot #4"
+#define qtn_slot5 "Slot #5"
+
+#define qtn_about_dialog_text "AtnSnes er en Snes9x emulator til S60. den er egentelig baseret på "\
+"OpenSnes9xGP, modificeret Snes9x til GP32 håndholdt, der havde nogle dele af det" \
+"Tilpasset til / komplet omskrevet til GP32 (i C eller ASM). Som GP32 er ARM CPU"\
+"baseret maskiner (Samme som S60 telefoner), disse optimeringer var brugt i denne"\
+"omskrevne emulator.\n"\
+"Denne emulator bruger kode fra disse folk/projekter:\n"\
+"Snes9x team:\n"\
+"Gary Henderson, Jerremy Koot, John Weidman og andre (see herunder)\n"\
+"* Emulatores selv!\n"\
+"Hjemmeside: http://www.snes9x.com/ \n"\
+"Yoyofr and Laxer3a\n"\
+"* Alt arbejdet i deres OpenSnes9xGP: asm CPU core, ny PPU kode,\n"\
+"  forskellige optimeringer\n"\
+"Hjemmeside: http://yoyofr92.free.fr/\n"\
+"notaz:\n"\
+"* SPC700 assembly kode\n"\
+"* En masse små kodeændringer.\n"\
+"Hjemmeside: http://notaz.atspace.com/ \n"\
+"E-mail: notasas(atsymbol)gmail.com\n"\
+"Summeli:\n"\
+"* AntSnes, S60 omskrivningen\n "\
+"* Små kodeændringer. \n"\
+"Hjemmeside: www.summeli.fi\n"\
+"E-mail summeli@summeli.fi\n"

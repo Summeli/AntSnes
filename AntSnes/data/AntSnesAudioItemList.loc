@@ -1,0 +1,39 @@
+/*
+========================================================================
+ Name        : AntSnesAudioItemList.loc
+ Author      : 
+ Copyright   : Your copyright notice
+ Description : 
+========================================================================
+*/
+CHARACTER_SET UTF8
+#ifdef LANGUAGE_01
+#include "AntSnesAudioItemList.l01"
+#endif
+#ifdef LANGUAGE_09
+#include "AntSnesAudioItemList.l09"
+#endif
+#ifdef LANGUAGE_07
+#include "AntSnesAudioItemList.l07"
+#endif
+#ifdef LANGUAGE_17
+#include "AntSnesAudioItemList.l17"
+#endif
+#ifdef LANGUAGE_59
+#include "AntSnesAudioItemList.l59"
+#endif
+#ifdef LANGUAGE_76
+#include "AntSnesAudioItemList.l76"
+#endif
+#ifdef LANGUAGE_16
+#include "AntSnesAudioItemList.l16"
+#endif
+#ifdef LANGUAGE_27
+#include "AntSnesAudioItemList.l27"
+#endif
+#ifdef LANGUAGE_42
+#include "AntSnesAudioItemList.l42"
+#endif
+#ifdef LANGUAGE_54
+#include "AntSnesAudioItemList.l54"
+#endif

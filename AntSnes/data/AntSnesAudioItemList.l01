@@ -1,0 +1,49 @@
+/* AntSnes
+ *
+ * Copyright (C) 2009 Summeli <summeli@summeli.fi>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ */
+ 
+// localized strings for language: UK English (01)
+#define STR_AntSnesAppUi_1 "Settings"
+#define STR_AntSnesAppUi_116 "Volume"
+#define STR_AntSnesAppUi_118 "On"
+#define STR_AntSnesAppUi_119 "Popup text for On"
+#define STR_AntSnesAppUi_120 "Off"
+#define STR_AntSnesAppUi_121 "Popup text for Off"
+#define STR_AntSnesAppUi_122 "Enable SpeedHack"
+#define STR_AntSnesAppUi_2 "Off"
+#define STR_AntSnesAppUi_3 "Popup text for Off"
+#define STR_AntSnesAppUi_4 "On"
+#define STR_AntSnesAppUi_5 "Popup text for On"
+#define STR_AntSnesAppUi_6 "Enable Audio"
+#define STR_AntSnesAppUi_40 "Sample Rate"
+#define STR_AntSnesAppUi_54 "8000Hz"
+#define STR_AntSnesAppUi_55 "8000Hz"
+#define STR_AntSnesAppUi_56 "11025Hz"
+#define STR_AntSnesAppUi_57 "11025Hz"
+#define STR_AntSnesAppUi_58 "16000Hz"
+#define STR_AntSnesAppUi_59 "16000Hz"
+#define STR_AntSnesAppUi_60 "22050Hz"
+#define STR_AntSnesAppUi_61 "22050Hz"
+#define STR_AntSnesAppUi_62 "44100Hz"
+#define STR_AntSnesAppUi_63 "44100Hz"
+#define STR_AntSnesAppUi_74 "Off"
+#define STR_AntSnesAppUi_75 "Popup text for Off"
+#define STR_AntSnesAppUi_76 "On"
+#define STR_AntSnesAppUi_77 "Popup text for On"
+#define STR_AntSnesAppUi_78 "Stereo"
+ 

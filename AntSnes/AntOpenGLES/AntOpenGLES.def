@@ -1,0 +1,5 @@
+EXPORTS
+	_ZN20CAntOpenGLESRenderer4NewLER9CWindowGcR7RWindow5TSizei11TScreenMode @ 1 NONAME
+	_ZTI20CAntOpenGLESRenderer @ 2 NONAME
+	_ZTV20CAntOpenGLESRenderer @ 3 NONAME
+

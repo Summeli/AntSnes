@@ -1,0 +1,105 @@
+/* AntSnes
+ *
+ * Copyright (C) 2009 Summeli <summeli@summeli.fi>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ */
+
+//  LOCALISATION STRINGS
+
+// localized strings for language: Indonesian (59)
+
+#define qtn_caption_string "AntSnes"
+
+#define qtn_continue "Lanjutkan Permainan"
+
+#define qtn_loadrom "Buka ROM"
+	
+#define qtn_savestate "Simpan Kondisi"
+
+#define qtn_loadstate "Buka Kondisi"
+
+#define qtn_resetgame "Reset Permainan"
+
+#define qtn_about "Tentang"
+
+#define qtn_settings "Pengaturan"
+
+#define qtn_exit "Keluar"
+
+#define qtn_about_dialog_title "Pengaturan"
+
+#define qtn_choose_memory_q "Pilih Memori:"
+#define qtn_accept "Setuju"
+#define qtn_cancel "Batal"
+
+#define qtn_key_config "Konfigurasi Tombol"
+#define qtn_video_settings "Pengaturan Gambar"
+#define qtn_audio_settings "Pengaturan Suara"
+#define qtn_default_settings "Pengaturan Awal"
+        
+#define qtn_load_rom "Buka ROM:"
+
+#define qtn_restart_required_note "Pengaturan Tersimpan. AntSnes harus dinyalakan ulang untuk mengaktifkan perubahan"
+
+#define qtn_default_settings_set "Pengaturan Awal dipilih, \n AntSnes harus dinyalakan ulang untuk mengaktifkan perubahan"
+#define qtn_set_default_settings_q "Pilih pengaturan awal?"
+
+#define qtn_select_resolution "Pilih resolusi"
+
+#define qtn_press_up_button "Tekan tombol ATAS, atau tekan 'C' untuk melewati"
+#define qtn_press_down_button "Tekan tombol BAWAH, atau tekan 'C' untuk melewati"
+#define qtn_press_left_button "Tekan tombol KIRI, atau tekan 'C' untuk melewati"
+#define qtn_press_right_button "Tekan tombol KANAN, atau tekan 'C' untuk melewati"
+#define qtn_press_x_button "Tekan tombol X, atau tekan 'C' untuk melewati"
+#define qtn_press_y_button "Tekan tombol Y, atau tekan 'C' untuk melewati"
+#define qtn_press_a_button "Tekan tombol A, atau tekan 'C' untuk melewati"
+#define qtn_press_b_button "Tekan tombol B, atau tekan 'C' untuk melewati"
+#define qtn_press_start_button "Tekan tombol START, atau tekan 'C' untuk melewati"
+#define qtn_press_select_button "Tekan tombol SELECT, atau tekan 'C' untuk melewati"
+#define qtn_press_tl_button "Tekan tombol TL, atau tekan 'C' untuk melewati"
+#define qtn_press_tr_button "Tekan tombol TR, atau tekan 'C' untuk melewati"
+#define qtn_key_config_done "Pengaturan Tombol Selesai!"
+
+#define qtn_slot1 "Slot #1"
+#define qtn_slot2 "Slot #2"
+#define qtn_slot3 "Slot #3"
+#define qtn_slot4 "Slot #4"
+#define qtn_slot5 "Slot #5"
+
+#define qtn_about_dialog_text "AntSnes adalah emulator Snes9x untuk S60. AntSnes sebenarnya berdasarkan pada "\
+"OpenSnes9xGP, Snes9x yang telah dimodifikasi untuk  handheld GP32, yang memiliki bagian-bagian" \
+"teradaptasi untuk / ditulis ulang untuk GP32 (dalam C atau ASM). Karena GP32 merupakan perangkat berbasis"\
+"ARM CPU (sama dengan handphone S60), optimasi yang sama dipergunakan dalam"\
+"port ini.\n"\
+"Emulator ini menggunakan kode dari proyek/tokoh berikut:\n"\
+"Snes9x team:\n"\
+"Gary Henderson, Jerremy Koot, John Weidman dan lainnya (lihat di bawah)\n"\
+"* Emulator itu sendiri!\n"\
+"Homepage: http://www.snes9x.com/ \n"\
+"Yoyofr dan Laxer3a\n"\
+"* Semua yang bekerja dalam OpenSnes9xGP: asm CPU core, PPU code baru,\n"\
+"  berbagai tweak\n"\
+"Homepage: http://yoyofr92.free.fr/\n"\
+"notaz:\n"\
+"* kode assembly SPC700\n"\
+"* banyak perubahan kode kecil.\n"\
+"Homepage: http://notaz.atspace.com/ \n"\
+"E-mail: notasas(atsymbol)gmail.com\n"\
+"Summeli:\n"\
+"* AntSnes, the S60 port\n "\
+"* beberapa perubahan kode kecil. \n"\
+"Homepage: www.summeli.fi\n"\
+"E-mail summeli@summeli.fi\n"

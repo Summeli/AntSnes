@@ -1,0 +1,119 @@
+/* AntSnes
+ *
+ * Copyright (C) 2009 Summeli <summeli@summeli.fi>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ */
+
+
+TARGET			AntSnes.exe
+TARGETTYPE		exe
+UID		  		0x100039CE 0xE5712A80
+VENDORID        0
+SECUREID		0xE5712A80
+CAPABILITY      NONE
+EPOCHEAPSIZE 6000000 64000000
+EPOCSTACKSIZE 2000
+EPOCALLOWDLLDATA
+LANG 01 //07 17 59 76 16 27 42 54
+
+//MACRO AUDIO_ENABLED
+//MACRO OUTPUT_TO_FILE //output audio to file, testmacro
+#define __S60_50__ //the preprocessor can't find it in the file..
+/*
+MACRO MACRODEBUGBUILD
+MACRO __SUPPORT_CPP_EXCEPTIONS__
+MACRO __EABI__
+*/
+USERINCLUDE	   ..\inc
+USERINCLUDE    ..\help
+USERINCLUDE		..\.. ..\data
+USERINCLUDE 	..\AntOpenGLES\
+
+SYSTEMINCLUDE	 \epoc32\include
+//SYSTEMINCLUDE	 \epoc32\include\libc //only in 3.1
+SYSTEMINCLUDE    \epoc32\include\stdapis
+SYSTEMINCLUDE 	 \epoc32\include\mmf\plugin
+
+SOURCEPATH		..\src
+SOURCE			AntSnes.cpp
+SOURCE			AntSnesApplication.cpp
+SOURCE			AntSnesAppUi.cpp
+SOURCE			AntSnesDocument.cpp
+SOURCE 			AntSnesContainer.cpp
+SOURCE			AntSnesController.cpp
+SOURCE			AntRemConCoreResponse.cpp
+SOURCE 			CSnesTimer.cpp
+SOURCE 			AntAudio.cpp
+SOURCE 			AntDSARenderer.cpp
+SOURCE 			AntKeyDialog.cpp
+SOURCE 			AntBlit.cpp
+#ifdef __S60_50__ 
+SOURCE LeftButtonControl.cpp RightButtonControl.cpp
+#endif
+//generated sources
+SOURCE AntSnesSettingItemList.cpp AntSnesSettingItemListSettings.cpp 
+SOURCE AntSnesAudioItemListSettings.cpp AntSnesAudioItemList.cpp
+SOURCEPATH		..\data
+
+START RESOURCE	AntSnes.rss
+HEADER
+TARGET AntSnes
+TARGETPATH resource\apps
+END //RESOURCE
+
+START RESOURCE	AntSnes_reg.rss
+TARGET AntSnes_reg
+TARGETPATH 	  \private\10003a3f\apps
+END //RESOURCE
+
+//#ifdef __S60_50__ 
+START BITMAP snescontrol.mbm
+TARGETPATH \system\apps\antsnes\
+HEADER
+SOURCEPATH ..\gfx
+SOURCE C24 SnesPad.bmp
+SOURCE C24 SnesButtons.bmp
+END
+//#endif
+
+LIBRARY		   euser.lib
+LIBRARY		   apparc.lib
+LIBRARY		   cone.lib
+LIBRARY		   eikcore.lib
+LIBRARY		   avkon.lib
+LIBRARY		   commonengine.lib
+LIBRARY        eikcoctl.lib 
+LIBRARY		   estor.lib
+LIBRARY        aknnotify.lib
+LIBRARY        ws32.lib
+LIBRARY        hlplch.lib
+LIBRARY 	   CommonDialogs.lib //load rom dlg
+//LIBRARY        libgles_cm.lib // for opengl es
+LIBRARY		   mediaclientaudiostream.lib //for audio
+LIBRARY		   fbscli.lib //For direct screen access
+LIBRARY		   efsrv.lib EZLIB.lib EFSRV.lib ESTLIB.lib HAL.lib 
+LIBRARY		   bitgdi.lib //TODO, remove when code is cleaned
+LIBRARY		   RemConCoreApi.lib RemConInterfaceBase.lib //the remotecontrol APIs
+LIBRARY		   eikdlg.lib  //antdlg
+LIBRARY		   scdv.lib //antiteariung API
+LIBRARY		   flogger.lib //rfilelogger
+LIBRARY		   charconv.lib 
+
+#ifdef __S60_50__ 
+LIBRARY		   aknicon.lib  
+#endif
+//ENGINE
+STATICLIBRARY	antsnes.lib //link statically to the engine 

@@ -1,0 +1,105 @@
+/* AntSnes
+ *
+ * Copyright (C) 2009 Summeli <summeli@summeli.fi>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ */
+
+//  LOCALISATION STRINGS
+
+// localized strings for language: Greek (54)
+
+#define qtn_caption_string "AntSnes"
+
+#define qtn_continue "Συνέχιση Παιχνιδίου"
+
+#define qtn_loadrom "Φόρτωση Παιχνιδιού"
+	
+#define qtn_savestate "Αποθήκευση Στιγμιοτύπου"
+
+#define qtn_loadstate "Φόρτωση Στιγμιοτύπου"
+
+#define qtn_resetgame "Επανεκκίνηση Παιχνιδιού"
+
+#define qtn_about "Σχετικά"
+
+#define qtn_settings "Ρυθμίσεις"
+
+#define qtn_exit "Έξοδος"
+
+#define qtn_about_dialog_title "Σχετικά"
+
+#define qtn_choose_memory_q "Επιλογή Μνήμης:"
+#define qtn_accept "Αποδοχή"
+#define qtn_cancel "Άκυρο"
+
+#define qtn_key_config "Διαμόρφωση Πλήκτρων"
+#define qtn_video_settings "Ρυθμίσεις Εικόνας"
+#define qtn_audio_settings "Ρυθμίσεις Ήχου"
+#define qtn_default_settings "Προεπιλεγμένες Ρυθμίσεις"
+        
+#define qtn_load_rom "Φόρτωση Παιχνιδιού:"
+
+#define qtn_restart_required_note "Οι ρυθμίσεις αποθηκέυτηκαν. Επανεκκινήστε το πρόγραμμα για να ισχύσουν οι αλλαγές."
+
+#define qtn_default_settings_set "Εφαρμόστηκαν οι Προεπιλεγμένες Ρυθμίσεις, \n επανεκκινήστε το προγραμμά για να ισχύσουν οι αλλαγές."
+#define qtn_set_default_settings_q "Εφαρμογή Προεπιλεγμένων Ρυθμίσεων;"
+
+#define qtn_select_resolution "Επιλογή Ανάλυσης"
+
+#define qtn_press_up_button "Πατηστε το 'Πάνω' ή πατήστε το 'C' για παράβλεψη"
+#define qtn_press_down_button "Πατηστε το 'Κάτω' ή πατήστε το 'C' για παράβλεψη"
+#define qtn_press_left_button "Πατηστε το 'Αριστερά' ή πατήστε το 'C' για παράβλεψη"
+#define qtn_press_right_button "Πατηστε το 'Δεξιά' ή πατήστε το 'C' για παράβλεψη"
+#define qtn_press_x_button "Πατηστε το 'Χ' ή πατήστε το 'C' για παράβλεψη"
+#define qtn_press_y_button "Πατηστε το 'Y' ή πατήστε το 'C' για παράβλεψη"
+#define qtn_press_a_button "Πατηστε το 'A' ή πατήστε το 'C' για παράβλεψη"
+#define qtn_press_b_button "Πατηστε το 'B' ή πατήστε το 'C' για παράβλεψη"
+#define qtn_press_start_button "Πατηστε το 'START' ή πατήστε το 'C' για παράβλεψη"
+#define qtn_press_select_button "Πατηστε το 'SELECT' ή πατήστε το 'C' για παράβλεψη"
+#define qtn_press_tl_button "Πατηστε το 'TL' ή πατήστε το 'C' για παράβλεψη"
+#define qtn_press_tr_button "Πατηστε το 'TR' ή πατήστε το 'C' για παράβλεψη"
+#define qtn_key_config_done "Η Διαμόρφωση Ολοκληρώθηκε!"
+
+#define qtn_slot1 "Αποθήκευση #1"
+#define qtn_slot2 "Αποθήκευση #2"
+#define qtn_slot3 "Αποθήκευση #3"
+#define qtn_slot4 "Αποθήκευση #4"
+#define qtn_slot5 "Αποθήκευση #5"
+
+#define qtn_about_dialog_text "AntSnes is Snes9x emulator for S60. It is actually based on "\
+"OpenSnes9xGP, modified Snes9x for GP32 handheld, which had parts of it" \
+"adapted to / totally rewritten for GP32 (in C or ASM). As GP32 is ARM CPU"\
+"based device (same as S60 phones), these optimizations were used in this"\
+"port.\n"\
+"This emulator uses code from these people/projects:\n"\
+"Snes9x team:\n"\
+"Gary Henderson, Jerremy Koot, John Weidman and others (see below)\n"\
+"* The emulator itself!\n"\
+"Homepage: http://www.snes9x.com/ \n"\
+"Yoyofr and Laxer3a\n"\
+"* All the work in their OpenSnes9xGP: asm CPU core, new PPU code,\n"\
+"  various tweaks\n"\
+"Homepage: http://yoyofr92.free.fr/\n"\
+"notaz:\n"\
+"* SPC700 assembly code\n"\
+"* alot of minor code changes.\n"\
+"Homepage: http://notaz.atspace.com/ \n"\
+"E-mail: notasas(atsymbol)gmail.com\n"\
+"Summeli:\n"\
+"* AntSnes, the S60 port\n "\
+"* minor code changes. \n"\
+"Homepage: www.summeli.fi\n"\
+"E-mail summeli@summeli.fi\n"

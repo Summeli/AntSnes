@@ -1,0 +1,31 @@
+CHARACTER_SET UTF8
+#ifdef LANGUAGE_01
+#include "AntSnesSettingItemList.l01"
+#endif
+#ifdef LANGUAGE_09
+#include "AntSnesSettingItemList.l09"
+#endif
+#ifdef LANGUAGE_07
+#include "AntSnesSettingItemList.l07"
+#endif
+#ifdef LANGUAGE_17
+#include "AntSnesSettingItemList.l17"
+#endif
+#ifdef LANGUAGE_59
+#include "AntSnesSettingItemList.l59"
+#endif
+#ifdef LANGUAGE_76
+#include "AntSnesSettingItemList.l76"
+#endif
+#ifdef LANGUAGE_16
+#include "AntSnesSettingItemList.l16"
+#endif
+#ifdef LANGUAGE_27
+#include "AntSnesSettingItemList.l27"
+#endif
+#ifdef LANGUAGE_42
+#include "AntSnesSettingItemList.l42"
+#endif
+#ifdef LANGUAGE_54
+#include "AntSnesSettingItemList.l54"
+#endif
