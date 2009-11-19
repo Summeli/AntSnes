@@ -149,11 +149,7 @@ void CRightButtonControl::HandlePointerEventL(const TPointerEvent& aPointerEvent
     //the control is released release all buttons
     if ( aPointerEvent.iType == TPointerEvent::EButton1Up )
         {
-        if( aPointerEvent.iPosition.iY> 80 )
-            {
-            key = iSimulatedKey;
-            newkeyevent = ETrue;
-            }
+        iObserver->VirtualKeyEvent( iSimulatedKey, EFalse );
         }
     if( newkeyevent )
         {
@@ -171,7 +167,7 @@ void CRightButtonControl::HandlePointerEventL(const TPointerEvent& aPointerEvent
 TAntSnesVirtualKey CRightButtonControl::GetGameKeys(TPoint aCurrentPos)
     {
 	TInt key = 0;
-    if (aCurrentPos.iY < 280 && aCurrentPos.iY> 80 )
+    if ((aCurrentPos.iY < 280) && (aCurrentPos.iY > 80) )
         { 
 		//Calculate distance from the center
 		TInt x = aCurrentPos.iX - KCentter.iX;
@@ -215,7 +211,12 @@ TAntSnesVirtualKey CRightButtonControl::GetGameKeys(TPoint aCurrentPos)
         }
     else if( aCurrentPos.iY >= 280 )
         {
-        if( aCurrentPos.iX <= 64 )
+        //right button pressed
+        key = EKEY_R;
+        }
+    else if( aCurrentPos.iY < 80 )
+        {
+        if( aCurrentPos.iX < 64 )
 			{
 			//start
 			key = EKEY_START;
@@ -225,11 +226,6 @@ TAntSnesVirtualKey CRightButtonControl::GetGameKeys(TPoint aCurrentPos)
 			//select
 			key = EKEY_SELECT;
 			}
-        }
-    else if( aCurrentPos.iY < 80 )
-        {
-        //right button pressed
-        key = EKEY_R;
         }
     
     return (TAntSnesVirtualKey) key;

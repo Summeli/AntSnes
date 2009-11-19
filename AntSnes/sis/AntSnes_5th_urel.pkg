@@ -5,7 +5,7 @@
 &EN
 
 ; standard SIS file header
-#{"AntSnes"},(0xE5712A80),0,7,0
+#{"AntSnes"},(0xE5712A80),0,7,1
 
 ;Localised Vendor name
 %{"Summeli"}

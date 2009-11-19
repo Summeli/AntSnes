@@ -1,4 +1,4 @@
-AntSnes v. 0.7.0
+AntSnes v. 0.7.1
 
 Follow my blog for updates:
 http://www.summeli.fi

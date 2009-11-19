@@ -170,7 +170,7 @@ void CLeftButtonControl::HandlePointerEventL(const TPointerEvent& aPointerEvent)
         if( aPointerEvent.iPosition.iY> 80 )
             {
             key = iSimulatedKey;
-            newkeyevent = ETrue;
+            iObserver->VirtualKeyEvent( iSimulatedKey, EFalse );
             }
         }
     if( newkeyevent )
