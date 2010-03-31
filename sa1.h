@@ -94,8 +94,10 @@ struct SSA1 {
     uint8   variable_bit_pos;
 };
 
+START_EXTERN_C
 extern struct SSA1Registers SA1Registers;
 extern struct SSA1 SA1;
+END_EXTERN_C
 
 #ifdef USE_SA1
 

@@ -47,7 +47,7 @@ Summeli
 Additional thanks
 -----------------
 
-* ZodTTD I used the same version of CPU core as his Snes4Iphone project
+* ZodTTD I used some code from his iPhone port too
 
 * Mark and Jean-loup for zlib library.
 

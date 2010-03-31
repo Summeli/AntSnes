@@ -1,0 +1,48 @@
+<ui version="4.0" >
+ <class>controlsettingsClass</class>
+ <widget class="QWidget" name="controlsettingsClass" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>640</width>
+    <height>150</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>controlsettings</string>
+  </property>
+  <widget class="QLabel" name="Controllabel" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>640</width>
+     <height>150</height>
+    </rect>
+   </property>
+   <property name="styleSheet" >
+    <string notr="true" />
+   </property>
+   <property name="text" >
+    <string/>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="keyconfigButton" >
+   <property name="geometry" >
+    <rect>
+     <x>200</x>
+     <y>70</y>
+     <width>251</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Run Key Config</string>
+   </property>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <resources/>
+ <connections/>
+</ui>

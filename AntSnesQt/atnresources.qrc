@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/" >
+        <file>style/summelistyle.qss</file>
+    </qresource>
+    <qresource prefix="/graphics" >
+        <file>gfx/AtnSnesWidget.bmp</file>
+        <file>gfx/SnesButtons.bmp</file>
+        <file>gfx/SnesPad.bmp</file>
+    </qresource>
+</RCC>

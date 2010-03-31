@@ -1,0 +1,1 @@
+call createsis create -cert sis\antsnesqt.cer -key sis\antsnesqt.key AntSnes_gcce.pkg
