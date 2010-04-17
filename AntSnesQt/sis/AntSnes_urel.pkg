@@ -2,13 +2,13 @@
 &EN
 
 ; SIS header: name, uid, version
-#{"AntSnesQt"},(0xE4270701),1,0,0
+#{"AntSnesQt"},(0xE4270701),0,5,0
 
 ; Localised Vendor name
-%{"Vendor"}
+%{"Summeli"}
 
-; Unique Vendor name
-:"Vendor"
+;Unique Vendor name
+:"Summeli"
 
 ; Manual PKG pre-rules from PRO files
 ; Default HW/platform dependencies
@@ -27,3 +27,6 @@
 "/epoc32/data/z/resource/apps/AntSnesQt.mif"    - "!:\resource\apps\AntSnesQt.mif"
 
 ; Manual PKG post-rules from PRO files
+
+; Add any installation notes if applicable
+"releasenotes.txt" - "", FILETEXT, TEXTCONTINUE

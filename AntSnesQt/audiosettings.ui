@@ -97,6 +97,9 @@
      <height>51</height>
     </rect>
    </property>
+   <property name="styleSheet" >
+    <string notr="true" />
+   </property>
    <item>
     <property name="text" >
      <string>Mono</string>

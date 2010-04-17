@@ -6,5 +6,6 @@
         <file>gfx/AtnSnesWidget.bmp</file>
         <file>gfx/SnesButtons.bmp</file>
         <file>gfx/SnesPad.bmp</file>
+        <file>gfx/downarrow.png</file>
     </qresource>
 </RCC>

@@ -1,178 +1,143 @@
 /* The background of the tab bar */
 QMainWindow  {
-	background-color: white;
+	background: #111111;
 	padding: 0;
 	margin: 0;
+	border: 0;
 }
 
 QWidget {
-	margin: 0px;
+	background: #111111;
+	padding: 0;
+	margin: 0;
+	border: 0;
 }
 
 QStackedWidget {
 	padding: 0;
 	margin: 0;
 }
-
-Aboutlabel, Controllabel, Audiolabel {
-background-color: rgb(192, 192, 192 );
-}
-
     		
 /* Dialogs */
 QDialog {
-	background-color: white;
-	border: 1px solid #21759B;
-}
-
-
-/* Add post/page specials */
-AddPostView > QLabel, WritePageView > QLabel {
-	padding: 0.2em 0 0.2em 0; 
+	background: #111111;
+	padding: 0;
+	margin: 0;
+	border: 1px solid #666;
 }
     		
 /* Form fields */
 QLabel { 
-	background: none;
+	background: #111111;
 	padding: 0;
 	margin: 0;
-	color: black;
 }
+
 
 QCheckBox { 
 	background: none;
-	color: #848484;
-	
+	color: #F8F8F8;
 }
 
+
 QCheckBox:focus { 
-	color: black;
+	color: #F8F8F8;
 }
+
 
 QLineEdit, QTextEdit {
 	border: 1px solid gray;
 	background: none;
 	padding: 0.2em;
-	color: #848484;
+	color: #F8F8F8;
    	border-radius: 3px;
 }
+
 
 QLineEdit:focus, QTextEdit:focus {
 	border: 1px solid black;
 	color: black;
 }
 
+/*	fun color to use with some texts
+color: #75ffb2; */
+/*	background: #333;*/
 QPushButton {
 	background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-			stop: 0 #E8F2FB, stop: 0.49 #E8F2FB,
-			stop: 0.50 #D3E7F8, stop: 1.0 #D3E7F8);
-	border: 1px solid #848484;
+			stop: 0 #333, stop: 0.49 #555,
+			stop: 0.50 #333, stop: 1.0 #555); 
+	border: 1px solid #666;
 	padding: 0.4em;
-	color: black;
+    color: #F8F8F8;
    	font: normal normal 6pt;
    	border-radius: 3px;
 }
 
+/*TODO: use this same color in other places too*/
 QPushButton:pressed {
-	background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-			stop: 0 #D3E7F8, stop: 0.49 #D3E7F8,
-			stop: 0.50 #E8F2FB, stop: 1.0 #E8F2FB);
+	background: #292929;
 }
+
 
 /* QComboBox/QDateTime specials */
-QComboBox, QDateTimeEdit {
-	border: 1px solid gray;
-	background: none;
-	padding: 0.2em;
-	color: gray;
-	border-radius: 3px;
+QComboBox, QDateTimeEdit {	
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+			stop: 0 #333, stop: 0.49 #555,
+			stop: 0.50 #333, stop: 1.0 #555); 
+	border: 1px solid #666;
+	padding: 0.4em;
+	color: #F8F8F8;
+   	font: normal normal 6pt;
+   	border-radius: 3px;
 }
+
 
 QComboBox:focus, QDateTimeEdit:focus {
-	border: 1px solid black;
-	color: black;
+	border: 1px solid #666;
+	color: #F8F8F8;
 }
 
-QComboBox QAbstractItemView {
-	color: black;
-	background-color: white;
-	selection-color: white;
-    selection-background-color: #21759B;
-	padding: 0.2em;
-	border: 1px solid gray;
-}
    		
 QComboBox::drop-down, QDateTimeEdit::drop-down {
-	background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-			stop: 0 #E8F2FB, stop: 0.49 #E8F2FB,
-			stop: 0.50 #D3E7F8, stop: 1.0 #D3E7F8);
+    border: 1px solid #666;
 	margin: -1px;
 	border: 1px solid gray;
 	width: 1.3em;
    	border-radius: 3px;
 }
 
-QComboBox::drop-down:pressed, QDateTimeEdit::drop-down:pressed {
-	background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-			stop: 0 #D3E7F8, stop: 0.49 #D3E7F8,
-			stop: 0.50 #E8F2FB, stop: 1.0 #E8F2FB);
-}
 
 QComboBox::down-arrow, QDateTimeEdit::down-arrow {
-	image: url(:/images/downarrow.png); 
+	image: url(:/graphics/gfx/downarrow.png);
 }
 
+ QSlider::groove:horizontal {
+     border: 1px solid #333;
+  	 background: #555;
+     margin: 2px 0;
+ }
 
+ QSlider::handle:horizontal {
+     background: #75ffb2;
+     border: 1px solid #F8F8F8;
+     width: 18px;
+     margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
+     border-radius: 3px;
+ }
 
-TextListItem QLabel#fromLabel {
-	font-size: 5pt;
-	font-style: italic;
-}
+ QGroupBox {
+	background: #111111;
+	padding: 0;
+	margin: 0;
+	border: 1px solid #666;
+	color: #F8F8F8;
+ }
 
- /* Popup menu */
-PopupMenu {
-	background-color: white;
-	border: 1px solid #BCBCBC;
-	color: black;
-	padding: 8px 0px 8px 0px;
-}
-
-PopupMenu::item {
-	background-color: white;
-	color: black;
-	padding: 8px 15px 8px 15px;
-	font-size: 7pt;
-}
-
-PopupMenu::item:selected {
-	background-color: #21759B;
-	color: white;
-}
-
-/* CheckableListItem */
-CheckableListItem {
-	padding: 2px;
-	padding-left: 14px;
-	margin-bottom: 6px;
-}
-
-CheckableListItem#imageListItem {
-	border: 1px solid #BCBCBC;
-}
-
-CheckableListItem#categoryListItem:focus,
-CheckableListItem#imageListItem:focus {
-	border: 1px solid #21759B;
-	border-left: 9px solid #21759B;
-	padding-left: 6px;
-    border-radius: 0px;
-}
-
-CheckableListItem > QLabel#titleLabel {
-	font-size: 7pt;
-}
-
-CheckableListItem > QLabel#sizeLabel, QLabel#modifiedLabel {
-	font-size: 4pt;
-}
-
+ QGroupBox::title {
+     subcontrol-origin: margin;
+     subcontrol-position: top left; /* position at the top left */
+     padding: 0 3px;
+     background-color: #111111;
+     color: #F8F8F8;
+ }
+ 
