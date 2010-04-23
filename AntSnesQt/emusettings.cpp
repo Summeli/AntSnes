@@ -68,12 +68,16 @@ EmuSettings::EmuSettings(QWidget *parent)
 	connect(ui.aboutButton, SIGNAL(clicked()), this, SLOT(aboutClicked()));
 	connect(ui.saveSlotBox, SIGNAL(currentIndexChanged(int)), this, SLOT(saveSlotIndexChanged(int)));
 	
+	// audio is not supported in this release, so disable the button
+	ui.audioButton->setEnabled(FALSE);
+	
 	//connect audio settins
 	connect( audiosettings, SIGNAL(AudioOn(int)), this, SLOT( setAudioOn(int)));
 	connect( audiosettings, SIGNAL(SampleRate(int)), this, SLOT( setSampleRate(int)));
 	connect( audiosettings, SIGNAL(enableStereo(int)), this, SLOT( setStereoOn(int)));
 	connect( audiosettings, SIGNAL(Volume(int)), this, SLOT( setVolume(int)));
 	connect( audiosettings, SIGNAL(enableSpeedHack(bool)), this, SLOT( setSpeedHack(bool)));
+	
 	
 	//connect video settings
 	connect( antvideosettings, SIGNAL(frameskip(int)), this, SLOT( frameskip(int) ));

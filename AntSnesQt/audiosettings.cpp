@@ -39,7 +39,7 @@ AudioSettings::AudioSettings(int audioOn, int samplerate, int stereoOn, int volu
 	ui.sampleRateBox->setCurrentIndex( sampeIndex );
 	ui.stereoBox->setCurrentIndex( audioOn );
 	ui.volumeSlider->setValue( volume );
-	ui.speedHackBox->setEnabled( enablespeedhack );
+	ui.speedHackBox->setChecked( enablespeedhack );
 	
 	connect(ui.AudioOnOffBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setAudioOn(int)));
 	connect(ui.sampleRateBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setSampleRate(int)));

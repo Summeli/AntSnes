@@ -28,9 +28,7 @@
     </rect>
    </property>
    <property name="styleSheet" >
-    <string notr="true" >QLabel{
-background-color: rgb(192, 192, 192 );
-}</string>
+    <string notr="true" />
    </property>
    <property name="text" >
     <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">

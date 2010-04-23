@@ -517,7 +517,9 @@ void QSnesController::Start()
         return;
     
     iPaused = false;
-    start( QThread::LowPriority );
+    //we don't want to start this thread again
+    if( !isRunning() )	
+    	start( QThread::LowPriority );
     __DEBUG_OUT
     }
 
