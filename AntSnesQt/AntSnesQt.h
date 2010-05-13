@@ -35,7 +35,9 @@
 #include "QRemoteControlKeys.h"
 
 #include "dpadwidget.h"
+#include "smalloptionswidget.h"
 #include "buttonwidget.h"
+#include "largepad.h"
 
 class AntSnesQt : public QMainWindow, MEmulatorAdaptation
 {
@@ -83,6 +85,9 @@ private:
     QRemoteControlKeys* remotecontrol;
     DPadWidget* dpad;
     buttonwidget* buttons;
+    smalloptionswidget* smallwidget;
+    smalloptionswidget* smallwidget2;
+    largepad* lpad;
 };
 
 #endif // ANTSNESQT_H

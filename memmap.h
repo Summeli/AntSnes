@@ -79,14 +79,13 @@
 
 class CMemory {
 public:
-    bool8 LoadROM (const char *);
-    void  InitROM (bool8);
-    bool8 LoadSRAM (const char *);
-    bool8 SaveSRAM (const char *);
-    bool8 Init ();
+    bool8_32 LoadROM (const char *);
+    void  InitROM (bool8_32);
+    bool8_32 LoadSRAM (const char *);
+    bool8_32 SaveSRAM (const char *);
+    bool8_32 Init ();
     void  Deinit ();
     void  FreeSDD1Data ();
-    
     
     void WriteProtectROM ();
     void FixROMSpeed ();
@@ -101,15 +100,15 @@ public:
     void SufamiTurboLoROMMap ();
     void HiROMMap ();
     void SuperFXROMMap ();
-    void TalesROMMap (bool8);
+    void TalesROMMap (bool8_32);
     void AlphaROMMap ();
     void SA1ROMMap ();
     void BSHiROMMap ();
-    bool8 AllASCII (uint8 *b, int size);
-    int  ScoreHiROM (bool8 skip_header);
-    int  ScoreLoROM (bool8 skip_header);
+    bool8_32 AllASCII (uint8 *b, int size);
+    int  ScoreHiROM (bool8_32 skip_header);
+    int  ScoreLoROM (bool8_32 skip_header);
     void ApplyROMFixes ();
-    void CheckForIPSPatch (const char *rom_filename, bool8 header,
+    void CheckForIPSPatch (const char *rom_filename, bool8_32 header,
 			   int32 &rom_size);
     
     const char *TVStandard ();
@@ -137,9 +136,9 @@ public:
     uint8 *BWRAM;
     uint8 *FillRAM;
     uint8 *C4RAM;
-    bool8 HiROM;
-    bool8 LoROM;
-//    uint16 SRAMMask;
+    bool8_32 HiROM;
+    bool8_32 LoROM;
+    uint16 SRAMMask;
     uint8 SRAMSize;
     uint8 *Map [MEMMAP_NUM_BLOCKS];
     uint8 *WriteMap [MEMMAP_NUM_BLOCKS];
@@ -173,16 +172,17 @@ extern uint8 *SRAM;
 extern uint8 *ROM;
 extern uint8 *RegRAM;
 void S9xDeinterleaveMode2 ();
+void S9xSaveSRAM (void);
 END_EXTERN_C
 
 void S9xAutoSaveSRAM ();
 
 #ifdef NO_INLINE_SET_GET
-uint8 S9xGetByte (uint32 Address);
-uint16 S9xGetWord (uint32 Address);
-void S9xSetByte (uint8 Byte, uint32 Address);
-void S9xSetWord (uint16 Byte, uint32 Address);
-void S9xSetPCBase (uint32 Address);
+uint8 S9xGetByte (uint32 Address, struct SCPUState *);
+uint16 S9xGetWord (uint32 Address, struct SCPUState *);
+void S9xSetByte (uint8 Byte, uint32 Address, struct SCPUState * );
+void S9xSetWord (uint16 Byte, uint32 Address, struct SCPUState *);
+void S9xSetPCBase (uint32 Address, struct SCPUState *);
 uint8 *S9xGetMemPointer (uint32 Address);
 uint8 *GetBasePointer (uint32 Address);
 #else

@@ -42,7 +42,6 @@
 //#define debug06
 
 #define __OPT__
-#define __OPT02__
 #define __OPT06__
 
 #ifdef DebugDSP1

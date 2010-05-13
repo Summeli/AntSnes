@@ -132,10 +132,15 @@ void QBlitterWidget::startDSA()
 	    RRegion *region = iDSA->DrawingRegion();
 	    
 	    gc->SetClippingRegion(region);
-	    User::LeaveIfError(iDSBitmap->Create(TRect(128,0, 512,360), CDirectScreenBitmap::EDoubleBuffer));
-	    
+	    //User::LeaveIfError(iDSBitmap->Create(TRect(128,0, 512,360), CDirectScreenBitmap::EDoubleBuffer));
+	    createScreenBuffer();
 	    }
 	__DEBUG_OUT
+	}
+
+void QBlitterWidget::setScreenMode( int mode)
+	{
+	screenmode = mode;
 	}
 
 void QBlitterWidget::Restart(RDirectScreenAccess::TTerminationReasons aReason)
@@ -146,8 +151,9 @@ void QBlitterWidget::Restart(RDirectScreenAccess::TTerminationReasons aReason)
     RRegion* region = iDSA->DrawingRegion();
     gc->SetClippingRegion(region);
  
-    iDSBitmap->Create(
-        TRect(128,0, 512,360), CDirectScreenBitmap::EDoubleBuffer); 
+    //iDSBitmap->Create(
+     //   TRect(128,0, 512,360), CDirectScreenBitmap::EDoubleBuffer); 
+    createScreenBuffer();
     __DEBUG_OUT
 	}
 
@@ -194,4 +200,22 @@ void QBlitterWidget::saveStateImage( QString rom, int sate )
 	bool saved = image.save ( filename, "jpg", 100 );
 	__DEBUG2("file saved ", saved);
 	__DEBUG_OUT
+	}
+	
+void QBlitterWidget::createScreenBuffer()
+	{
+	switch( screenmode )
+		{
+		case 0:
+			 User::LeaveIfError(iDSBitmap->Create(TRect(256,0, 640,360), CDirectScreenBitmap::EDoubleBuffer));
+			break;
+		case 1: 
+			 User::LeaveIfError(iDSBitmap->Create(TRect(128,0, 512,360), CDirectScreenBitmap::EDoubleBuffer));
+			break;
+		case 2:
+			User::LeaveIfError(iDSBitmap->Create(TRect(128,0, 512,360), CDirectScreenBitmap::EDoubleBuffer));
+			break;
+		default:
+			break;
+		}
 	}

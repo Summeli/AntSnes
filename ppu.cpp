@@ -2344,7 +2344,7 @@ void S9xResetPPU ()
 	ZeroMemory(IPPU.TileCached[TILE_4BIT], MAX_4BIT_TILES);
 	ZeroMemory(IPPU.TileCached[TILE_8BIT], MAX_8BIT_TILES);
 	IPPU.FirstVRAMRead = FALSE;
-	IPPU.Interlace = FALSE;
+	IPPU.LatchedInterlace = FALSE;
 	IPPU.DoubleWidthPixels = FALSE;
     IPPU.RenderedScreenWidth = SNES_WIDTH;
     IPPU.RenderedScreenHeight = SNES_HEIGHT;
@@ -2392,10 +2392,10 @@ void S9xProcessMouse (int which1)
 	if ((IPPU.Controller == SNES_MOUSE
 		|| IPPU.Controller == SNES_MOUSE_SWAPPED)
 		&& S9xReadMousePosition(which1, x, y, buttons))
-    {
-	int delta_x, delta_y;
+	{
+		int delta_x, delta_y;
 #define MOUSE_SIGNATURE 0x1
-	IPPU.Mouse [which1] = MOUSE_SIGNATURE | 
+		IPPU.Mouse[which1] =
 			MOUSE_SIGNATURE
 				| (PPU.MouseSpeed[which1] << 4)
 				| ((buttons & 1) << 6)

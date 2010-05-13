@@ -23,26 +23,10 @@
 
 #include <w32std.h>
 
-enum TAntSnesVirtualKey
-	{
-    EKEY_UP = 1,
-    EKEY_DOWN = 2,
-    EKEY_RIGHT = 4,
-    EKEY_LEFT = 8,
-    EKEY_A = 16,
-    EKEY_B = 32,
-    EKEY_Y = 64,
-    EKEY_X = 128,
-    EKEY_L = 256,
-    EKEY_R = 512,
-    EKEY_START = 1024,
-    EKEY_SELECT = 2048
-	};
-
 class MVirtualKeyObserver
 	{
 public:
-	virtual void VirtualKeyEvent( const TAntSnesVirtualKey& aKey, TBool isDown ) = 0;
+	virtual void VirtualKeyEvent( const TUint32 aKey, TBool isDown ) = 0;
 	};
 
 

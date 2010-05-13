@@ -116,13 +116,10 @@ void S9xResetCPU ()
 #ifndef VAR_CYCLES
     //ICPU.Speed = S9xE1M1X1; // unused
 #endif
-#ifndef CPU_ASM
-    ICPU.S9xOpcodes = S9xOpcodesM1X1; // unused
-#endif
+    //ICPU.S9xOpcodes = S9xOpcodesM1X1; // unused
     ICPU.CPUExecuting = TRUE;
-#ifndef CPU_ASM
-    S9xUnpackStatus(); // not needed
-#endif
+
+    //S9xUnpackStatus(); // not needed
 }
 
 

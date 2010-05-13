@@ -24,6 +24,7 @@ UID		  		0x100039CE 0xE5712A80
 VENDORID        0
 SECUREID		0xE5712A80
 CAPABILITY      NONE
+//CAPABILITY      SwEvent
 EPOCHEAPSIZE 6000000 64000000
 EPOCSTACKSIZE 2000
 EPOCALLOWDLLDATA
@@ -61,7 +62,7 @@ SOURCE 			AntDSARenderer.cpp
 SOURCE 			AntKeyDialog.cpp
 SOURCE 			AntBlit.cpp
 #ifdef __S60_50__ 
-SOURCE LeftButtonControl.cpp RightButtonControl.cpp
+SOURCE LeftButtonControl.cpp
 #endif
 //generated sources
 SOURCE AntSnesSettingItemList.cpp AntSnesSettingItemListSettings.cpp 
@@ -85,7 +86,6 @@ TARGETPATH \system\apps\antsnes\
 HEADER
 SOURCEPATH ..\gfx
 SOURCE C24 SnesPad.bmp
-SOURCE C24 SnesButtons.bmp
 END
 //#endif
 

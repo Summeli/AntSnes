@@ -34,7 +34,6 @@
 #include "AntSnesAudioItemListSettings.h"
 #include "MMenuObserver.h"
 #ifdef __S60_50__
-#include "RightButtonControl.h"
 #include "LeftButtonControl.h"
 #endif
 
@@ -124,9 +123,15 @@ private:
 	
 	CAntSnesAudioItemList* iAudioItemList;
 	TAntSnesAudioItemListSettings* iAudioList;
+	
+    TInt iMenuKeyHandle;
+    TInt iNoKeyHandle;
+    TInt iNoKeyHandle2;
+    TInt iMenuKeyHandle2;
+    TInt iCameraKeyHandle;
+    
 #ifdef __S60_50__
     CLeftButtonControl* iLeftButtonControl;
-    CRightButtonControl* iRightButtonControl;
 #endif
 	};
 

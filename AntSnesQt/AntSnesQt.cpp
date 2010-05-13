@@ -35,6 +35,7 @@ AntSnesQt::AntSnesQt(QWidget *parent)
 	ui.setupUi(this);
 	showFullScreen();
 	
+	QMainWindow::setStyleSheet("QMainWindow { background: #111111; }");
     //create button widgets
     dpad = new DPadWidget( this );
     dpad->setGeometry(QRect(0, 0, 128, 360));
@@ -42,10 +43,26 @@ AntSnesQt::AntSnesQt(QWidget *parent)
     connect(dpad, SIGNAL(showMenu()), this, SLOT( showAntSnesMenu()) );
     connect(dpad, SIGNAL(virtualKeyEvent(quint32, bool)), this, SLOT( virtualKeyEvent(quint32, bool)) );
     
+    lpad = new largepad( this );
+    lpad->setGeometry(QRect(0, 0, 256, 360));
+    lpad->hide();
+    connect(lpad, SIGNAL(showMenu()), this, SLOT( showAntSnesMenu()) );
+    connect(lpad, SIGNAL(virtualKeyEvent(quint32, bool)), this, SLOT( virtualKeyEvent(quint32, bool)) );
+        
     buttons = new buttonwidget( this );
     buttons->setGeometry(QRect(512, 0, 128, 360));
     buttons->show();
     connect(buttons, SIGNAL(virtualKeyEvent(quint32, bool)), this, SLOT( virtualKeyEvent(quint32, bool)) );
+    
+    smallwidget = new smalloptionswidget( this );
+    smallwidget->setGeometry(QRect(0, 0, 128, 360));
+    smallwidget->hide();
+    connect(smallwidget, SIGNAL(showMenu()), this, SLOT( showAntSnesMenu()) );
+    
+    smallwidget2 =  new smalloptionswidget( this );
+    smallwidget2->setGeometry(QRect(512, 0, 128, 360));
+    smallwidget2->hide();
+    connect(smallwidget2, SIGNAL(showMenu()), this, SLOT( showAntSnesMenu()) );
     
     widget = new QBlitterWidget();
     widget->setObjectName(QString::fromUtf8("QBlitterWidget"));
@@ -76,6 +93,8 @@ AntSnesQt::~AntSnesQt()
 {
 	delete widget;
 	delete control;
+	delete smallwidget;
+	delete smallwidget2;
 	delete dpad;
 	delete antaudio;
 }
@@ -130,7 +149,7 @@ void AntSnesQt::keyReleaseEvent(QKeyEvent* event)
 void AntSnesQt::LoadROM(QString rom, TAntSettings antSettings )
     {
 	__DEBUG_IN
-	iAntSettings = antSettings;
+	updateSettings( antSettings );
     emit( doLoadROM( rom, antSettings ));
 	
 	emit(Start());
@@ -178,6 +197,36 @@ void AntSnesQt::updateSettings( TAntSettings antSettings )
 	__DEBUG_IN
 	control->updateSettings( antSettings );
 	iAntSettings = antSettings;
+	
+	//change the are in blitter widget
+	widget->setScreenMode( antSettings.iScreenSettings );
+	
+	__DEBUG2("antSettings.iScreenSettings is ", antSettings.iScreenSettings );
+	//change the widgets too
+	switch(antSettings.iScreenSettings  )
+		{
+		case 0:
+			smallwidget->hide();
+			smallwidget2->hide();
+			buttons->hide();
+			dpad->hide();
+			lpad->show();
+			break;
+		case 1:
+			lpad->hide();
+			smallwidget->hide();
+			smallwidget2->hide();
+			buttons->show();
+			dpad->show();
+			break;
+		case 2:
+			lpad->hide();
+			buttons->hide();
+			dpad->hide();
+			smallwidget->show();
+			smallwidget2->show();
+			break;
+		}
 	__DEBUG_OUT
 	}
 

@@ -84,7 +84,7 @@ struct SGFX{
     uint8  r212d;
     uint8  r2130;
     uint8  r2131;
-    bool8  Pseudo;
+    bool8_32  Pseudo;
     
 #ifdef GFX_MULTI_FORMAT
     uint32 PixelFormat;
@@ -92,9 +92,6 @@ struct SGFX{
     uint32 (*BuildPixel2) (uint32 R, uint32 G, uint32 B);
     void   (*DecomposePixel) (uint32 Pixel, uint32 &R, uint32 &G, uint32 &B);
 #endif
-
-	uint32 solid1;
-	uint32 solid2;
 };
 
 struct SLineData {
@@ -122,9 +119,9 @@ struct SBG
     uint32 PaletteShift;
     uint32 PaletteMask;
     
-    uint8 *Buffer;
+	uint8 *Buffer;
     uint8 *Buffered;
-    bool8  DirectColourMode;
+    bool8_32  DirectColourMode;
 };
 
 struct SLineMatrixData
@@ -228,15 +225,15 @@ void S9xBuildDirectColourMaps ();
 // port.
 extern struct SGFX GFX;
 
-bool8 S9xGraphicsInit ();
+bool8_32 S9xGraphicsInit ();
 void S9xGraphicsDeinit();
-bool8 S9xInitUpdate (void);
-bool8 S9xDeinitUpdate (int Width, int Height, bool8 sixteen_bit);
+bool8_32 S9xInitUpdate (void);
+bool8_32 S9xDeinitUpdate (int Width, int Height, bool8_32 sixteen_bit);
 void S9xSetPalette ();
 void S9xSyncSpeed ();
 
 #ifdef GFX_MULTI_FORMAT
-bool8 S9xSetRenderPixelFormat (int format);
+bool8_32 S9xSetRenderPixelFormat (int format);
 #endif
 
 END_EXTERN_C

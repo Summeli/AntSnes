@@ -69,7 +69,7 @@ void CAntSnesAppUi::ConstructL()
 	InternalizeL(*prefs);
 	CleanupStack::PopAndDestroy();//close prefs
 #ifdef __S60_50__
-	BaseConstructL( EAknEnableSkin | EAppOrientationLandscape);
+	BaseConstructL( EAknEnableSkin | EAknTouchCompatible | EAppOrientationLandscape);
 #else
     if( iSettings.iScreenMode == EPortrait)
     	{
@@ -87,9 +87,8 @@ void CAntSnesAppUi::ConstructL()
 #endif
 #ifdef __S60_50__
     //5th edition resosulution is 640 × 360, leveave 128 x and 128 for each control
-    TRect subrect( 128,0, 512,360);
-    TRect subrect2( 512,0,640,360);
-    TRect subrect3(0,0,128,360);
+    TRect subrect( 256,0, 640,360);
+    TRect subrect3(0,0,256,360);
     iAppContainer = new (ELeave) CAntSnesContainer;
     iAppContainer->ConstructL( subrect, iSettings );
     AddToStackL( iAppContainer );
@@ -97,10 +96,11 @@ void CAntSnesAppUi::ConstructL()
     iLeftButtonControl = new (ELeave) CLeftButtonControl();
     AddToStackL( iLeftButtonControl );
     iLeftButtonControl->ConstructL( subrect3, iAppContainer->GetEngine(), this ); //uncomment, for game
-        
+    
+    /*
     iRightButtonControl = new (ELeave) CRightButtonControl();
     AddToStackL( iRightButtonControl );
-    iRightButtonControl->ConstructL( subrect2, iAppContainer->GetEngine() ); 
+    iRightButtonControl->ConstructL( subrect2, iAppContainer->GetEngine() ); */
 #else
     iAppContainer = new (ELeave) CAntSnesContainer;
     iAppContainer->ConstructL( ApplicationRect(), iSettings );
@@ -135,6 +135,12 @@ void CAntSnesAppUi::ConstructL()
 #ifndef __S60_50__
     CEikonEnv::Static()->AppUiFactory()->MenuBar()->TryDisplayMenuBarL();
 #endif
+    iMenuKeyHandle = CEikonEnv::Static()->RootWin().CaptureKeyUpAndDowns(EStdKeyMenu, 0, 0); 
+    iMenuKeyHandle2 = CEikonEnv::Static()->RootWin().CaptureKeyUpAndDowns(EStdKeyApplication0, 0, 0); 
+    iNoKeyHandle = CEikonEnv::Static()->RootWin().CaptureKeyUpAndDowns(EStdKeyNo, 0, 0);
+    iNoKeyHandle2 = CEikonEnv::Static()->RootWin().CaptureKey( EKeyNo, 0, 0 );  
+    iCameraKeyHandle = CEikonEnv::Static()->RootWin().CaptureKey( EKeyDevice7, 0, 0 );
+    
 	}
 // -----------------------------------------------------------------------------
 // CAntSnesAppUi::CAntSnesAppUi()
@@ -176,6 +182,12 @@ CAntSnesAppUi::~CAntSnesAppUi()
 		}
 	
 	delete iSettings.iROMPath;
+	
+	CEikonEnv::Static()->RootWin().CancelCaptureKeyUpAndDowns(iMenuKeyHandle);
+	CEikonEnv::Static()->RootWin().CancelCaptureKeyUpAndDowns(iMenuKeyHandle2);
+	CEikonEnv::Static()->RootWin().CancelCaptureKeyUpAndDowns(iNoKeyHandle);
+	CEikonEnv::Static()->RootWin().CancelCaptureKey(iCameraKeyHandle);
+	CEikonEnv::Static()->RootWin().CancelCaptureKey(iNoKeyHandle2);
 	}
 
 void CAntSnesAppUi::ShowMenu()

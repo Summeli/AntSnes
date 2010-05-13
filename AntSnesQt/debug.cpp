@@ -23,7 +23,7 @@
 #include <QApplication>
 
 QTime timeDebug;
-QFile file("C:\\Data\\antdebug.txt");
+QFile file("F:\\Data\\antdebug.txt");
 
 void debugOutput(QtMsgType type, const char *msg)
 {

@@ -21,8 +21,8 @@
 (0x2001E61C), 4, 6, 0, {"Qt"}
 
 ; Executable and default resource files
-"/epoc32/release/gcce/udeb/AntSnesQt.exe"    - "!:\sys\bin\AntSnesQt.exe"
-"/epoc32/data/z/resource/apps/AntSnesQt.rsc"    - "!:\resource\apps\AntSnesQt.rsc"
-"/epoc32/data/z/private/10003a3f/import/apps/AntSnesQt_reg.rsc"    - "!:\private\10003a3f\import\apps\AntSnesQt_reg.rsc"
-"/epoc32/data/z/resource/apps/AntSnesQt.mif"    - "!:\resource\apps\AntSnesQt.mif"
+"/S60/devices/S60_5th_Edition_SDK_v1.0/epoc32/release/gcce/udeb/AntSnesQt.exe"    - "!:\sys\bin\AntSnesQt.exe"
+"/S60/devices/S60_5th_Edition_SDK_v1.0/epoc32/data/z/resource/apps/AntSnesQt.rsc"    - "!:\resource\apps\AntSnesQt.rsc"
+"/S60/devices/S60_5th_Edition_SDK_v1.0/epoc32/data/z/private/10003a3f/import/apps/AntSnesQt_reg.rsc"    - "!:\private\10003a3f\import\apps\AntSnesQt_reg.rsc"
+"/S60/devices/S60_5th_Edition_SDK_v1.0/epoc32/data/z/resource/apps/AntSnesQt.mif"    - "!:\resource\apps\AntSnesQt.mif"
 ; Manual PKG post-rules from PRO files

@@ -53,6 +53,7 @@ public slots:
     void loadROM();
     void keyConfig();
     void frameskip( int skip );
+    void screensettings( int settings );
     void keyconfigDone();
     void exit();
     void resetButtonClicked();

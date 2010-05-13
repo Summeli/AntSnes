@@ -5,7 +5,7 @@
 &EN
 
 ; standard SIS file header
-#{"AntSnes"},(0xE5712A80),0,7,1
+#{"AntSnes"},(0xE5712A80),0,7,2
 
 ;Localised Vendor name
 %{"Summeli"}
@@ -19,12 +19,12 @@
 ;Files to install
 ;You should change the source paths to match that of your environment
 ;<source> <destination>
-"\epoc32\release\gcce\urel\AntSnes.exe"		-"!:\sys\bin\AntSnes.exe"
+"\S60\devices\S60_5th_Edition_SDK_v1.0\epoc32\release\gcce\urel\AntSnes.exe"		-"!:\sys\bin\AntSnes.exe"
 
-"\epoc32\data\z\resource\apps\AntSnes.r01"		-"!:\resource\apps\AntSnes.r01"
-"\epoc32\data\z\private\10003a3f\apps\AntSnes_reg.r01"  -"!:\private\10003a3f\import\apps\AntSnes_reg.r01"
+"\S60\devices\S60_5th_Edition_SDK_v1.0\epoc32\data\z\resource\apps\AntSnes.r01"		-"!:\resource\apps\AntSnes.r01"
+"\S60\devices\S60_5th_Edition_SDK_v1.0\epoc32\data\z\private\10003a3f\apps\AntSnes_reg.r01"  -"!:\private\10003a3f\import\apps\AntSnes_reg.r01"
 "..\gfx\antsnes.mif"               -"!:\resource\apps\AntSnes.mif"
-"\epoc32\data\z\system\apps\antsnesheader\snescontrol.mbm" - "!:\private\E5712A80\snescontrol.mbm"
+"\S60\devices\S60_5th_Edition_SDK_v1.0\epoc32\data\z\system\apps\antsnesheader\snescontrol.mbm" - "!:\private\E5712A80\snescontrol.mbm"
 "..\help\AntSnes.hlp"							 -"!:\resource\help\AntSnes.hlp"
 
 ;ini file

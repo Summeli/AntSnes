@@ -55,9 +55,9 @@ class CLeftButtonControl : public CCoeControl, MCoeControlObserver,  MDirectScre
     TKeyResponse OfferKeyEventL(const TKeyEvent &aKeyEvent, TEventCode aType);
     void SizeChanged();
     void HandlePointerEventL(const TPointerEvent& aPointerEvent);
-  
+    void processButtons( const TPointerEvent& aPointerEvent );
   private:
-	  TAntSnesVirtualKey GetGameKeys( TPoint aCurrentPos );
+	  TUint32 GetGameKeys( TPoint aCurrentPos );
       
   private:
     // Implement MDirectScreenAccess
@@ -78,7 +78,7 @@ class CLeftButtonControl : public CCoeControl, MCoeControlObserver,  MDirectScre
      RFs iFs;
      CFbsBitmap* iBitmap;           //OWNED
       
-     TAntSnesVirtualKey iSimulatedKey;
+     TUint32 iSimulatedKey;
 	     
 };
 

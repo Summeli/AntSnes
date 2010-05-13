@@ -31,8 +31,8 @@
   <widget class="QPushButton" name="keyconfigButton" >
    <property name="geometry" >
     <rect>
-     <x>200</x>
-     <y>70</y>
+     <x>370</x>
+     <y>20</y>
      <width>251</width>
      <height>61</height>
     </rect>
@@ -40,6 +40,31 @@
    <property name="text" >
     <string>Run Key Config</string>
    </property>
+  </widget>
+  <widget class="QComboBox" name="screensettings" >
+   <property name="geometry" >
+    <rect>
+     <x>10</x>
+     <y>20</y>
+     <width>331</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text" >
+     <string>use big D-pad</string>
+    </property>
+   </item>
+   <item>
+    <property name="text" >
+     <string>use D-pad and XYAB-pad</string>
+    </property>
+   </item>
+   <item>
+    <property name="text" >
+     <string>hide both PADs</string>
+    </property>
+   </item>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11" />

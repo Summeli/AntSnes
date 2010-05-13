@@ -132,7 +132,7 @@ void CAntAudio::Reset()
 
 // returns a pointer to buffer for next frame,
 // to be used when iSoundBuffers are used directly
-TUint8 *CAntAudio::NextFrameL()
+TInt8 *CAntAudio::NextFrameL()
 {
 #ifdef OUTPUT_TO_FILE	
 	return (TUint8*) iSoundBuffers[iEmptyBufQ[0]]->Ptr();
@@ -142,7 +142,7 @@ TUint8 *CAntAudio::NextFrameL()
 		__DEBUG1("CAntAudio: NextFrame is NULL");
 		return NULL;
 		}
-	return (TUint8*) iSoundBuffers[iEmptyBufQ[0]]->Ptr();
+	return (TInt8*) iSoundBuffers[iEmptyBufQ[0]]->Ptr();
 }
 
 void CAntAudio::FrameMixed()

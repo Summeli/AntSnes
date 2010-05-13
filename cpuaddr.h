@@ -43,280 +43,298 @@
 
 #include "port.h"
 
-EXTERN_C long OpAddress;
+//EXTERN_C long OpAddress;
 
-STATIC inline void Immediate8 ()
+STATIC INLINE long FASTCALL Immediate8 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-    OpAddress = ICPU.ShiftedPB + CPU.PC - CPU.PCBase;
-    CPU.PC++;
+    long OpAddress = icpu->ShiftedPB + cpu->PC - cpu->PCBase;
+    cpu->PC++;
+	return OpAddress;
 }
 
-STATIC inline void Immediate16 ()
+STATIC INLINE long FASTCALL Immediate16 (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-    OpAddress = ICPU.ShiftedPB + CPU.PC - CPU.PCBase;
-    CPU.PC += 2;
+    long OpAddress = icpu->ShiftedPB + cpu->PC - cpu->PCBase;
+    cpu->PC += 2;
+	return OpAddress;
 }
 
-STATIC inline void Relative ()
+STATIC INLINE long FASTCALL Relative (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-    s9xInt8 = *CPU.PC++;
+    int8 Int8 = *cpu->PC++;
 #ifdef VAR_CYCLES
-    CPU.Cycles += CPU.MemSpeed;
+    cpu->Cycles += cpu->MemSpeed;
 #endif    
-    OpAddress = ((int) (CPU.PC - CPU.PCBase) + s9xInt8) & 0xffff;
+	return ((int) (cpu->PC - cpu->PCBase) + Int8) & 0xffff;
 }
 
-STATIC inline void RelativeLong ()
+STATIC INLINE long FASTCALL RelativeLong (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
 #ifdef FAST_LSB_WORD_ACCESS
-    OpAddress = *(uint16 *) CPU.PC;
+    long OpAddress = *(uint16 *) cpu->PC;
 #else
-    OpAddress = *CPU.PC + (*(CPU.PC + 1) << 8);
+    long OpAddress = *cpu->PC + (*(cpu->PC + 1) << 8);
 #endif
 #ifdef VAR_CYCLES
-    CPU.Cycles += CPU.MemSpeedx2 + ONE_CYCLE;
+    cpu->Cycles += cpu->MemSpeedx2 + ONE_CYCLE;
 #endif
-    CPU.PC += 2;
-    OpAddress += (CPU.PC - CPU.PCBase);
+    cpu->PC += 2;
+    OpAddress += (cpu->PC - cpu->PCBase);
     OpAddress &= 0xffff;
+	return OpAddress;
 }
 
-STATIC inline void AbsoluteIndexedIndirect ()
+STATIC INLINE long FASTCALL AbsoluteIndexedIndirect (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
 #ifdef FAST_LSB_WORD_ACCESS
-    OpAddress = (Registers.X.W + *(uint16 *) CPU.PC) & 0xffff;
+    long OpAddress = (reg->X.W + *(uint16 *) cpu->PC) & 0xffff;
 #else
-    OpAddress = (Registers.X.W + *CPU.PC + (*(CPU.PC + 1) << 8)) & 0xffff;
+    long OpAddress = (reg->X.W + *cpu->PC + (*(cpu->PC + 1) << 8)) & 0xffff;
 #endif
 #ifdef VAR_CYCLES
-    CPU.Cycles += CPU.MemSpeedx2;
+    cpu->Cycles += cpu->MemSpeedx2;
 #endif
-    CPU.PC += 2;
-    OpAddress = S9xGetWord (ICPU.ShiftedPB + OpAddress);
+    cpu->PC += 2;
+    return S9xGetWord (icpu->ShiftedPB + OpAddress, cpu);
 }
 
-STATIC inline void AbsoluteIndirectLong ()
+STATIC INLINE long FASTCALL AbsoluteIndirectLong (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
 #ifdef FAST_LSB_WORD_ACCESS
-    OpAddress = *(uint16 *) CPU.PC;
+    long OpAddress = *(uint16 *) cpu->PC;
 #else
-    OpAddress = *CPU.PC + (*(CPU.PC + 1) << 8);
+    long OpAddress = *cpu->PC + (*(cpu->PC + 1) << 8);
 #endif
 
 #ifdef VAR_CYCLES
-    CPU.Cycles += CPU.MemSpeedx2;
+    cpu->Cycles += cpu->MemSpeedx2;
 #endif
-    CPU.PC += 2;
-    OpAddress = S9xGetWord (OpAddress) | (S9xGetByte (OpAddress + 2) << 16);
+    cpu->PC += 2;
+    return S9xGetWord (OpAddress, cpu) | (S9xGetByte (OpAddress + 2, cpu) << 16);
 }
 
-STATIC inline void AbsoluteIndirect ()
+STATIC INLINE long FASTCALL AbsoluteIndirect (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
 #ifdef FAST_LSB_WORD_ACCESS
-    OpAddress = *(uint16 *) CPU.PC;
+    long OpAddress = *(uint16 *) cpu->PC;
 #else
-    OpAddress = *CPU.PC + (*(CPU.PC + 1) << 8);
+    long OpAddress = *cpu->PC + (*(cpu->PC + 1) << 8);
 #endif
 
 #ifdef VAR_CYCLES
-    CPU.Cycles += CPU.MemSpeedx2;
+    cpu->Cycles += cpu->MemSpeedx2;
 #endif
-    CPU.PC += 2;
-    OpAddress = S9xGetWord (OpAddress) + ICPU.ShiftedPB;
+    cpu->PC += 2;
+    return S9xGetWord (OpAddress, cpu) + icpu->ShiftedPB;
 }
 
-STATIC inline void Absolute ()
+STATIC INLINE long FASTCALL Absolute (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
 #ifdef FAST_LSB_WORD_ACCESS
-    OpAddress = *(uint16 *) CPU.PC + ICPU.ShiftedDB;
+    long OpAddress = *(uint16 *) cpu->PC + icpu->ShiftedDB;
 #else
-    OpAddress = *CPU.PC + (*(CPU.PC + 1) << 8) + ICPU.ShiftedDB;
+    long OpAddress = *cpu->PC + (*(cpu->PC + 1) << 8) + icpu->ShiftedDB;
 #endif
-    CPU.PC += 2;
+    cpu->PC += 2;
 #ifdef VAR_CYCLES
-    CPU.Cycles += CPU.MemSpeedx2;
+    cpu->Cycles += cpu->MemSpeedx2;
 #endif
+	return OpAddress;
 }
 
-STATIC inline void AbsoluteLong ()
+STATIC INLINE long FASTCALL AbsoluteLong (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
 #ifdef FAST_LSB_WORD_ACCESS
-    OpAddress = (*(uint32 *) CPU.PC) & 0xffffff;
+    long OpAddress = (*(uint32 *) cpu->PC) & 0xffffff;
 #else
-    OpAddress = *CPU.PC + (*(CPU.PC + 1) << 8) + (*(CPU.PC + 2) << 16);
+    long OpAddress = *cpu->PC + (*(cpu->PC + 1) << 8) + (*(cpu->PC + 2) << 16);
 #endif
-    CPU.PC += 3;
+    cpu->PC += 3;
 #ifdef VAR_CYCLES
-    CPU.Cycles += CPU.MemSpeedx2 + CPU.MemSpeed;
+    cpu->Cycles += cpu->MemSpeedx2 + cpu->MemSpeed;
 #endif
+	return OpAddress;
 }
 
-STATIC inline void Direct( void)
+STATIC INLINE long FASTCALL Direct(struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-    OpAddress = (*CPU.PC++ + Registers.D.W) & 0xffff;
+    long OpAddress = (*cpu->PC++ + reg->D.W) & 0xffff;
 #ifdef VAR_CYCLES
-    CPU.Cycles += CPU.MemSpeed;
+    cpu->Cycles += cpu->MemSpeed;
 #endif
-//    if (Registers.DL != 0) CPU.Cycles += ONE_CYCLE;
+//    if (reg->DL != 0) cpu->Cycles += ONE_CYCLE;
+	return OpAddress;
 }
 
-STATIC inline void DirectIndirectIndexed ()
+STATIC INLINE long FASTCALL DirectIndirectIndexed (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-    OpAddress = (*CPU.PC++ + Registers.D.W) & 0xffff;
+    long OpAddress = (*cpu->PC++ + reg->D.W) & 0xffff;
 #ifdef VAR_CYCLES
-    CPU.Cycles += CPU.MemSpeed;
+    cpu->Cycles += cpu->MemSpeed;
 #endif
 
-    OpAddress = ICPU.ShiftedDB + S9xGetWord (OpAddress) + Registers.Y.W;
+    OpAddress = icpu->ShiftedDB + S9xGetWord (OpAddress, cpu) + reg->Y.W;
 
-//    if (Registers.DL != 0) CPU.Cycles += ONE_CYCLE;
+//    if (reg->DL != 0) cpu->Cycles += ONE_CYCLE;
     // XXX: always add one if STA
     // XXX: else Add one cycle if crosses page boundary
+	return OpAddress;
 }
 
-STATIC inline void DirectIndirectIndexedLong ()
+STATIC INLINE long FASTCALL DirectIndirectIndexedLong (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-    OpAddress = (*CPU.PC++ + Registers.D.W) & 0xffff;
+    long OpAddress = (*cpu->PC++ + reg->D.W) & 0xffff;
 #ifdef VAR_CYCLES
-    CPU.Cycles += CPU.MemSpeed;
+    cpu->Cycles += cpu->MemSpeed;
 #endif
 
-    OpAddress = S9xGetWord (OpAddress) + (S9xGetByte (OpAddress + 2) << 16) +
-		Registers.Y.W;
-//    if (Registers.DL != 0) CPU.Cycles += ONE_CYCLE;
+    OpAddress = S9xGetWord (OpAddress, cpu) + (S9xGetByte (OpAddress + 2, cpu) << 16) +
+		reg->Y.W;
+//    if (reg->DL != 0) cpu->Cycles += ONE_CYCLE;
+	return OpAddress;
 }
 
-STATIC inline void DirectIndexedIndirect( void)
+STATIC INLINE long FASTCALL DirectIndexedIndirect(struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-    OpAddress = (*CPU.PC++ + Registers.D.W + Registers.X.W) & 0xffff;
+    long OpAddress = (*cpu->PC++ + reg->D.W + reg->X.W) & 0xffff;
 #ifdef VAR_CYCLES
-    CPU.Cycles += CPU.MemSpeed;
+    cpu->Cycles += cpu->MemSpeed;
 #endif
 
-    OpAddress = S9xGetWord (OpAddress) + ICPU.ShiftedDB;
+    OpAddress = S9xGetWord (OpAddress, cpu) + icpu->ShiftedDB;
 
 #ifdef VAR_CYCLES
-//    if (Registers.DL != 0)
-//	CPU.Cycles += TWO_CYCLES;
+//    if (reg->DL != 0)
+//	cpu->Cycles += TWO_CYCLES;
 //    else
-	CPU.Cycles += ONE_CYCLE;
+	cpu->Cycles += ONE_CYCLE;
 #endif
+	return OpAddress;
 }
 
-STATIC inline void DirectIndexedX ()
+STATIC INLINE long FASTCALL DirectIndexedX (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-    OpAddress = (*CPU.PC++ + Registers.D.W + Registers.X.W) & 0xffff;
+    long OpAddress = (*cpu->PC++ + reg->D.W + reg->X.W) & 0xffff;
 #ifdef VAR_CYCLES
-    CPU.Cycles += CPU.MemSpeed;
+    cpu->Cycles += cpu->MemSpeed;
 #endif
 
 #ifdef VAR_CYCLES
-//    if (Registers.DL != 0)
-//	CPU.Cycles += TWO_CYCLES;
+//    if (reg->DL != 0)
+//	cpu->Cycles += TWO_CYCLES;
 //    else
-	CPU.Cycles += ONE_CYCLE;
+	cpu->Cycles += ONE_CYCLE;
 #endif
+	return OpAddress;
 }
 
-STATIC inline void DirectIndexedY ()
+STATIC INLINE long FASTCALL DirectIndexedY (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-    OpAddress = (*CPU.PC++ + Registers.D.W + Registers.Y.W) & 0xffff;
+    long OpAddress = (*cpu->PC++ + reg->D.W + reg->Y.W) & 0xffff;
 #ifdef VAR_CYCLES
-    CPU.Cycles += CPU.MemSpeed;
+    cpu->Cycles += cpu->MemSpeed;
 #endif
 
 #ifdef VAR_CYCLES
-//    if (Registers.DL != 0)
-//	CPU.Cycles += TWO_CYCLES;
+//    if (reg->DL != 0)
+//	cpu->Cycles += TWO_CYCLES;
 //    else
-	CPU.Cycles += ONE_CYCLE;
+	cpu->Cycles += ONE_CYCLE;
 #endif
+	return OpAddress;
 }
 
-STATIC inline void AbsoluteIndexedX ()
+STATIC INLINE long FASTCALL AbsoluteIndexedX (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
 #ifdef FAST_LSB_WORD_ACCESS
-    OpAddress = ICPU.ShiftedDB + *(uint16 *) CPU.PC + Registers.X.W;
+    long OpAddress = icpu->ShiftedDB + *(uint16 *) cpu->PC + reg->X.W;
 #else
-    OpAddress = ICPU.ShiftedDB + *CPU.PC + (*(CPU.PC + 1) << 8) +
-		Registers.X.W;
+    long OpAddress = icpu->ShiftedDB + *cpu->PC + (*(cpu->PC + 1) << 8) +
+		reg->X.W;
 #endif
-    CPU.PC += 2;
+    cpu->PC += 2;
 #ifdef VAR_CYCLES
-    CPU.Cycles += CPU.MemSpeedx2;
+    cpu->Cycles += cpu->MemSpeedx2;
 #endif
     // XXX: always add one cycle for ROL, LSR, etc
     // XXX: else is cross page boundary add one cycle
+	return OpAddress;
 }
 
-STATIC inline void AbsoluteIndexedY ()
+STATIC INLINE long FASTCALL AbsoluteIndexedY (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
 #ifdef FAST_LSB_WORD_ACCESS
-    OpAddress = ICPU.ShiftedDB + *(uint16 *) CPU.PC + Registers.Y.W;
+    long OpAddress = icpu->ShiftedDB + *(uint16 *) cpu->PC + reg->Y.W;
 #else
-    OpAddress = ICPU.ShiftedDB + *CPU.PC + (*(CPU.PC + 1) << 8) +
-		Registers.Y.W;
+    long OpAddress = icpu->ShiftedDB + *cpu->PC + (*(cpu->PC + 1) << 8) +
+		reg->Y.W;
 #endif    
-    CPU.PC += 2;
+    cpu->PC += 2;
 #ifdef VAR_CYCLES
-    CPU.Cycles += CPU.MemSpeedx2;
+    cpu->Cycles += cpu->MemSpeedx2;
 #endif
     // XXX: always add cycle for STA
     // XXX: else is cross page boundary add one cycle
+	return OpAddress;
 }
 
-STATIC inline void AbsoluteLongIndexedX ()
+STATIC INLINE long FASTCALL AbsoluteLongIndexedX (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
 #ifdef FAST_LSB_WORD_ACCESS
-    OpAddress = (*(uint32 *) CPU.PC + Registers.X.W) & 0xffffff;
+    long OpAddress = (*(uint32 *) cpu->PC + reg->X.W) & 0xffffff;
 #else
-    OpAddress = (*CPU.PC + (*(CPU.PC + 1) << 8) + (*(CPU.PC + 2) << 16) + Registers.X.W) & 0xffffff;
+    long OpAddress = (*cpu->PC + (*(cpu->PC + 1) << 8) + (*(cpu->PC + 2) << 16) + reg->X.W) & 0xffffff;
 #endif
-    CPU.PC += 3;
+    cpu->PC += 3;
 #ifdef VAR_CYCLES
-    CPU.Cycles += CPU.MemSpeedx2 + CPU.MemSpeed;
+    cpu->Cycles += cpu->MemSpeedx2 + cpu->MemSpeed;
 #endif
+	return OpAddress;
 }
 
-STATIC inline void DirectIndirect ()
+STATIC INLINE long FASTCALL DirectIndirect (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-    OpAddress = (*CPU.PC++ + Registers.D.W) & 0xffff;
+    long OpAddress = (*cpu->PC++ + reg->D.W) & 0xffff;
 #ifdef VAR_CYCLES
-    CPU.Cycles += CPU.MemSpeed;
+    cpu->Cycles += cpu->MemSpeed;
 #endif
-    OpAddress = S9xGetWord (OpAddress) + ICPU.ShiftedDB;
+    OpAddress = S9xGetWord (OpAddress, cpu) + icpu->ShiftedDB;
 
-//    if (Registers.DL != 0) CPU.Cycles += ONE_CYCLE;
+//    if (reg->DL != 0) cpu->Cycles += ONE_CYCLE;
+	return OpAddress;
 }
 
-STATIC inline void DirectIndirectLong ()
+STATIC INLINE long FASTCALL DirectIndirectLong (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-    OpAddress = (*CPU.PC++ + Registers.D.W) & 0xffff;
+    long OpAddress = (*cpu->PC++ + reg->D.W) & 0xffff;
 #ifdef VAR_CYCLES
-    CPU.Cycles += CPU.MemSpeed;
+    cpu->Cycles += cpu->MemSpeed;
 #endif
-    OpAddress = S9xGetWord (OpAddress) +
-		(S9xGetByte (OpAddress + 2) << 16);
-//    if (Registers.DL != 0) CPU.Cycles += ONE_CYCLE;
+    OpAddress = S9xGetWord (OpAddress, cpu) +
+		(S9xGetByte (OpAddress + 2, cpu) << 16);
+//    if (reg->DL != 0) cpu->Cycles += ONE_CYCLE;
+	return OpAddress;
 }
 
-STATIC inline void StackRelative ()
+STATIC INLINE long FASTCALL StackRelative (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-    OpAddress = (*CPU.PC++ + Registers.S.W) & 0xffff;
+    long OpAddress = (*cpu->PC++ + reg->S.W) & 0xffff;
 #ifdef VAR_CYCLES
-    CPU.Cycles += CPU.MemSpeed;
-    CPU.Cycles += ONE_CYCLE;
+    cpu->Cycles += cpu->MemSpeed;
+    cpu->Cycles += ONE_CYCLE;
 #endif
+	return OpAddress;
 }
 
-STATIC inline void StackRelativeIndirectIndexed ()
+STATIC INLINE long FASTCALL StackRelativeIndirectIndexed (struct SRegisters * reg, struct SICPU * icpu, struct SCPUState * cpu)
 {
-    OpAddress = (*CPU.PC++ + Registers.S.W) & 0xffff;
+    long OpAddress = (*cpu->PC++ + reg->S.W) & 0xffff;
 #ifdef VAR_CYCLES
-    CPU.Cycles += CPU.MemSpeed;
-    CPU.Cycles += TWO_CYCLES;
+    cpu->Cycles += cpu->MemSpeed;
+    cpu->Cycles += TWO_CYCLES;
 #endif
-    OpAddress = (S9xGetWord (OpAddress) + ICPU.ShiftedDB +
-		 Registers.Y.W) & 0xffffff;
+    OpAddress = (S9xGetWord (OpAddress, cpu) + icpu->ShiftedDB +
+		 reg->Y.W) & 0xffffff;
+	return OpAddress;
 }
 #endif

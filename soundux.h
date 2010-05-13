@@ -61,25 +61,20 @@ enum { MODE_NONE = SOUND_SILENT, MODE_ADSR, MODE_RELEASE = SOUND_RELEASE,
 #define NUM_CHANNELS    8
 #define SOUND_BUFFER_SIZE (2*44100/50)
 #define MAX_BUFFER_SIZE SOUND_BUFFER_SIZE
-#define SOUND_BUFFER_SIZE_MASK (SOUND_BUFFER_SIZE - 1)
 
 #define SOUND_BUFS      4
 
-#ifdef __sgi
-#  include <audio.h>
-#endif /* __sgi */
 
 typedef struct {
     int playback_rate;
     bool8 stereo;
     bool8 mute_sound;
     uint8 sound_switch;
-    bool8 sixteen_bit;
     int noise_gen;
 	uint32 freqbase; // notaz
 } SoundStatus;
 
-EXTERN_C volatile SoundStatus so;
+EXTERN_C SoundStatus so;
 
 typedef struct {
     int state;
@@ -167,10 +162,10 @@ void S9xPlaybackSoundSetting (int channel);
 void S9xFixEnvelope (int channel, uint8 gain, uint8 adsr1, uint8 adsr2);
 void S9xStartSample (int channel);
 
-EXTERN_C void S9xMixSamples (uint8 *buffer, int sample_count);
-EXTERN_C void S9xMixSamplesO (uint8 *buffer, int sample_count, int byte_offset);
-bool8 S9xOpenSoundDevice (int, bool8, int);
+EXTERN_C void S9xMixSamples (signed short *buffer, int sample_count);
+EXTERN_C void S9xMixSamplesO(signed short *buffer, int sample_count, int sample_offset);
 void S9xSetPlaybackRate (uint32 rate);
+EXTERN_C bool8 S9xInitSound (void);
 #endif
 
 
@@ -183,7 +178,6 @@ void S9xSetPlaybackRate (uint32 rate);
 extern int Echo [24000];
 extern int Loop [16];
 extern int FilterTaps [8];
-extern int DummyEchoBuffer [SOUND_BUFFER_SIZE];
 extern int EchoBuffer [SOUND_BUFFER_SIZE];
 extern int NoiseFreq [32];
 
@@ -290,7 +284,7 @@ static inline void S9xSetEchoEnable (uint8 byte)
 	if (byte & (1 << i))
 	    SoundData.channels [i].echo_buf_ptr = EchoBuffer;
 	else
-	    SoundData.channels [i].echo_buf_ptr = DummyEchoBuffer;
+	    SoundData.channels [i].echo_buf_ptr = 0;
     }
 }
 

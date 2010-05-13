@@ -1,4 +1,4 @@
-AntSnes v. 0.7.1
+AntSnes v. 0.7.2
 
 Follow my blog for updates:
 http://www.summeli.fi
@@ -24,6 +24,9 @@ notaz
 * various tweaks
 Homepage: http://notaz.atspace.com/
 E-mail: notasas(atsymbol)gmail.com
+
+Saiyaku 
+* large D-pad grapchis
 
 Summeli
 * S60 port and ui

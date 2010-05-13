@@ -18,7 +18,10 @@ HEADERS += buttonwidget.h \
     QBlitterWidget.h \
     AntSettings.h \
     snescontroller.h \
-    AntSnesQt.h
+    AntSnesQt.h \
+    smalloptionswidget.h \
+    largepad.h
+    
 SOURCES += buttonwidget.cpp \
 	dpadwidget.cpp \
 	QRemoteControlKeys.cpp \
@@ -36,7 +39,10 @@ SOURCES += buttonwidget.cpp \
     snescontroller.cpp \
     main.cpp \
     AntSnesQt.cpp \
-    AntBlit.cpp
+    AntBlit.cpp \
+    smalloptionswidget.cpp \
+    largepad.cpp
+    
 FORMS += buttonwidget.ui \
 	dpadwidget.ui \
 	aboutdialog.ui \
@@ -45,7 +51,9 @@ FORMS += buttonwidget.ui \
     keyconfigdialog.ui \
     audiosettings.ui \
     emusettings.ui \
-    AntSnesQt.ui
+    AntSnesQt.ui \
+    smalloptionswidget.ui \
+    largepad.ui
 
 RESOURCES += atnresources.qrc
 
@@ -68,7 +76,7 @@ symbian:LIBS += -lantsnes.lib \
 symbian:TARGET.EPOCHEAPSIZE = 0x200000 \
     0x800000
 
-symbian:TARGET.CAPABILITY += SwEvent
+#symbian:TARGET.CAPABILITY += SwEvent
 symbian:ICON = gfx/AntSnes_44.svg
 # symbian:TARGET.EPOCSTACKSIZE 80000
 symbian:INCLUDEPATH += ../

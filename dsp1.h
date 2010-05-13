@@ -92,13 +92,7 @@ void  DSP3_Reset();
 void DSP4SetByte(uint8 byte, uint16 address);
 uint8 DSP4GetByte(uint16 address);
 
-
-// Simple vector and matrix types
-typedef double MATRIX[3][3];
-typedef double VECTOR[3];
-
-enum AttitudeMatrix { MatrixA, MatrixB, MatrixC };
-
+START_EXTERN_C
 struct SDSP1 {
 	uint8 version;
     bool8 waiting4command;
@@ -113,8 +107,6 @@ struct SDSP1 {
     uint8 output [512];
 };
 
-
-START_EXTERN_C
 void S9xResetDSP1 ();
 uint8 S9xGetDSP (uint16 Address);
 void S9xSetDSP (uint8 Byte, uint16 Address);

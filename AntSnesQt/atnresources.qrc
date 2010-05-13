@@ -3,9 +3,11 @@
         <file>style/summelistyle.qss</file>
     </qresource>
     <qresource prefix="/graphics" >
-        <file>gfx/AtnSnesWidget.bmp</file>
-        <file>gfx/SnesButtons.bmp</file>
-        <file>gfx/SnesPad.bmp</file>
+        <file>gfx/antsneslogo.png</file>
         <file>gfx/downarrow.png</file>
+        <file>gfx/largeDPAD.png</file>
+        <file>gfx/left_panel.png</file>
+        <file>gfx/right_panel.png</file>
+        <file>gfx/separator.png</file>
     </qresource>
 </RCC>

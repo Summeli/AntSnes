@@ -29,8 +29,9 @@
 
 #include "LeftButtonControl.h"
 
+#include "snes9x.h"
 //our resolution is 128 x 360, 
-const TPoint KCentter( 64, 180);
+const TPoint KCentter( 128, 128);
 
 _LIT(KBackgroundImageFile, "snescontrol.mbm"); //TODO: put here the own stuff
 
@@ -91,6 +92,7 @@ void CLeftButtonControl::ConstructL(const TRect& aRect, MVirtualKeyObserver* aOb
     iGc->SetClippingRegion(iRegion);
     iGc->BitBlt(TPoint(0, 0), iBitmap);
 
+    iSimulatedKey = 0;
     iObserver = aObserver;
 	iMenuObserver = aMenuobserver;    
 	ActivateL();
@@ -137,48 +139,44 @@ void CLeftButtonControl::HandleEnterPressL()
 
 void CLeftButtonControl::HandlePointerEventL(const TPointerEvent& aPointerEvent)
 {
-   // the user wants to control the game
-    TBool newkeyevent = EFalse;
-    TAntSnesVirtualKey key;
- 
-    if (aPointerEvent.iType == TPointerEvent::EButton1Down
-            || aPointerEvent.iType == TPointerEvent::EDrag)
-        {
-        //only 200x200 position in the center is used
-        if ( aPointerEvent.iPosition.iY > 80 )
-            { 
-            key = GetGameKeys( aPointerEvent.iPosition );
-            //if new key is pressed
-            if( key != iSimulatedKey )
-                {
-                //release the old key
-                iObserver->VirtualKeyEvent( iSimulatedKey, EFalse );
-                iSimulatedKey = key;
-                newkeyevent = ETrue;
-                }
-            }
-        else
-            {
-            iMenuObserver->ShowMenu();
-             return;
-            }
-    }
-
     //the control is released release all buttons
-    if ( aPointerEvent.iType == TPointerEvent::EButton1Up )
-        {
-        if( aPointerEvent.iPosition.iY> 80 )
-            {
-            key = iSimulatedKey;
-            iObserver->VirtualKeyEvent( iSimulatedKey, EFalse );
-            }
-        }
-    if( newkeyevent )
-        {
-        iObserver->VirtualKeyEvent( iSimulatedKey, ETrue );
-        }
+	  if ( aPointerEvent.iType == TPointerEvent::EButton1Down || aPointerEvent.iType == TPointerEvent::EDrag )
+		  {
+		  processButtons( aPointerEvent );
+		  }
+	  else if (  aPointerEvent.iType == TPointerEvent::EButton1Up )
+		  {
+		  iObserver->VirtualKeyEvent( iSimulatedKey, EFalse );
+		  iSimulatedKey = 0;
+		  }
+
 }
 
+void CLeftButtonControl::processButtons( const TPointerEvent& aPointerEvent )
+	{
+	if( aPointerEvent.iPosition.iY > 307 && aPointerEvent.iPosition.iX > 170 )
+		{
+		iMenuObserver->ShowMenu();
+        return;
+		}
+	else
+		{
+		TUint32 key = GetGameKeys( aPointerEvent.iPosition );
+		if( key !=  iSimulatedKey )
+			{
+			//release old keys
+			TUint32 release = iSimulatedKey;
+			release &= ~(key & iSimulatedKey);
+			iObserver->VirtualKeyEvent( release, EFalse );
+			
+			//send new key
+			TUint32 newkey = key;
+			newkey &=  ~(key & iSimulatedKey);
+			iObserver->VirtualKeyEvent( newkey, ETrue );
+			}
+		iSimulatedKey = key;
+		}
+	}
 
 /**
  * GetGameKeys
@@ -187,10 +185,11 @@ void CLeftButtonControl::HandlePointerEventL(const TPointerEvent& aPointerEvent)
  * @param aCurrentPos the clicked postion
  * @return keys pressed
  */
-TAntSnesVirtualKey CLeftButtonControl::GetGameKeys(TPoint aCurrentPos)
+TUint32 CLeftButtonControl::GetGameKeys(TPoint aCurrentPos)
     {
-    TInt key = 0;
-    if (aCurrentPos.iY < 280 && aCurrentPos.iY> 80 )
+    TUint32 key = 0;
+    TInt ycoord = aCurrentPos.iY;
+    if ( ycoord < 255 )
     	{ 
 		//Calculate distance from the center
 		TInt x = aCurrentPos.iX - KCentter.iX;
@@ -214,55 +213,66 @@ TAntSnesVirtualKey CLeftButtonControl::GetGameKeys(TPoint aCurrentPos)
 	    if (angle > 337 || angle < 23)
 	        {
 	        //right key was pressed
-	        key += EKEY_RIGHT;
+	        key += SNES_RIGHT_MASK;
 	        }
 	    else if (angle >= 23 && angle < 68)
 	        {
 	        //right and down was pressed
-	        key += EKEY_RIGHT;
-	        key += EKEY_DOWN;
+	        key += SNES_RIGHT_MASK;
+	        key += SNES_DOWN_MASK;
 	        }
 	    else if (angle >= 68 && angle < 113)
 	        {
 	        //Down key was pressed
-	        key += EKEY_DOWN;
+	        key += SNES_DOWN_MASK;
 	        }
 	    else if (angle >= 113 && angle < 158)
 	        {
 	        //Down and left key was pressed
-	        key += EKEY_DOWN;
-	        key += EKEY_LEFT;
+	        key += SNES_DOWN_MASK;
+	        key += SNES_LEFT_MASK;
 	        }
 	    else if (angle >= 158 && angle < 203)
 	        {
 	        //Left key was pressed
-	        key += EKEY_LEFT;
+	        key += SNES_LEFT_MASK;
 	        }
 	    else if (angle >= 203 && angle < 248)
 	        {
 	        //left and up key was pressed
-	        key += EKEY_LEFT;
-	        key += EKEY_UP;
+	        key += SNES_LEFT_MASK;
+	        key += SNES_UP_MASK;
 	        }
 	    else if (angle >= 248 && angle < 293)
 	        {
 	        //up key was pressed
-	        key += EKEY_UP;
+	        key += SNES_UP_MASK;
 	        }
 	    else if (angle >= 293 && angle <= 337)
 	        {
 	        //up and right key was pressed
-	        key += EKEY_UP;
-	        key += EKEY_RIGHT;
+	        key += SNES_UP_MASK;
+	        key += SNES_RIGHT_MASK;
 	        }
     	}
-    else if( aCurrentPos.iY >= 280 )
-        {
-        //left key pressed
-		key = EKEY_L;
-        }
+	else if(  ycoord >= 255 && ycoord < 307 )
+	        {
+	        //left key pressed
+			if( aCurrentPos.iX < 128 )
+				key = SNES_TL_MASK;
+			else //right key was pressed
+				key = SNES_TR_MASK;
+	        }
+	else if( ycoord >= 300 && aCurrentPos.iX < 340 )
+		{
+		//select was pressed
+		if( aCurrentPos.iX < 85 )
+			key = SNES_SELECT_MASK ;
+		else //start was pressed
+			key = SNES_START_MASK;
+		}
     
-    return (TAntSnesVirtualKey) key;
+    return key;
     }
 
 void CLeftButtonControl::Restart(

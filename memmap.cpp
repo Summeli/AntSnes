@@ -53,7 +53,7 @@
 #include "cpuexec.h"
 #include "ppu.h"
 #include "display.h"
-//#include "cheats.h"
+#include "cheats.h"
 #include "apu.h"
 #include "sa1.h"
 #include "srtc.h"
@@ -69,8 +69,9 @@ extern struct FxInit_s SuperFX;
 static uint8 bytes0x2000 [0x2000];
 
 extern char *rom_filename;
+extern bool8 LoadZip(const char* , int32 *, int32 *);
 
-bool8 CMemory::AllASCII (uint8 *b, int size)
+bool8_32 CMemory::AllASCII (uint8 *b, int size)
 {
     for (int i = 0; i < size; i++)
     {
@@ -80,7 +81,7 @@ bool8 CMemory::AllASCII (uint8 *b, int size)
     return (TRUE);
 }
 
-int CMemory::ScoreHiROM (bool8 skip_header)
+int CMemory::ScoreHiROM (bool8_32 skip_header)
 {
     int score = 0;
     int o = skip_header ? 0xff00 + 0x200 : 0xff00;
@@ -107,7 +108,7 @@ int CMemory::ScoreHiROM (bool8 skip_header)
     return (score);
 }
 
-int CMemory::ScoreLoROM (bool8 skip_header)
+int CMemory::ScoreLoROM (bool8_32 skip_header)
 {
     int score = 0;
     int o = skip_header ? 0x7f00 + 0x200 : 0x7f00;
@@ -163,7 +164,7 @@ char *CMemory::Safe (const char *s)
 /* Init()                                                                                     */
 /* This function allocates all the memory needed by the emulator                              */
 /**********************************************************************************************/
-bool8 CMemory::Init ()
+bool8_32 CMemory::Init ()
 {
     RAM	    = (uint8 *) malloc (0x20000);
     SRAM    = (uint8 *) malloc (0x20000);
@@ -179,16 +180,6 @@ bool8 CMemory::Init ()
     IPPU.TileCached [TILE_4BIT] = (uint8 *) malloc (MAX_4BIT_TILES);
     IPPU.TileCached [TILE_8BIT] = (uint8 *) malloc (MAX_8BIT_TILES);
     
-    
-    // FillRAM uses first 32K of ROM image area, otherwise space just
-    // wasted. Might be read by the SuperFX code.
-
-//    FillRAM = ROM;
-
-    // Add 0x8000 to ROM image pointer to stop SuperFX code accessing
-    // unallocated memory (can cause crash on some ports).
-//    ROM += 0x8000;
-
     if (!RAM || !SRAM || !VRAM || !ROM ||
         !IPPU.TileCache [TILE_2BIT] || !IPPU.TileCache [TILE_4BIT] ||
 	!IPPU.TileCache [TILE_8BIT] || !IPPU.TileCached [TILE_2BIT] ||
@@ -197,7 +188,10 @@ bool8 CMemory::Init ()
 	Deinit ();
 	return (FALSE);
     }
-	
+ 
+    // FillRAM uses first 32K of ROM image area, otherwise space just
+    // wasted. Might be read by the SuperFX code.
+
     FillRAM = ROM;
     // Add 0x8000 to ROM image pointer to stop SuperFX code accessing
     // unallocated memory (can cause crash on some ports).
@@ -227,23 +221,23 @@ void CMemory::Deinit ()
 {
     if (RAM)
     {
-	free ((uint8*)RAM);
+	free ((char *) RAM);
 	RAM = NULL;
-    }      
+    }
     if (SRAM)
     {
-	free ((uint8*)SRAM);
+	free ((char *) SRAM);
 	SRAM = NULL;
     }
     if (VRAM)
     {
-	free ((uint8*)VRAM);
+	free ((char *) VRAM);
 	VRAM = NULL;
     }
     if (ROM)
     {
 	ROM -= 0x8000;
-	free ((uint8*)ROM);
+	free ((char *) ROM);
 	ROM = NULL;
     }
 
@@ -297,31 +291,38 @@ void CMemory::FreeSDD1Data ()
 }
 
 /**********************************************************************************************/
+/* checkext()                                                                                 */
+/**********************************************************************************************/
+int checkzip( char * fn  )
+{
+    int cnt = strlen(fn);
+    if( ( (fn[cnt-1] == 'p') || (fn[cnt-1] == 'P') ) &&
+        ( (fn[cnt-2] == 'i') || (fn[cnt-2] == 'I') ) &&
+        ( (fn[cnt-3] == 'z') || (fn[cnt-3] == 'Z') )    ){
+        return true;
+        
+    }
+    return false;
+}
 /* LoadROM()                                                                                  */
 /* This function loads a Snes-Backup image                                                    */
 /**********************************************************************************************/
 // notaz: now it returns 0 on success and error code if fails
-bool8 CMemory::LoadROM (const char *filename)
+bool8_32 CMemory::LoadROM (const char *filename)
 {
-    unsigned long FileSize = 0, AllocSize = 0;
+    unsigned long FileSize = 0;
     int retry_count = 0;
     STREAM ROMFile;
-    bool8 Interleaved = FALSE;
-    bool8 Tales = FALSE;
-
-	// notaz: this was overflowing stack. Using MAX_PATH for ext is really stupid IMO
-//    char dir [_MAX_DIR + 1];
-//    char drive [_MAX_DRIVE + 1];
-//    char name [_MAX_FNAME + 1];
-//    char ext [_MAX_EXT + 1];
-//    char fname [_MAX_PATH + 1];
+    bool8_32 Interleaved = FALSE;
+    bool8_32 Tales = FALSE;
+    char dir [_MAX_DIR + 1];
+    char drive [_MAX_DRIVE + 1];
+    char name [_MAX_FNAME + 1];
+    char ext [_MAX_EXT + 1];
+    char fname [_MAX_PATH + 1];
     int i;
 
-	// do it fast and simple instead
-	const char *ext = filename + strlen(filename) - 3;
-	const char *fname = filename;
-
-	memset (&SNESGameFixes, 0, sizeof(SNESGameFixes));
+    memset (&SNESGameFixes, 0, sizeof(SNESGameFixes));
     SNESGameFixes.SRAMInitialValue = 0x60;
 
     memset (bytes0x2000, 0, 0x2000);
@@ -329,117 +330,44 @@ bool8 CMemory::LoadROM (const char *filename)
 
     CalculatedSize = 0;
 again:
-//    _splitpath (filename, drive, dir, name, ext);
-//    _makepath (fname, drive, dir, name, ext);
+#ifndef _SNESPPC
+    _splitpath (filename, drive, dir, name, ext);
+    _makepath (fname, drive, dir, name, ext);
+#else
+	strcpy(fname, filename);
+//	strupr(fname);
+#endif
 
+#ifdef __WIN32__
+    memmove (&ext [0], &ext[1], 4);
+#endif
 
     int32 TotalFileSize = 0;
-	uint8 *ptr = ROM;
-	HeaderCount = 0;
 
-	if(ROM) { ROM -= 0x8000; free(ROM); ROM = 0; }
-
-	if (strcasecmp (ext, "zip") == 0)
+#ifdef UNZIP_SUPPORT
+    if( checkzip( fname ) )
     {
-		struct zipent* zipentry;
-		ZIP *zipfile = openzip(fname);
+		if (!LoadZip (fname, &TotalFileSize, &HeaderCount))
+    	    return (FALSE);
 
-		if(!zipfile) return 1; // couldn't open
-
-		// find first ROM
-		while((zipentry = readzip(zipfile)) != 0)
-		{
-			char *ext;
-			if(strlen(zipentry->name) < 5) continue;
-			ext = zipentry->name+strlen(zipentry->name)-4;
-			
-			if(!strcasecmp(ext, ".smc") || !strcasecmp(ext, ".swc") || !strcasecmp(ext, ".sfc") || !strcasecmp(ext, ".bin")) break;
-		}
-
-		if(!zipentry) {
-			closezip(zipfile);
-			return 4; // no roms
-		}
-
-		AllocSize = FileSize = zipentry->uncompressed_size;
-
-		// Allocate space for the rom
-		ROM = (uint8 *) malloc(AllocSize+0x8000);
-		if(!ROM) { closezip(zipfile); return 2; }
-
-		ptr = ROM + 0x8000;
-
-		if(readuncompresszip(zipfile, zipentry, (char *)ptr) != 0) {
-			free(ROM);
-			ROM = 0;
-			closezip(zipfile);
-			return 5; // unzip failed
-		}
-
-		if ((ptr[0x7fd6] & 0xf0) == 0x10) {
-			// damn, SuperFX will need much more RAM for it's emulation
-			free(ROM);
-			if(AllocSize < 0x380000)
-				AllocSize = 0x380000;
-			ROM = (uint8 *) malloc(AllocSize+0x8000);
-			if(!ROM) { closezip(zipfile); return 2; }
-			ptr = ROM + 0x8000;
-			if(readuncompresszip(zipfile, zipentry, (char *)ptr) != 0) {
-				free(ROM);
-				ROM = 0;
-				closezip(zipfile);
-				return 5; // unzip failed
-			}
-		}
-
-		closezip(zipfile);
+    	strcpy (ROMFilename, fname);
     }
     else
+#endif
     {
-		if ((ROMFile = OPEN_STREAM (fname, "rb")) == NULL)
-			return 1;
-
-		strcpy (ROMFilename, fname);
-
-		// notaz: alloc mem for ROM here
-		SEEK_STREAM(0, SEEK_END, ROMFile);
-		AllocSize = FileSize = ftell(ROMFile);
-
-		// notaz: do early SuperFX detection, mainly for smw2
-		SEEK_STREAM(0x7fd6, SEEK_SET, ROMFile);
-		READ_STREAM(&ROMType, 1, ROMFile);
-		if ((ROMType & 0xf0) == 0x10) {
-			// damn, SuperFX will need much more RAM for it's emulation
-			dprintf("SuperFX early-detected");
-			if(AllocSize < 0x380000)
-				AllocSize = 0x380000;
-		}
-
-		if(FileSize < 0x10000 || FileSize > 0x600200) { CLOSE_STREAM (ROMFile); return 1; }
-		ROM = (uint8 *) malloc(AllocSize+0x8000);
-		if(!ROM) { CLOSE_STREAM (ROMFile); return 2; }
-
-		ptr = ROM + 0x8000;
-
-		SEEK_STREAM(0, SEEK_SET, ROMFile);
-		READ_STREAM (ptr, FileSize, ROMFile);
-		CLOSE_STREAM (ROMFile);
-	} // zip
+	if ((ROMFile = OPEN_STREAM (fname, "rb")) == NULL)
+	    return (FALSE);
 
 	strcpy (ROMFilename, fname);
 
-	// do some init stuff which CMemory::Init() was previously doing
-	FillRAM = ROM;
-	ROM += 0x8000;
-	::ROM = ROM;
-	::RegRAM = FillRAM;
-#ifdef SUPER_FX
-	SuperFX.pvRegisters = &FillRAM [0x3000];
-	SuperFX.pvRom = (uint8 *) ROM;
-#endif
+	HeaderCount = 0;
+	uint8 *ptr = ROM;
+	bool8_32 more = FALSE;
 
-//	    FileSize = READ_STREAM (ptr, MAX_ROM_SIZE + 0x200 - (ptr - ROM), ROMFile);
-//	    CLOSE_STREAM (ROMFile);
+	do
+	{
+	    FileSize = READ_STREAM (ptr, MAX_ROM_SIZE + 0x200 - (ptr - ROM), ROMFile);
+	    CLOSE_STREAM (ROMFile);
 	    int calc_size = (FileSize / 0x2000) * 0x2000;
 
 	    if ((FileSize - calc_size == 512 && !Settings.ForceNoHeader) ||
@@ -451,19 +379,21 @@ again:
 	    }
 	    ptr += FileSize;
 	    TotalFileSize += FileSize;
-/*
+
 	    int len;
 	    if (ptr - ROM < MAX_ROM_SIZE + 0x200 &&
 		(isdigit (ext [0]) && ext [1] == 0 && ext [0] < '9'))
 	    {
 		more = TRUE;
 		ext [0]++;
-#if defined(__WIN32__)||defined(__GP32__)
+#ifdef __WIN32__
                 memmove (&ext [1], &ext [0], 4);
                 ext [0] = '.';
 #endif
+#ifndef _SNESPPC
 		_makepath (fname, drive, dir, name, ext);
-	    }
+#endif
+		}
 	    else
 	    if (ptr - ROM < MAX_ROM_SIZE + 0x200 &&
 		(((len = strlen (name)) == 7 || len == 8) &&
@@ -473,19 +403,20 @@ again:
 	    {
 		more = TRUE;
 		name [len - 1]++;
-#if defined(__WIN32__)||defined(__GP32__)
+#ifdef __WIN32__
                 memmove (&ext [1], &ext [0], 4);
                 ext [0] = '.';
 #endif
+#ifndef _SNESPPC
 		_makepath (fname, drive, dir, name, ext);
-	    }
+#endif
+		}
 	    else
 		more = FALSE;
 	} while (more && (ROMFile = OPEN_STREAM (fname, "rb")) != NULL);
-*/
-	
+    }
 
-    /*if (HeaderCount == 0)
+    if (HeaderCount == 0)
 	S9xMessage (S9X_INFO, S9X_HEADERS_INFO, "No ROM file header found.");
     else
     {
@@ -495,9 +426,9 @@ again:
 	else
 	    S9xMessage (S9X_INFO, S9X_HEADERS_INFO,
 			"Found multiple ROM file headers (and ignored them).");
-    }*/
+    }
 
-    //CheckForIPSPatch (filename, HeaderCount != 0, TotalFileSize);
+    CheckForIPSPatch (filename, HeaderCount != 0, TotalFileSize);
     int orig_hi_score, orig_lo_score;
     int hi_score, lo_score;
 
@@ -510,12 +441,12 @@ again:
     {
 	memmove (Memory.ROM, Memory.ROM + 512, TotalFileSize - 512);
 	TotalFileSize -= 512;
-	//S9xMessage (S9X_INFO, S9X_HEADER_WARNING, 
-		//    "Try specifying the -nhd command line option if the game doesn't work\n");
+	S9xMessage (S9X_INFO, S9X_HEADER_WARNING, 
+		    "Try specifying the -nhd command line option if the game doesn't work\n");
     }
 
     CalculatedSize = (TotalFileSize / 0x2000) * 0x2000;
-//    ZeroMemory (ROM + CalculatedSize, MAX_ROM_SIZE - CalculatedSize);
+    ZeroMemory (ROM + CalculatedSize, MAX_ROM_SIZE - CalculatedSize);
 
     // Check for cherryroms.com DAIKAIJYUMONOGATARI2
 
@@ -660,7 +591,7 @@ again:
 	}
 	else
 	{
-	    bool8 t = LoROM;
+	    bool8_32 t = LoROM;
 
 	    LoROM = HiROM;
 	    HiROM = t;
@@ -717,11 +648,11 @@ again:
     FreeSDD1Data ();
     InitROM (Tales);
 	
-//    S9xLoadCheatFile (S9xGetFilename(".cht"));
-//    S9xInitCheatData ();
-//    S9xApplyCheats ();
+    S9xLoadCheatFile (S9xGetFilename(".cht"));
+    S9xInitCheatData ();
+    S9xApplyCheats ();
 
-    S9xReset();
+    S9xReset ();
 
     return 0;
 }
@@ -774,11 +705,11 @@ void S9xDeinterleaveMode2 ()
     S9xReset ();
 }
 
-void CMemory::InitROM (bool8 Interleaved)
+void CMemory::InitROM (bool8_32 Interleaved)
 {
-
+#ifndef ZSNES_FX
     SuperFX.nRomBanks = CalculatedSize >> 15;
-
+#endif
     Settings.MultiPlayer5Master = Settings.MultiPlayer5;
     Settings.MouseMaster = Settings.Mouse;
     Settings.SuperScopeMaster = Settings.SuperScope;
@@ -1044,7 +975,7 @@ void CMemory::InitROM (bool8 Interleaved)
   
 }
 
-bool8 CMemory::LoadSRAM (const char *filename)
+bool8_32 CMemory::LoadSRAM (const char *filename)
 {
     int size = Memory.SRAMSize ?
 	       (1 << (Memory.SRAMSize + 3)) * 128 : 0;
@@ -1056,28 +987,25 @@ bool8 CMemory::LoadSRAM (const char *filename)
     
     if (size)
     {
-	//	FILE *file;
-		STREAM SRAMFile;
-	//	if ((file = fopen (filename, "rb")))
-		if ((SRAMFile = OPEN_STREAM (filename, "rb")))	   
-		{
-	//	    int len = fread ((char*) ::SRAM, 1, 0x20000, file);
-	//	    fclose (file);
-			int len = READ_STREAM ((char*) ::SRAM, 0x20000, SRAMFile);
-		    CLOSE_STREAM (SRAMFile);
-		    if (len - size == 512)
-		    {
-				// S-RAM file has a header - remove it
-				memmove (::SRAM, ::SRAM + 512, size);
-		    }
-		    if (len == size + SRTC_SRAM_PAD)
-		    {
-				S9xSRTCPostLoadState ();
-				S9xResetSRTC ();
-				rtc.index = -1;
-				rtc.mode = MODE_READ;
-		    }
-		    else S9xHardResetSRTC ();	
+	FILE *file;
+	if ((file = fopen(filename, "rb")))
+	{
+	    int len = fread ((char*) ::SRAM, 1, 0x20000, file);
+	    fclose (file);
+	    if (len - size == 512)
+	    {
+		// S-RAM file has a header - remove it
+		memmove (::SRAM, ::SRAM + 512, size);
+	    }
+	    if (len == size + SRTC_SRAM_PAD)
+	    {
+		S9xSRTCPostLoadState ();
+		S9xResetSRTC ();
+		rtc.index = -1;
+		rtc.mode = MODE_READ;
+	    }
+	    else
+		S9xHardResetSRTC ();
 			return (TRUE);
 		}
 		S9xHardResetSRTC ();
@@ -1089,7 +1017,7 @@ bool8 CMemory::LoadSRAM (const char *filename)
     return (TRUE);
 }
 
-bool8 CMemory::SaveSRAM (const char *filename)
+bool8_32 CMemory::SaveSRAM (const char *filename)
 {
     int size = Memory.SRAMSize ?
 	       (1 << (Memory.SRAMSize + 3)) * 128 : 0;
@@ -1107,16 +1035,11 @@ bool8 CMemory::SaveSRAM (const char *filename)
 
     if (size && *Memory.ROMFilename)
     {
-	//	FILE *file;
-		STREAM SRAMFile;
-	//	if ((file = fopen (filename, "wb")))
-		if ((SRAMFile = OPEN_STREAM (filename, "wb")))
-		{
-//		    fwrite ((char *) ::SRAM, size, 1, file);
-//		    fclose (file);
-			WRITE_STREAM ((char*) ::SRAM, size, SRAMFile);
-		    CLOSE_STREAM (SRAMFile);
-//		    sync();
+	FILE *file;
+	if ((file = fopen (filename, "wb")))
+	{
+	    fwrite ((char *) ::SRAM, size, 1, file);
+	    fclose (file);
 #if defined(__linux)
 		    chown (filename, getuid (), getgid ());
 #endif
@@ -1367,7 +1290,7 @@ void CMemory::HiROMMap ()
     WriteProtectROM ();
 }
 
-void CMemory::TalesROMMap (bool8 Interleaved)
+void CMemory::TalesROMMap (bool8_32 Interleaved)
 {
     int c;
     int i;
@@ -2095,6 +2018,13 @@ const char *CMemory::ROMID ()
 
 void CMemory::ApplyROMFixes ()
 {
+	DSP1.version = 0;
+	if (strncmp(ROMName, "DUNGEON MASTER", 14) == 0)
+	{
+		DSP1.version = 1;
+		SetDSP=&DSP2SetByte;
+		GetDSP=&DSP2GetByte;
+	}
     // Enable S-RTC (Real Time Clock) emulation for Dai Kaijyu Monogatari 2
     Settings.SRTC = ((ROMType & 0xf0) >> 4) == 5;
 
@@ -2652,8 +2582,7 @@ static long ReadInt (FILE *f, unsigned nbytes)
 
 #define IPS_EOF 0x00454F46l
 
-#if 0
-void CMemory::CheckForIPSPatch (const char *rom_filename, bool8 header,
+void CMemory::CheckForIPSPatch (const char *rom_filename, bool8_32 header,
 				int32 &rom_size)
 {
     char  dir [_MAX_DIR + 1];
@@ -2664,17 +2593,9 @@ void CMemory::CheckForIPSPatch (const char *rom_filename, bool8 header,
     FILE  *patch_file  = NULL;
     long  offset = header ? 512 : 0;
 
-    _splitpath (rom_filename, drive, dir, name, ext);
-    _makepath (fname, drive, dir, name, "ips");
-    
-    if (!(patch_file = fopen (fname, "rb")))
-    {
-	if (!(patch_file = fopen (S9xGetFilename (".ips"), "rb")))
-	    return;
-    }
+    if (!(patch_file = fopen(S9xGetFilename (".ips"), "rb"))) return;
 
-    if (fread (fname, 1, 5, patch_file) != 5 ||
-	strncmp (fname, "PATCH", 5) != 0)
+    if (fread (fname, 1, 5, patch_file) != 5 || strncmp (fname, "PATCH", 5) != 0)
     {
 	fclose (patch_file);
 	return;
@@ -2752,7 +2673,6 @@ err_eof:
     if (patch_file) 
 	fclose (patch_file);
 }
-#endif
 
 #undef INLINE
 #define INLINE

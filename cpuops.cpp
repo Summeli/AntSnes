@@ -3915,8 +3915,161 @@ static void OpDB (void)
 }
 
 // Reserved S9xOpcode
-static void Op42 (void)
-{
+static void Op42 (void) {	
+#ifndef SA1_OPCODES	
+	uint8 b;
+	
+	CPU.WaitAddress = NULL;
+	if (Settings.SA1)	S9xSA1ExecuteDuringSleep ();
+	
+	CPU.Cycles = CPU.NextEvent;
+	if (CPU.APU_APUExecuting)
+	{
+		ICPU.CPUExecuting = FALSE;
+		do
+		{
+			APU_EXECUTE1();
+		} while (CPU.APU_Cycles < CPU.NextEvent);
+		ICPU.CPUExecuting = TRUE;
+	}
+	
+	//debug_log("toto");
+	b=*CPU.PC++;
+	
+	//relative
+	s9xInt8=0xF0|(b&0xF);
+#ifdef VAR_CYCLES
+	CPU.Cycles += CPU.MemSpeed;
+#endif    
+	OpAddress = ((int) (CPU.PC - CPU.PCBase) + s9xInt8) & 0xffff;
+	
+	switch (b&0xF0) {		
+		case 0x10: //BPL
+			BranchCheck1 ();
+			if (!CheckNegative ()) {
+				CPU.PC = CPU.PCBase + OpAddress;
+#ifdef VAR_CYCLES
+				CPU.Cycles += ONE_CYCLE;
+#else
+#ifndef SA1_OPCODES
+				CPU.Cycles++;
+#endif
+#endif
+				CPUShutdown ();
+			}
+			return;
+		case 0x30: //BMI
+			BranchCheck1 ();
+			if (CheckNegative ()) {
+				CPU.PC = CPU.PCBase + OpAddress;
+#ifdef VAR_CYCLES
+				CPU.Cycles += ONE_CYCLE;
+#else
+#ifndef SA1_OPCODES
+				CPU.Cycles++;
+#endif
+#endif
+				CPUShutdown ();
+			}
+			return;
+		case 0x50: //BVC
+			BranchCheck0 ();
+			if (!CheckOverflow ()) {
+				CPU.PC = CPU.PCBase + OpAddress;
+#ifdef VAR_CYCLES
+				CPU.Cycles += ONE_CYCLE;
+#else
+#ifndef SA1_OPCODES
+				CPU.Cycles++;
+#endif
+#endif
+				CPUShutdown ();
+			}
+			return;
+		case 0x70: //BVS
+			BranchCheck0 ();
+			if (CheckOverflow ()) {
+				CPU.PC = CPU.PCBase + OpAddress;
+#ifdef VAR_CYCLES
+				CPU.Cycles += ONE_CYCLE;
+#else
+#ifndef SA1_OPCODES
+				CPU.Cycles++;
+#endif
+#endif
+				CPUShutdown ();
+			}
+			return;
+		case 0x80: //BRA			
+			//op80
+			CPU.PC = CPU.PCBase + OpAddress;
+#ifdef VAR_CYCLES
+    		CPU.Cycles += ONE_CYCLE;
+#else
+#ifndef SA1_OPCODES
+    		CPU.Cycles++;
+#endif
+#endif
+			CPUShutdown ();
+			return;
+		case 0x90: //BCC
+			BranchCheck0 ();
+			if (!CheckCarry ()) {
+				CPU.PC = CPU.PCBase + OpAddress;
+#ifdef VAR_CYCLES
+				CPU.Cycles += ONE_CYCLE;
+#else
+#ifndef SA1_OPCODES
+				CPU.Cycles++;
+#endif
+#endif
+				CPUShutdown ();
+			}
+			return;
+		case 0xB0: //BCS
+			BranchCheck0 ();
+			if (CheckCarry ()) {
+				CPU.PC = CPU.PCBase + OpAddress;
+#ifdef VAR_CYCLES
+				CPU.Cycles += ONE_CYCLE;
+#else
+#ifndef SA1_OPCODES
+				CPU.Cycles++;
+#endif
+#endif
+				CPUShutdown ();
+			}
+			return;
+		case 0xD0: //BNE
+			BranchCheck1 ();
+			if (!CheckZero ()) {
+				CPU.PC = CPU.PCBase + OpAddress;
+#ifdef VAR_CYCLES
+				CPU.Cycles += ONE_CYCLE;
+#else
+#ifndef SA1_OPCODES
+				CPU.Cycles++;
+#endif
+#endif
+				CPUShutdown ();
+			}
+			return;
+		case 0xF0: //BEQ
+			BranchCheck2 ();
+			if (CheckZero ()) {
+				CPU.PC = CPU.PCBase + OpAddress;
+#ifdef VAR_CYCLES
+				CPU.Cycles += ONE_CYCLE;
+				#else
+				#ifndef SA1_OPCODES
+				CPU.Cycles++;
+				#endif
+				#endif
+				CPUShutdown ();
+			}
+    	return;
+	}
+#endif	
 }
 
 /**********************************************************************************************/

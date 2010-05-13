@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>DPadWidgetClass</class>
- <widget class="QWidget" name="DPadWidgetClass" >
-  <property name="geometry" >
+ <widget class="QWidget" name="DPadWidgetClass">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,11 +10,11 @@
     <height>360</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>DPadWidget</string>
   </property>
-  <widget class="QLabel" name="dpadwidgetlabel" >
-   <property name="geometry" >
+  <widget class="QLabel" name="dpadwidgetlabel">
+   <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
@@ -21,19 +22,19 @@
      <height>360</height>
     </rect>
    </property>
-   <property name="styleSheet" >
-    <string notr="true" >QLabel{
-background-image: url(:/graphics/gfx/SnesPad.bmp);
+   <property name="styleSheet">
+    <string notr="true">QLabel{
+background-image: url(:/graphics/gfx/left_panel.png);
 }</string>
    </property>
-   <property name="text" >
+   <property name="text">
     <string/>
    </property>
   </widget>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="atnresources.qrc" />
+  <include location="atnresources.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -50,27 +50,27 @@ char *S9xParseArgs (char **argv, int argc);
 void S9xParseArg (char **argv, int &index, int argc);
 void S9xExtraUsage ();
 uint32 S9xReadJoypad (int which1_0_to_4);
-bool8 S9xReadMousePosition (int which1_0_to_1, int &x, int &y, uint32 &buttons);
-bool8 S9xReadSuperScopePosition (int &x, int &y, uint32 &buttons);
+bool8_32 S9xReadMousePosition (int which1_0_to_1, int &x, int &y, uint32 &buttons);
+bool8_32 S9xReadSuperScopePosition (int &x, int &y, uint32 &buttons);
 
 void S9xUsage ();
 void S9xInitDisplay (int argc, char **argv);
 void S9xDeinitDisplay ();
 void S9xInitInputDevices ();
 void S9xSetTitle (const char *title);
-void S9xProcessEvents (bool8 block);
+void S9xProcessEvents (bool8_32 block);
 void S9xPutImage (int width, int height);
 void S9xParseDisplayArg (char **argv, int &index, int argc);
 void S9xToggleSoundChannel (int channel);
 void S9xSetInfoString (const char *string);
 int S9xMinCommandLineArgs ();
 void S9xNextController ();
-bool8 S9xLoadROMImage (const char *string);
+bool8_32 S9xLoadROMImage (const char *string);
 const char *S9xSelectFilename (const char *def, const char *dir,
 			       const char *ext, const char *title);
 
-const char *S9xChooseFilename (bool8 read_only);
-bool8 S9xOpenSnapshotFile (const char *base, bool8 read_only, STREAM *file);
+const char *S9xChooseFilename (bool8_32 read_only);
+bool8_32 S9xOpenSnapshotFile (const char *base, bool8_32 read_only, STREAM *file);
 void S9xCloseSnapshotFile (STREAM file);
 
 const char *S9xBasename (const char *filename);

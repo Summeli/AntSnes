@@ -155,30 +155,19 @@ if (CPU.APU_APUExecuting == mode) \
 
 #else
 
-#ifndef CPU_ASM
 #define APU_EXECUTE1() \
-if (Settings.APUEnabled) \
 { \
     CPU.APU_Cycles += S9xAPUCycles [*IAPU.PC]; \
     (*S9xApuOpcodes[*IAPU.PC]) (); \
 }
 
 #define APU_EXECUTE(x) \
-if (CPU.APU_APUExecuting && Settings.APUEnabled) \
+if (CPU.APU_APUExecuting) \
 {\
-    	while (CPU.APU_Cycles <= CPU.Cycles) \
-	{ \
-  	  CPU.APU_Cycles += S9xAPUCycles [*IAPU.PC]; \
-  	  (*S9xApuOpcodes[*IAPU.PC]) (); \
-	} \
+    while (CPU.APU_Cycles <= CPU.Cycles) \
+	APU_EXECUTE1(); \
 }
 
-#else
-
-#define APU_EXECUTE1()
-#define APU_EXECUTE(x)
-
-#endif
 #endif // ASM_SPC700
 
 #endif // SPCTOOL

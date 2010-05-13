@@ -25,7 +25,7 @@
 #include "emusettings.h"
 #include "debug.h"
 
-#define KAntSettingsVersion 2
+#define KAntSettingsVersion 3
 
 EmuSettings::EmuSettings(QWidget *parent)
     : QMainWindow(parent)
@@ -47,7 +47,7 @@ EmuSettings::EmuSettings(QWidget *parent)
 	antvideosettings->setGeometry(QRect(0, 0, 640, 150));
 	antvideosettings->hide();
 	
-	keysettings =new controlsettings( this );
+	keysettings =new controlsettings( antsettings.iScreenSettings, this );
 	keysettings->setGeometry(QRect(0, 0, 640, 150));
 	keysettings->hide();
 	
@@ -84,6 +84,7 @@ EmuSettings::EmuSettings(QWidget *parent)
 	
 	//connect control settings
 	connect( keysettings, SIGNAL(runkeyconfig()), this, SLOT( keyConfig() ));
+	connect( keysettings, SIGNAL(screensettings(int)), this, SLOT( screensettings(int) ));
 	
 	romloaded = false;
 	settingsChanged = false;
@@ -138,6 +139,14 @@ void EmuSettings::frameskip( int skip )
 	__DEBUG2("Frameskip is", skip );
 	settingsChanged = true;
     antsettings.iFrameSkip = skip;
+    }
+
+void EmuSettings::screensettings( int settings )
+	{
+	__DEBUG_IN
+	__DEBUG2("current screensetetings are", settings );
+	settingsChanged = true;
+    antsettings.iScreenSettings = settings;
 	__DEBUG_OUT
     }
 
@@ -394,6 +403,7 @@ void EmuSettings::setDefaultSettings()
 	antsettings.iSampleRate = 22050;
 	antsettings.iStereo = false;
 	antsettings.iVolume = 4;
+	antsettings.iScreenSettings = 0;
 	}
 
 void EmuSettings::savecurrentSettings()
@@ -418,7 +428,7 @@ void EmuSettings::savecurrentSettings()
 	settings.setValue("samplerate",antsettings.iSampleRate);
 	settings.setValue("stereo",antsettings.iStereo);
 	settings.setValue("volume",antsettings.iVolume);
-	
+	settings.setValue("screensettings", antsettings.iScreenSettings);
 	settings.sync();
 	__DEBUG_OUT
 	}
@@ -452,6 +462,6 @@ void EmuSettings::loadSettings()
 	antsettings.iSampleRate = settings.value("samplerate").toInt();
 	antsettings.iStereo = settings.value("stereo").toBool();
 	antsettings.iVolume = settings.value("volume").toInt();
-	
+	antsettings.iScreenSettings = settings.value("screensettings").toInt();
 	__DEBUG_OUT
 	}

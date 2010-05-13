@@ -1,1 +1,1 @@
-\Epoc32\tools\mifconv.exe antsnes.mif /c32 "AntSnes_44.svg"
+\S60\devices\S60_5th_Edition_SDK_v1.0\Epoc32\tools\mifconv.exe antsnes.mif /c32 "AntSnes_44.svg"

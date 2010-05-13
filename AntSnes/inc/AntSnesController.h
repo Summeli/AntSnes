@@ -167,7 +167,7 @@ public:
 	void AudioChannelOpened();
 	
 public:
-	void VirtualKeyEvent( const TAntSnesVirtualKey& aKey, TBool isDown );
+	void VirtualKeyEvent( const TUint32 aKey, TBool isDown );
 	  
 private: // Data
     /** OpenGL es */

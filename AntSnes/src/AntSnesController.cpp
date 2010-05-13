@@ -65,7 +65,7 @@ static int target_fps, target_frametime, too_fast;
 //extern int emu_was_reset;
 static int emu_cflags = 0; // emu control flags: reset_timing, saveload_pending, load
 static int sndLen = 0;
-static uint8* audioOut = 0;
+static signed short* audioOut = 0;
 static uint32 JoyPad;
 static uint32 JoyPadClicks;
 static bool audioEnabled;
@@ -82,7 +82,6 @@ static MAntVideo* g_DSARenderer;
 static int g_samplecount;
 
 TUint16 KAntKeyTable[12]={SNES_UP_MASK,SNES_DOWN_MASK,SNES_LEFT_MASK,SNES_RIGHT_MASK,SNES_A_MASK,SNES_X_MASK,SNES_Y_MASK,SNES_B_MASK,SNES_START_MASK,SNES_SELECT_MASK,SNES_TL_MASK,SNES_TR_MASK};
-TUint16 KVirtualKeyTable[12] = {EKEY_UP,EKEY_DOWN,EKEY_LEFT,EKEY_RIGHT,EKEY_A,EKEY_X,EKEY_Y,EKEY_B,EKEY_START,EKEY_SELECT,EKEY_L,EKEY_R};
 CAntAudio* g_GameAudio;
 
 TInt Audio_ThreadInit( TAny* )
@@ -468,7 +467,7 @@ TInt CAntSnesController::DoSnesFrameL()
 	if( audioEnabled )
 		{
 		TInt err;
-		audioOut = g_GameAudio->NextFrameL();	
+		audioOut = (signed short*) g_GameAudio->NextFrameL();	
 		if(audioOut)
 			{
 			S9xMixSamplesO(audioOut, iSampleCount, 0);
@@ -524,7 +523,7 @@ TInt CAntSnesController::DoSnesFrameL(TInt aRenderFrame)
 		if( audioEnabled )
 			{
 			TInt err;
-			audioOut = g_GameAudio->NextFrameL();	
+			audioOut = (signed short*) g_GameAudio->NextFrameL();	
 			if(audioOut)
 				{
 				S9xMixSamplesO(audioOut, iSampleCount, 0);
@@ -792,7 +791,7 @@ DEBUGPRINT(_L("KeyEvent"));
 
 	if( aType == EEventKeyDown )
 		{
-		for(TInt i=0;i<16;i++)
+		for(TInt i=0;i<12;i++)
 			{
 			if(c==iSettings.iScanKeyTable[i])
 				{
@@ -803,7 +802,7 @@ DEBUGPRINT(_L("KeyEvent"));
 		}
 	if(aType == EEventKeyUp)
 		{
-		for(TInt i=0;i<16;i++)
+		for(TInt i=0;i<12;i++)
 			{
 			if(c==iSettings.iScanKeyTable[i])
 				{
@@ -817,27 +816,16 @@ DEBUGPRINT(_L("KeyEvent"));
 }
 
 
-void CAntSnesController::VirtualKeyEvent( const TAntSnesVirtualKey& aKey, TBool isDown )
+void CAntSnesController::VirtualKeyEvent( const TUint32 aKey, TBool isDown )
 	{
+	TUint32 key = (TUint32) aKey; 
 	if( isDown )
 		{
-		for(TInt i=0;i<12;i++)
-			{
-			if(aKey==KVirtualKeyTable[i])
-				{
-				JoyPad |= KAntKeyTable[i];
-				}
-			}
+		JoyPad |= aKey;
 		}
 	else
 		{
-		for(TInt i=0;i<12;i++)
-			{
-			if(aKey==KVirtualKeyTable[i])
-				{
-				JoyPad &= ~KAntKeyTable[i];
-				}
-			}
+		JoyPad &= ~aKey;
 		}
 	}
 
@@ -1256,4 +1244,63 @@ void DumpMemInfo()
 	DEBUGPRINT(_L("ram_free=%dKB/%dKB"), ramSizeFree/1024, ramSize/1024);
 }
 
+void _splitpath (const char *path, char *drive, char *dir, char *fname,
+	char *ext)
+{
+	*drive = 0;
+
+	char *slash = strrchr (path, '/');
+	if (!slash)
+		slash = strrchr (path, '\\');
+
+	char *dot = strrchr (path, '.');
+
+	if (dot && slash && dot < slash)
+		dot = NULL;
+
+	if (!slash)
+	{
+		strcpy (dir, "");
+		strcpy (fname, path);
+		if (dot)
+		{
+			*(fname + (dot - path)) = 0;
+			strcpy (ext, dot + 1);
+		}
+		else
+			strcpy (ext, "");
+	}
+	else
+	{
+		strcpy (dir, path);
+		*(dir + (slash - path)) = 0;
+		strcpy (fname, slash + 1);
+		if (dot)
+		{
+			*(fname + (dot - slash) - 1) = 0;
+			strcpy (ext, dot + 1);
+		}
+		else
+			strcpy (ext, "");
+	}
+} 
+
+
+void _makepath (char *path, const char *, const char *dir,
+	const char *fname, const char *ext)
+{
+	if (dir && *dir)
+	{
+		strcpy (path, dir);
+		strcat (path, "/");
+	}
+	else
+	*path = 0;
+	strcat (path, fname);
+	if (ext && *ext)
+	{
+		strcat (path, ".");
+		strcat (path, ext);
+	}
+}
 // eof

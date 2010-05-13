@@ -49,7 +49,7 @@
 #include "dma.h"
 #include "gfx.h"
 #include "soundux.h"
-//#include "cheats.h"
+#include "cheats.h"
 #include "sa1.h"
 //#include "netplay.h"
 #include "port.h"
@@ -180,9 +180,9 @@ uint32 current_graphic_format = RGB565;
 #endif
 
 uint8 GetBank = 0;
-//struct SCheatData Cheat;
+struct SCheatData Cheat;
 
-volatile SoundStatus so;
+SoundStatus so;
 SSoundData SoundData;
 int Echo [24000];
 int DummyEchoBuffer [SOUND_BUFFER_SIZE];

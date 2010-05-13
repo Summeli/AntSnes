@@ -40,10 +40,12 @@ public slots:
     void stopDSA();
     void startDSA();
     void saveStateImage( QString rom, int sate );
+    void setScreenMode( int mode);
     
 protected:
     void paintEvent(QPaintEvent *);
-
+    void createScreenBuffer();
+    
 public:
     // from MDirectScreenAccess class  
     void Restart(RDirectScreenAccess::TTerminationReasons aReason); 
@@ -58,6 +60,7 @@ protected: //data
     QImage* buf;
     TUint8* bitmapdata;
     
+    int screenmode;
     CDirectScreenAccess *iDSA;
     CDirectScreenBitmap *iDSBitmap;
 

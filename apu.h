@@ -138,14 +138,12 @@ void S9xSetAPUControl (uint8 byte);
 void S9xSetAPUDSP (uint8 byte);
 uint8 S9xGetAPUDSP ();
 void S9xSetAPUTimer (uint16 Address, uint8 byte);
-bool8 S9xInitSound(); //(int quality, bool8 stereo, int buffer_size);
 void S9xOpenCloseSoundTracingFile (bool8);
 void S9xPrintAPUState ();
 extern int32 S9xAPUCycles [256];	// Scaled cycle lengths
 extern int32 S9xAPUCycleLengths [256];	// Raw data.
 extern void (*S9xApuOpcodes [256]) (void);
 extern void (*S9xApuOpcodesReal [256]) (void);
-void APUCompare();
 END_EXTERN_C
 
 

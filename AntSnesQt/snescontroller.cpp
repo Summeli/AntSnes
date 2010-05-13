@@ -48,7 +48,7 @@ static int target_fps, target_frametime, too_fast;
 static int emu_cflags = 0; // emu control flags: reset_timing, saveload_pending, load
 static int sndLen = 0;
 #ifdef __STUPID_ANTAUDIO
-static uint8* audioOut = 0;
+static short int* audioOut = 0;
 #endif
 static uint32 JoyPad;
 static bool audioEnabled;
@@ -444,10 +444,10 @@ void QSnesController::gameLoopAuto()
 
 #ifdef __STUPID_ANTAUDIO
         
-           audioOut = audio->NextFrameL();   
+           audioOut = (short int*) audio->NextFrameL();   
             if(audioOut)
                 {
-                S9xMixSamplesO(audioOut, iSampleCount, 0);
+                S9xMixSamplesO( audioOut, iSampleCount, 0);
                 emit(audioFrameReady());     
                 }
 #else
@@ -493,7 +493,7 @@ void QSnesController::gameLoopSkip( int frameskip )
 		if( audioEnabled )
 			{
 #ifdef __STUPID_ANTAUDIO
-			audioOut = audio->NextFrameL();   
+			audioOut = (short int*) audio->NextFrameL();   
 			if(audioOut)
 			  {
 			  S9xMixSamplesO(audioOut, iSampleCount, 0);
@@ -952,4 +952,63 @@ unsigned long gp2x_timer_read(void)
   //tval.tv_usec
   //tval.tv_sec
   return (tval.tv_sec*1000000)+tval.tv_usec;
+}
+
+void _splitpath (const char *path, char *drive, char *dir, char *fname,
+	char *ext)
+{
+	*drive = 0;
+
+	char *slash = strrchr (path, '/');
+	if (!slash)
+		slash = strrchr (path, '\\');
+
+	char *dot = strrchr (path, '.');
+
+	if (dot && slash && dot < slash)
+		dot = NULL;
+
+	if (!slash)
+	{
+		strcpy (dir, "");
+		strcpy (fname, path);
+		if (dot)
+		{
+			*(fname + (dot - path)) = 0;
+			strcpy (ext, dot + 1);
+		}
+		else
+			strcpy (ext, "");
+	}
+	else
+	{
+		strcpy (dir, path);
+		*(dir + (slash - path)) = 0;
+		strcpy (fname, slash + 1);
+		if (dot)
+		{
+			*(fname + (dot - slash) - 1) = 0;
+			strcpy (ext, dot + 1);
+		}
+		else
+			strcpy (ext, "");
+	}
+} 
+
+void _makepath (char *path, const char *, const char *dir,
+	const char *fname, const char *ext)
+{
+	if (dir && *dir)
+	{
+		strcpy (path, dir);
+		strcat (path, "/");
+	}
+	else
+	*path = 0;
+	strcat (path, fname);
+	if (ext && *ext)
+	{
+		strcat (path, ".");
+		strcat (path, ext);
+	}
 }

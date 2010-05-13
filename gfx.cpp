@@ -49,7 +49,7 @@
 #include "display.h"
 #include "gfx.h"
 #include "apu.h"
-//#include "cheats.h"
+#include "cheats.h"
 //#include "tile.h"
 #include "port.h"
 
@@ -554,11 +554,11 @@ void S9xStartScreenRefresh ()
 	    return;
 	}
 #endif
-		IPPU.RenderedFramesCount++;
-		IPPU.PreviousLine = IPPU.CurrentLine = 0;
-		IPPU.MaxBrightness = PPU.Brightness;
-		IPPU.LatchedBlanking = PPU.ForcedBlanking;
-	IPPU.Interlace = (Memory.FillRAM[0x2133] & 1);
+	IPPU.RenderedFramesCount++;
+	IPPU.PreviousLine = IPPU.CurrentLine = 0;
+	IPPU.MaxBrightness = PPU.Brightness;
+	IPPU.LatchedBlanking = PPU.ForcedBlanking;
+	IPPU.LatchedInterlace = (Memory.FillRAM[0x2133] & 1);
 	IPPU.RenderedScreenWidth = 256;
 	IPPU.RenderedScreenHeight = PPU.ScreenHeight;
 	IPPU.DoubleWidthPixels = FALSE;
@@ -657,6 +657,9 @@ void S9xEndScreenRefresh ()
 		S9xDeinitUpdate (IPPU.RenderedScreenWidth, IPPU.RenderedScreenHeight,
 				 Settings.SixteenBit);
     }
+#ifndef RC_OPTIMIZED
+    S9xApplyCheats ();
+#endif
 
 #ifdef DEBUGGER
     if (CPU.Flags & FRAME_ADVANCE_FLAG)
@@ -701,7 +704,7 @@ void S9xSetInfoString (const char *string)
     GFX.InfoStringTimeout = 120;
 }
 
-INLINE void SelectTileRenderer (bool8 normal)
+INLINE void SelectTileRenderer (bool8_32 normal)
 {
     if (normal)
     {
@@ -827,8 +830,7 @@ void S9xSetupOBJ ()
     IPPU.OBJChanged = FALSE;
 }
 
-
-void DrawOBJS (bool8 OnMain = FALSE, uint8 D = 0)
+void DrawOBJS (bool8_32 OnMain = FALSE, uint8 D = 0)
 {
 	uint32 O;
     uint32 BaseTile, Tile;
@@ -1321,7 +1323,7 @@ void DrawBackgroundOffset (uint32 BGMode, uint32 bg, uint8 Z1, uint8 Z2)
 	    uint32 MaxCount = 8;
 
 	    uint32 s = Left * GFX.PixSize + Y * GFX.PPL;
-	    bool8 left_hand_edge = (Left == 0);
+	    bool8_32 left_hand_edge = (Left == 0);
 	    Width = Right - Left;
 
 	    if (Left & 7)
@@ -2368,7 +2370,7 @@ void DrawBGMode7Background16Sub1_2 (uint8 *Screen, int bg)
     Screen += GFX.StartY * GFX.Pitch; \
     uint8 *Depth = GFX.DB + GFX.StartY * GFX.PPL; \
     struct SLineMatrixData *l = &LineMatrixData [GFX.StartY]; \
-    bool8 allowSimpleCase = FALSE; \
+    bool8_32 allowSimpleCase = FALSE; \
     if (!l->MatrixB && !l->MatrixC && (l->MatrixA == 0x0100) && (l->MatrixD == 0x0100) \
         && !LineMatrixData[GFX.EndY].MatrixB && !LineMatrixData[GFX.EndY].MatrixC \
         && (LineMatrixData[GFX.EndY].MatrixA == 0x0100) && (LineMatrixData[GFX.EndY].MatrixD == 0x0100) \
@@ -2394,7 +2396,7 @@ void DrawBGMode7Background16Sub1_2 (uint8 *Screen, int bg)
 	    yy += (VOffset - CentreY) % 1023; \
 	else \
 	    yy += VOffset - CentreY; \
-        bool8 simpleCase = FALSE; \
+        bool8_32 simpleCase = FALSE; \
         int BB; \
         int DD; \
         /* Make a special case for the identity matrix, since it's a common case and */ \
@@ -2815,13 +2817,13 @@ TWO_LOW_BITS_MASK = RGB_LOW_BITS_MASK | (RGB_LOW_BITS_MASK << 1); \
 HIGH_BITS_SHIFTED_TWO_MASK = (( (FIRST_COLOR_MASK | SECOND_COLOR_MASK | THIRD_COLOR_MASK) & \
                                 ~TWO_LOW_BITS_MASK ) >> 2);
 
-void RenderScreen (uint8 *Screen, bool8 sub, bool8 force_no_add, uint8 D)
+void RenderScreen (uint8 *Screen, bool8_32 sub, bool8_32 force_no_add, uint8 D)
 {
-    bool8 BG0;
-    bool8 BG1;
-    bool8 BG2;
-    bool8 BG3;
-    bool8 OB;
+    bool8_32 BG0;
+    bool8_32 BG1;
+    bool8_32 BG2;
+    bool8_32 BG3;
+    bool8_32 OB;
 
     GFX.S = Screen;
 
@@ -2974,7 +2976,9 @@ void DisplayChar (uint8 *Screen, uint8 c)
 {
     int line = (((c & 0x7f) - 32) >> 4) * font_height;
     int offset = (((c & 0x7f) - 32) & 15) * font_width;
+#ifndef _SNESPPC
     if (Settings.SixteenBit)
+#endif
     {
 	int h, w;
 	uint16 *s = (uint16 *) Screen;
@@ -2993,6 +2997,7 @@ void DisplayChar (uint8 *Screen, uint8 c)
 	    }
 	}
     }
+#ifndef _SNESPPC
     else
     {
 	int h, w;
@@ -3012,6 +3017,7 @@ void DisplayChar (uint8 *Screen, uint8 c)
 	    }
 	}
     }
+#endif
 }
 
 static void S9xDisplayFrameRate ()
@@ -3025,6 +3031,9 @@ static void S9xDisplayFrameRate ()
 	     (int) Memory.ROMFramesPerSecond);
 
     int i;
+#ifdef _SNESPPC
+    Screen += (font_width - 1) * sizeof(uint16);
+#endif
     for (i = 0; i < len; i++)
     {
 	DisplayChar (Screen, string [i]);
@@ -3066,13 +3075,17 @@ void S9xUpdateScreen ()
 {
     int32 x2 = 1;
     GFX.S = GFX.Screen;
-    GFX.r2131 = Memory.FillRAM [0x2131];
-    GFX.r212c = Memory.FillRAM [0x212c];
-    GFX.r212d = Memory.FillRAM [0x212d];
-    GFX.r2130 = Memory.FillRAM [0x2130];
-    GFX.Pseudo = (Memory.FillRAM [0x2133] & 8) != 0 &&
-		(GFX.r212c & 15) != (GFX.r212d & 15) &&
-		(GFX.r2131 & 0x3f) == 0;
+	unsigned char *memoryfillram = Memory.FillRAM;
+
+	// get local copies of vid registers to be used later
+    GFX.r2131 = memoryfillram [0x2131]; // ADDITION/SUBTRACTION & SUBTRACTION DESIGNATION FOR EACH SCREEN 
+    GFX.r212c = memoryfillram [0x212c]; // MAIN SCREEN, DESIGNATION - used to enable BGS
+    GFX.r212d = memoryfillram [0x212d]; // SUB SCREEN DESIGNATION - used to enable sub BGS
+    GFX.r2130 = memoryfillram [0x2130]; // INITIAL SETTINGS FOR FIXED COLOR ADDITION OR SCREEN ADDITION
+	
+	GFX.Pseudo = (memoryfillram [0x2133] & 8) != 0 && // Use EXTERNAL SYNCHRONIZATION?
+		 (GFX.r212c & 15) != (GFX.r212d & 15) && // Are the main screens different from the sub screens?
+		 (GFX.r2131 & 0x3f) == 0; // Is colour data addition/subtraction disabled on all BGS?
 
 	// refresh the sprites.
     if (IPPU.OBJChanged)
@@ -3095,14 +3108,14 @@ void S9xUpdateScreen ()
 
 #ifndef RC_OPTIMIZED
     if (Settings.SupportHiRes &&
-	(PPU.BGMode == 5 || PPU.BGMode == 6 || IPPU.Interlace))
+	(PPU.BGMode == 5 || PPU.BGMode == 6 || IPPU.LatchedInterlace))
     {
 		if (PPU.BGMode == 5 || PPU.BGMode == 6)
 		{
 		    IPPU.RenderedScreenWidth = 512;
 		    x2 = 2;
 		}
-		if (IPPU.Interlace)
+		if (IPPU.LatchedInterlace)
 		{
 		    starty = GFX.StartY * 2;
 		    endy = GFX.EndY * 2 + 1;
@@ -3824,11 +3837,11 @@ else \
 		    uint8 subadd = GFX.r2131 & 0x3f;
 
 			// go through all BGS are check if they need to be displayed
-		    bool8 BG0 = DISPLAY(1) && !(Settings.os9x_hack & GFX_IGNORE_BG0);
-		    bool8 BG1 = DISPLAY(2) && !(Settings.os9x_hack & GFX_IGNORE_BG1);
-		    bool8 BG2 = DISPLAY(4) && !(Settings.os9x_hack & GFX_IGNORE_BG2);
-		    bool8 BG3 = DISPLAY(8) && !(Settings.os9x_hack & GFX_IGNORE_BG3);
-		    bool8 OB  = DISPLAY(16) && !(Settings.os9x_hack & GFX_IGNORE_OBJ);
+		    bool8_32 BG0 = DISPLAY(1) && !(Settings.os9x_hack & GFX_IGNORE_BG0);
+		    bool8_32 BG1 = DISPLAY(2) && !(Settings.os9x_hack & GFX_IGNORE_BG1);
+		    bool8_32 BG2 = DISPLAY(4) && !(Settings.os9x_hack & GFX_IGNORE_BG2);
+		    bool8_32 BG3 = DISPLAY(8) && !(Settings.os9x_hack & GFX_IGNORE_BG3);
+		    bool8_32 OB  = DISPLAY(16) && !(Settings.os9x_hack & GFX_IGNORE_OBJ);
 
 		    if (PPU.BGMode <= 1)
 		    {
@@ -3960,7 +3973,7 @@ else \
 #endif
 	}
 
-	if (IPPU.Interlace)
+	if (IPPU.LatchedInterlace)
 	{
 	    // Interlace is enabled - double the height of all non-mode 5 and 6
 	    // pixels.
@@ -4000,7 +4013,7 @@ _BUILD_PIXEL(GBR565)
 _BUILD_PIXEL(GBR555)
 _BUILD_PIXEL(RGB5551)
 
-bool8 S9xSetRenderPixelFormat (int format)
+bool8_32 S9xSetRenderPixelFormat (int format)
 {
     extern uint32 current_graphic_format;
 

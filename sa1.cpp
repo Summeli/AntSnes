@@ -92,10 +92,10 @@ void S9xSA1Reset ()
     SA1.PC = NULL;
     SA1.PCBase = NULL;
     S9xSA1SetPCBase (SA1Registers.PC);
-    SA1.S9xOpcodes = S9xSA1OpcodesM1X1;
+    //SA1.S9xOpcodes = S9xSA1OpcodesM1X1; // unused
 
     S9xSA1UnpackStatus();
-    S9xSA1FixCycles ();
+    //S9xSA1FixCycles (); // unused
     SA1.Executing = TRUE;
     SA1.BWRAM = Memory.SRAM;
     Memory.FillRAM [0x2225] = 0;
@@ -136,7 +136,7 @@ void S9xFixSA1AfterSnapshotLoad ()
 
     S9xSA1SetPCBase (SA1.ShiftedPB + SA1Registers.PC);
     S9xSA1UnpackStatus ();
-    S9xSA1FixCycles ();
+    //S9xSA1FixCycles (); // unused
     SA1.VirtualBitmapFormat = (Memory.FillRAM [0x223f] & 0x80) ? 2 : 4;
     Memory.BWRAM = Memory.SRAM + (Memory.FillRAM [0x2224] & 7) * 0x2000;
     S9xSA1SetBWRAMMemMap (Memory.FillRAM [0x2225]);
@@ -407,7 +407,7 @@ void S9xSetSA1 (uint8 byte, uint32 address)
 	    {
 		SA1.Flags |= IRQ_PENDING_FLAG;
 		SA1.IRQActive |= SNES_IRQ_SOURCE;
-		SA1.Executing = !SA1.Waiting && SA1.S9xOpcodes;
+		SA1.Executing = !SA1.Waiting;// && SA1.S9xOpcodes; // unused
 	    }
 	}
 	if (byte & 0x10)
@@ -692,7 +692,7 @@ void S9xSetSA1 (uint8 byte, uint32 address)
 	if ((Memory.FillRAM [0x2230] & 0xb0) == 0xa0)
 	{
 	    // Char conversion 2 DMA enabled
-	    memmove (&Memory.ROM [Memory.MAX_ROM_SIZE - 0x10000] + SA1.in_char_dma * 16,
+	    memmove (&Memory.ROM [CMemory::MAX_ROM_SIZE - 0x10000] + SA1.in_char_dma * 16,
 		     &Memory.FillRAM [0x2240], 16);
 	    SA1.in_char_dma = (SA1.in_char_dma + 1) & 7;
 	    if ((SA1.in_char_dma & 3) == 0)
@@ -768,7 +768,7 @@ static void S9xSA1CharConv2 ()
 		(Memory.FillRAM [0x2231] & 3) == 1 ? 4 : 2;
     int bytes_per_char = 8 * depth;
     uint8 *p = &Memory.FillRAM [0x3000] + dest + offset * bytes_per_char;
-    uint8 *q = &Memory.ROM [Memory.MAX_ROM_SIZE - 0x10000] + offset * 64;
+    uint8 *q = &Memory.ROM [CMemory::MAX_ROM_SIZE - 0x10000] + offset * 64;
 
     switch (depth)
     {

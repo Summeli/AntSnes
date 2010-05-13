@@ -47,10 +47,7 @@
 #include "sa1.h"
 #include "port.h"
 
-/*
-#ifdef CPU_ASM
 #define __memcheck__
-#endif*/
 
 //#define __show_io__
 extern int oppause;
@@ -405,27 +402,19 @@ INLINE void S9xSetWord (uint16 Word, uint32 Address)
 	CPU.Cycles += Memory.MemorySpeed [block] << 1;
 #endif
 #if defined(CPU_SHUTDOWN) && defined(USE_SA1)
-	SetAddress += Address & 0xffff;
-	if (SetAddress == SA1.WaitByteAddress1 ||
-	    SetAddress == SA1.WaitByteAddress2)
+	uint8 *SetAddressSA1 += Address & 0xffff;
+	if (SetAddressSA1 == SA1.WaitByteAddress1 ||
+	    SetAddressSA1 == SA1.WaitByteAddress2)
 	{
 	    SA1.Executing = SA1.S9xOpcodes != NULL;
 	    SA1.WaitCounter = 0;
 	}
-	SetAddress -= Address & 0xffff;
-#ifdef FAST_LSB_WORD_ACCESS
-	*(uint16 *) SetAddress = Word;
-#else
-	*(SetAddress + (Address & 0xffff)) = (uint8) Word;
-	*(SetAddress + ((Address + 1) & 0xffff)) = Word >> 8;
 #endif
-#else
 #ifdef FAST_LSB_WORD_ACCESS
 	*(uint16 *) (SetAddress + (Address & 0xffff)) = Word;
 #else
 	*(SetAddress + (Address & 0xffff)) = (uint8) Word;
 	*(SetAddress + ((Address + 1) & 0xffff)) = Word >> 8;
-#endif
 #endif
 	return;
     }

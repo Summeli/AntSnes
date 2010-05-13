@@ -40,6 +40,7 @@ struct TAntSettings
 	int iSampleRate;
 	bool iStereo;
 	int iVolume;
+	int iScreenSettings;
 	
 };
 

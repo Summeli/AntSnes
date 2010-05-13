@@ -58,14 +58,14 @@ struct SOpcodes {
 
 struct SICPU
 {
-#ifndef CPU_ASM
+/*
     uint8  *Speed;
     struct SOpcodes *S9xOpcodes;
     uint8  _Carry;
     uint8  _Zero;
     uint8  _Negative;
     uint8  _Overflow;
-#endif
+*/
 	bool8  CPUExecuting;
     uint32 ShiftedPB;
     uint32 ShiftedDB;
@@ -104,7 +104,7 @@ STATIC inline void CLEAR_IRQ_SOURCE (uint32 M)
 	CPU.Flags &= ~IRQ_PENDING_FLAG;
 }
 
-#ifndef CPU_ASM
+#if 0
 STATIC inline void S9xUnpackStatus()
 {
     ICPU._Zero = (Registers.PL & Zero) == 0;

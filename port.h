@@ -76,7 +76,30 @@ typedef signed short int16;
 typedef signed int int32;
 typedef unsigned int uint32;
 typedef long long int64; // correct?
+
+typedef unsigned char	bool8_32;
+typedef unsigned char	uint8_32;
+typedef unsigned short	uint16_32;
+typedef signed char		int8_32;
+typedef short			int16_32;
 #endif
+
+//Path Defines
+#undef  _MAX_PATH
+#define _MAX_DIR PATH_MAX
+#define _MAX_DRIVE 1
+#define _MAX_FNAME PATH_MAX
+#define _MAX_EXT PATH_MAX
+#define PATH_MAX 1024
+#define _MAX_PATH (1024)
+
+//Additional Items for _SNESPPC port
+void _makepath (char *path, const char *drive, const char *dir,
+		const char *fname, const char *ext);
+void _splitpath (const char *path, char *drive, char *dir, char *fname,
+		 char *ext);
+#define strcasecmp strcmp
+#define strncasecmp strncmp
 
 #include "pixform.h"
 

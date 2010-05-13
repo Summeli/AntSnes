@@ -53,7 +53,7 @@ void DPadWidget::mousePressEvent(QMouseEvent* event )
 void DPadWidget::mouseReleaseEvent(QMouseEvent* event )
 	{
 	__DEBUG_IN
-	 if( event->y() > 80 )
+	 if( event->y() > 20 )
 		 {
 		 emit(virtualKeyEvent(prevkeys,false));
 	     prevkeys = 0;
@@ -71,7 +71,7 @@ void DPadWidget::mouseMoveEvent(QMouseEvent* event)
 void DPadWidget::processbuttons( QMouseEvent* event )
 	{
 	__DEBUG_IN
-	if( event->y() < 80 )
+	if( event->y() < 20 )
 		{
 		emit(showMenu() );
 		return;
@@ -99,7 +99,7 @@ void DPadWidget::processbuttons( QMouseEvent* event )
 quint32 DPadWidget::getSnesKeys( QMouseEvent* event )
 	{
 	quint32 key = 0;
-	if(  event->y() >= 280 )
+	if(  event->y() >= 320 )
 	        {
 	        //left key pressed
 			key = SNES_TL_MASK;

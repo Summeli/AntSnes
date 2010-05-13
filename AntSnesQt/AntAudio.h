@@ -44,7 +44,7 @@ public:
 	
 public:
 	void setAudioSettings(TInt aRate, TBool aStereo, TInt aPcmFrames, TInt aVolume );
-	TUint8* NextFrameL();
+	TInt8* NextFrameL();
 	TInt FreeBufferCount();
 	void Stop();
 

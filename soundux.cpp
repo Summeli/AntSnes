@@ -48,6 +48,19 @@
 #include <string.h>
 #include <errno.h>
 //#include <fcntl.h>
+typedef	unsigned int uint32_t;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+extern void memcpy16(unsigned short *dest, unsigned short *src, int count);
+extern void memcpy16bswap(unsigned short *dest, void *src, int count);
+extern void memcpy32(uint32_t *dest, int *src, int count);
+extern void memset32(uint32_t *dest, int c, int count);
+#ifdef __cplusplus
+}
+#endif
+
 #include "port.h"
 
 #define CLIP16(v) \
@@ -248,7 +261,7 @@ static void DecodeBlock (Channel *ch)
 	ch->last_block = TRUE;
 	ch->loop = FALSE;
 	ch->block = ch->decoded;
-	memset ((void *) ch->decoded, 0, sizeof (int16) * 16);
+		memset32 ((uint32_t *) ch->decoded, 0, 8);
 	return;
     }
     signed char *compressed = (signed char *) &IAPU.RAM [ch->block_pointer];
@@ -259,7 +272,7 @@ static void DecodeBlock (Channel *ch)
 
     int16 *raw = ch->block = ch->decoded;
 
-#ifdef CPU_ASM //not defined in reesys version
+#if 0 //def ARM
 	DecodeBlockAsm (compressed, raw, &ch->previous [0], &ch->previous [1]);
 #else
 	int32 out;
@@ -634,8 +647,11 @@ static void MixStereo (int sample_count)
 
 		MixBuffer [I]   += VL;
 		MixBuffer [I+1] += VR;
+		if (ch->echo_buf_ptr)
+		{
 			ch->echo_buf_ptr [I]   += VL;
 			ch->echo_buf_ptr [I+1] += VR;
+		}
         }
 stereo_exit: ;
     }
@@ -910,7 +926,8 @@ static void MixMono (int sample_count)
 	    }
 
 	    MixBuffer [I] += V;
-	    ch->echo_buf_ptr [I] += V;
+		if (ch->echo_buf_ptr)
+		    ch->echo_buf_ptr [I] += V;
 
 	    if (pitch_mod & (1 << (J + 1)))
 		wave [I] = ch->sample * ch->envx;
@@ -921,321 +938,190 @@ mono_exit: ;
 
 
 // For backwards compatibility with older port specific code
-void S9xMixSamples (uint8 *buffer, int sample_count)
+void S9xMixSamples (signed short *buffer, int sample_count)
 {
     S9xMixSamplesO (buffer, sample_count, 0);
 }
 
 
-void S9xMixSamplesO (uint8 *buffer, int sample_count, int byte_offset)
+void S9xMixSamplesO (signed short *buffer, int sample_count, int sample_offset)
 {
-    int J;
-    int I;
+	// 16-bit sound only
+	int J;
 
-    if (!so.mute_sound)
-    {
-	memset (MixBuffer, 0, sample_count * sizeof (MixBuffer [0]));
+	buffer += sample_offset;
+
+	if (so.mute_sound)
+	{
+		memset32((uint32_t*)buffer, 0, sample_count>>1);
+		return;
+	}
+
+	memset32 ((uint32_t*)MixBuffer, 0, sample_count);
 	if (SoundData.echo_enable)
-	    memset (EchoBuffer, 0, sample_count * sizeof (EchoBuffer [0]));
+		memset32 ((uint32_t*)EchoBuffer, 0, sample_count);
 
 	if (so.stereo)
-	    MixStereo (sample_count);
+		MixStereo (sample_count);
 	else
-	    MixMono (sample_count);
-    }
+		MixMono (sample_count);
 
     /* Mix and convert waveforms */
-    if (so.sixteen_bit)
-    {
-	int byte_count = sample_count << 1;
-	
-	// 16-bit sound
-	if (so.mute_sound)
+	if (SoundData.echo_enable && SoundData.echo_buffer_size)
 	{
-            memset (buffer + byte_offset, 0, byte_count);
-	}
-	else
-	{
-	    int O = byte_offset >> 1;
-	    if (SoundData.echo_enable && SoundData.echo_buffer_size)
-	    {
 		if (so.stereo)
 		{
-		    // 16-bit stereo sound with echo enabled ...
-		    if (SoundData.no_filter)
-		    {
-			// ... but no filter defined.
-			for (J = 0; J < sample_count; J++)
+			int l, r;
+			int master_vol_l = SoundData.master_volume[0];
+			int master_vol_r = SoundData.master_volume[1];
+			int echo_vol_l = SoundData.echo_volume[0];
+			int echo_vol_r = SoundData.echo_volume[1];
+
+			// 16-bit stereo sound with echo enabled ...
+			if (SoundData.no_filter)
 			{
-			    int E = Echo [SoundData.echo_ptr];
+				// ... but no filter defined.
+				for (J = 0; J < sample_count; J+=2)
+				{
+					int E = Echo [SoundData.echo_ptr];
 
-			    Echo [SoundData.echo_ptr] = (E * SoundData.echo_feedback) / 128 +
-							EchoBuffer [J];
+					Echo[SoundData.echo_ptr++] = (E * SoundData.echo_feedback) / 128 + EchoBuffer[J];
+					Echo[SoundData.echo_ptr++] = (E * SoundData.echo_feedback) / 128 + EchoBuffer[J+1];
 
-			    if ((SoundData.echo_ptr += 1) >= SoundData.echo_buffer_size)
-				SoundData.echo_ptr = 0;
+					if (SoundData.echo_ptr >= SoundData.echo_buffer_size)
+						SoundData.echo_ptr = 0;
 
-			    I = (MixBuffer [J] * 
-				 SoundData.master_volume [J & 1] +
-				 E * SoundData.echo_volume [J & 1]) / VOL_DIV16;
+					l = (MixBuffer[J]   * master_vol_l + E * echo_vol_l) / VOL_DIV16;
+					r = (MixBuffer[J+1] * master_vol_r + E * echo_vol_r) / VOL_DIV16;
 
-			    CLIP16(I);
-			    ((signed short *) buffer)[J + O] = I;
+					CLIP16(l);
+					CLIP16(r);
+					buffer[J]   = l;
+					buffer[J+1] = r;
+				}
 			}
-		    }
-		    else
-		    {
-			// ... with filter defined.
-			for (J = 0; J < sample_count; J++)
+			else
 			{
-			    int E = Echo [SoundData.echo_ptr];
+				// ... with filter defined.
+				for (J = 0; J < sample_count; J+=2)
+				{
+					register int E = Echo [SoundData.echo_ptr];
 
-			    Loop [(Z - 0) & 15] = E;
-			    E =  E                    * FilterTaps [0];
-			    E += Loop [(Z -  2) & 15] * FilterTaps [1];
-			    E += Loop [(Z -  4) & 15] * FilterTaps [2];
-			    E += Loop [(Z -  6) & 15] * FilterTaps [3];
-			    E += Loop [(Z -  8) & 15] * FilterTaps [4];
-			    E += Loop [(Z - 10) & 15] * FilterTaps [5];
-			    E += Loop [(Z - 12) & 15] * FilterTaps [6];
-			    E += Loop [(Z - 14) & 15] * FilterTaps [7];
-			    E /= 128;
-			    Z++;
+					Loop [(Z - 0) & 15] = E;
+					E =  E                    * FilterTaps [0];
+					E += Loop [(Z -  2) & 15] * FilterTaps [1];
+					E += Loop [(Z -  4) & 15] * FilterTaps [2];
+					E += Loop [(Z -  6) & 15] * FilterTaps [3];
+					E += Loop [(Z -  8) & 15] * FilterTaps [4];
+					E += Loop [(Z - 10) & 15] * FilterTaps [5];
+					E += Loop [(Z - 12) & 15] * FilterTaps [6];
+					E += Loop [(Z - 14) & 15] * FilterTaps [7];
+					E /= 128;
+					Z++;
 
-			    Echo [SoundData.echo_ptr] = (E * SoundData.echo_feedback) / 128 +
-							EchoBuffer [J];
+					Echo[SoundData.echo_ptr++] = (E * SoundData.echo_feedback) / 128 + EchoBuffer[J];
+					Echo[SoundData.echo_ptr++] = (E * SoundData.echo_feedback) / 128 + EchoBuffer[J+1];
 
-			    if ((SoundData.echo_ptr += 1) >= SoundData.echo_buffer_size)
-				SoundData.echo_ptr = 0;
+					if (SoundData.echo_ptr >= SoundData.echo_buffer_size)
+						SoundData.echo_ptr = 0;
 
-			    I = (MixBuffer [J] * 
-				 SoundData.master_volume [J & 1] +
-				 E * SoundData.echo_volume [J & 1]) / VOL_DIV16;
+					l = (MixBuffer[J]   * master_vol_l + E * echo_vol_l) / VOL_DIV16;
+					r = (MixBuffer[J+1] * master_vol_r + E * echo_vol_r) / VOL_DIV16;
 
-			    CLIP16(I);
-			    ((signed short *) buffer)[J + O] = I;
+					CLIP16(l);
+					CLIP16(r);
+					buffer[J]   = l;
+					buffer[J+1] = r;
+				}
 			}
-		    }
 		}
 		else
 		{
-		    // 16-bit mono sound with echo enabled...
-		    if (SoundData.no_filter)
-		    {
-			// ... no filter defined
-			for (J = 0; J < sample_count; J++)
+			int I;
+			int master_vol_l = SoundData.master_volume[0];
+			int echo_vol_l = SoundData.echo_volume[0];
+
+			// 16-bit mono sound with echo enabled...
+			if (SoundData.no_filter)
 			{
-			    int E = Echo [SoundData.echo_ptr];
+				// ... no filter defined
+				for (J = 0; J < sample_count; J++)
+				{
+					int E = Echo [SoundData.echo_ptr];
 
-			    Echo [SoundData.echo_ptr] = (E * SoundData.echo_feedback) / 128 +
-							 EchoBuffer [J];
+					Echo[SoundData.echo_ptr++] = (E * SoundData.echo_feedback) / 128 + EchoBuffer[J];
 
-			    if ((SoundData.echo_ptr += 1) >= SoundData.echo_buffer_size)
-				SoundData.echo_ptr = 0;
+					if (SoundData.echo_ptr >= SoundData.echo_buffer_size)
+						SoundData.echo_ptr = 0;
 
-			    I = (MixBuffer [J] *
-				 SoundData.master_volume [0] +
-				 E * SoundData.echo_volume [0]) / VOL_DIV16;
-			    CLIP16(I);
-			    ((signed short *) buffer)[J + O] = I;
+					I = (MixBuffer[J] * master_vol_l + E * echo_vol_l) / VOL_DIV16;
+					CLIP16(I);
+					buffer[J] = I;
+				}
 			}
-		    }
-		    else
-		    {
-			// ... with filter defined
-			for (J = 0; J < sample_count; J++)
+			else
 			{
-			    int E = Echo [SoundData.echo_ptr];
+				// ... with filter defined
+				for (J = 0; J < sample_count; J++)
+				{
+					register int E = Echo [SoundData.echo_ptr];
 
-			    Loop [(Z - 0) & 7] = E;
-			    E =  E                  * FilterTaps [0];
-			    E += Loop [(Z - 1) & 7] * FilterTaps [1];
-			    E += Loop [(Z - 2) & 7] * FilterTaps [2];
-			    E += Loop [(Z - 3) & 7] * FilterTaps [3];
-			    E += Loop [(Z - 4) & 7] * FilterTaps [4];
-			    E += Loop [(Z - 5) & 7] * FilterTaps [5];
-			    E += Loop [(Z - 6) & 7] * FilterTaps [6];
-			    E += Loop [(Z - 7) & 7] * FilterTaps [7];
-			    E /= 128;
-			    Z++;
+					Loop [(Z - 0) & 7] = E;
+					E =  E                  * FilterTaps [0];
+					E += Loop [(Z - 1) & 7] * FilterTaps [1];
+					E += Loop [(Z - 2) & 7] * FilterTaps [2];
+					E += Loop [(Z - 3) & 7] * FilterTaps [3];
+					E += Loop [(Z - 4) & 7] * FilterTaps [4];
+					E += Loop [(Z - 5) & 7] * FilterTaps [5];
+					E += Loop [(Z - 6) & 7] * FilterTaps [6];
+					E += Loop [(Z - 7) & 7] * FilterTaps [7];
+					E /= 128;
+					Z++;
 
-			    Echo [SoundData.echo_ptr] = (E * SoundData.echo_feedback) / 128 +
-							 EchoBuffer [J];
+					Echo[SoundData.echo_ptr++] = (E * SoundData.echo_feedback) / 128 + EchoBuffer[J];
 
-			    if ((SoundData.echo_ptr += 1) >= SoundData.echo_buffer_size)
-				SoundData.echo_ptr = 0;
+					if (SoundData.echo_ptr >= SoundData.echo_buffer_size)
+						SoundData.echo_ptr = 0;
 
-			    I = (MixBuffer [J] * SoundData.master_volume [0] +
-				 E * SoundData.echo_volume [0]) / VOL_DIV16;
-			    CLIP16(I);
-			    ((signed short *) buffer)[J + O] = I;
+					I = (MixBuffer[J] * master_vol_l + E * echo_vol_l) / VOL_DIV16;
+					CLIP16(I);
+					buffer[J] = I;
+				}
 			}
-		    }
 		}
-	    }
-	    else
-	    {
-		// 16-bit mono or stereo sound, no echo
-		for (J = 0; J < sample_count; J++)
-		{
-		    I = (MixBuffer [J] * 
-			 SoundData.master_volume [J & 1]) / VOL_DIV16;
-
-		    CLIP16(I);
-		    ((signed short *) buffer)[J + O] = I;
-		}
-	    }
-	}
-    }
-    else
-    {
-	int O = byte_offset;
-
-	// 8-bit sound
-	if (so.mute_sound)
-	{
-            memset (buffer + O, 128, sample_count);
 	}
 	else
-#ifdef __sun
-	if (so.encoded)
 	{
-	    for (J = 0; J < sample_count; J++)
-	    {
-		I = (MixBuffer [J] * SoundData.master_volume_left) / VOL_DIV16;
-		CLIP16(I);
-		buffer[J + O] = int2ulaw (I);
-	    }
-	}
-	else
-#endif
-	{
-	    if (SoundData.echo_enable && SoundData.echo_buffer_size)
-	    {
+		int l, master_vol_l = SoundData.master_volume[0];
+
 		if (so.stereo)
 		{
-		    // 8-bit stereo sound with echo enabled...
-		    if (SoundData.no_filter)
-		    {
-			// ... but no filter
-			for (J = 0; J < sample_count; J++)
+			int r, master_vol_r = SoundData.master_volume[1];
+
+			// 16-bit stereo sound, no echo
+			for (J = 0; J < sample_count; J+=2)
 			{
-			    int E = Echo [SoundData.echo_ptr];
+				l = (MixBuffer[J]   * master_vol_l) / VOL_DIV16;
+				r = (MixBuffer[J+1] * master_vol_r) / VOL_DIV16;
 
-			    Echo [SoundData.echo_ptr] = (E * SoundData.echo_feedback) / 128 + 
-							EchoBuffer [J];
-
-			    if ((SoundData.echo_ptr += 1) >= SoundData.echo_buffer_size)
-				SoundData.echo_ptr = 0;
-
-			    I = (MixBuffer [J] * 
-				 SoundData.master_volume [J & 1] +
-				 E * SoundData.echo_volume [J & 1]) / VOL_DIV8;
-			    CLIP8(I);
-			    buffer [J + O] = I + 128;
+				CLIP16(l);
+				CLIP16(r);
+				buffer[J]   = l;
+				buffer[J+1] = r;
 			}
-		    }
-		    else
-		    {
-			// ... with filter
-			for (J = 0; J < sample_count; J++)
-			{
-			    int E = Echo [SoundData.echo_ptr];
-
-			    Loop [(Z - 0) & 15] = E;
-			    E =  E                    * FilterTaps [0];
-			    E += Loop [(Z -  2) & 15] * FilterTaps [1];
-			    E += Loop [(Z -  4) & 15] * FilterTaps [2];
-			    E += Loop [(Z -  6) & 15] * FilterTaps [3];
-			    E += Loop [(Z -  8) & 15] * FilterTaps [4];
-			    E += Loop [(Z - 10) & 15] * FilterTaps [5];
-			    E += Loop [(Z - 12) & 15] * FilterTaps [6];
-			    E += Loop [(Z - 14) & 15] * FilterTaps [7];
-			    E /= 128;
-			    Z++;
-
-			    Echo [SoundData.echo_ptr] = (E * SoundData.echo_feedback) / 128 + 
-							EchoBuffer [J];
-
-			    if ((SoundData.echo_ptr += 1) >= SoundData.echo_buffer_size)
-				SoundData.echo_ptr = 0;
-
-			    I = (MixBuffer [J] * 
-				 SoundData.master_volume [J & 1] +
-				 E * SoundData.echo_volume [J & 1]) / VOL_DIV8;
-			    CLIP8(I);
-			    buffer [J + O] = I + 128;
-			}
-		    }
 		}
 		else
 		{
-		    // 8-bit mono sound with echo enabled...
-		    if (SoundData.no_filter)
-		    {
-			// ... but no filter.
+			// 16-bit mono sound, no echo
 			for (J = 0; J < sample_count; J++)
 			{
-			    int E = Echo [SoundData.echo_ptr];
+				l = (MixBuffer[J] * master_vol_l) / VOL_DIV16;
 
-			    Echo [SoundData.echo_ptr] = (E * SoundData.echo_feedback) / 128 + 
-							EchoBuffer [J];
-
-			    if ((SoundData.echo_ptr += 1) >= SoundData.echo_buffer_size)
-				SoundData.echo_ptr = 0;
-
-			    I = (MixBuffer [J] * SoundData.master_volume [0] +
-				 E * SoundData.echo_volume [0]) / VOL_DIV8;
-			    CLIP8(I);
-			    buffer [J + O] = I + 128;
+				CLIP16(l);
+				buffer[J] = l;
 			}
-		    }
-		    else
-		    {
-			// ... with filter.
-			for (J = 0; J < sample_count; J++)
-			{
-			    int E = Echo [SoundData.echo_ptr];
-
-			    Loop [(Z - 0) & 7] = E;
-			    E =  E                  * FilterTaps [0];
-			    E += Loop [(Z - 1) & 7] * FilterTaps [1];
-			    E += Loop [(Z - 2) & 7] * FilterTaps [2];
-			    E += Loop [(Z - 3) & 7] * FilterTaps [3];
-			    E += Loop [(Z - 4) & 7] * FilterTaps [4];
-			    E += Loop [(Z - 5) & 7] * FilterTaps [5];
-			    E += Loop [(Z - 6) & 7] * FilterTaps [6];
-			    E += Loop [(Z - 7) & 7] * FilterTaps [7];
-			    E /= 128;
-			    Z++;
-
-			    Echo [SoundData.echo_ptr] = (E * SoundData.echo_feedback) / 128 + 
-							EchoBuffer [J];
-
-			    if ((SoundData.echo_ptr += 1) >= SoundData.echo_buffer_size)
-				SoundData.echo_ptr = 0;
-
-			    I = (MixBuffer [J] * SoundData.master_volume [0] +
-				 E * SoundData.echo_volume [0]) / VOL_DIV8;
-			    CLIP8(I);
-			    buffer [J + O] = I + 128;
-			}
-		    }
 		}
-	    }
-	    else
-	    {
-		// 8-bit mono or stereo sound, no echo
-		for (J = 0; J < sample_count; J++)
-		{
-		    I = (MixBuffer [J] * 
-			 SoundData.master_volume [J & 1]) / VOL_DIV8;
-		    CLIP8(I);
-		    buffer [J + O] = I + 128;
-		}
-	    }
 	}
-    }
 }
 
 #ifdef __DJGPP
@@ -1374,7 +1260,6 @@ bool8 S9xInitSound (void)
 {
     so.playback_rate = 0;
     so.stereo = 0;
-    so.sixteen_bit = Settings.SixteenBitSound;
 	so.sound_switch = 255;
 
     S9xResetSound (TRUE);

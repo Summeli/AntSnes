@@ -1,6 +1,6 @@
 /* The background of the tab bar */
 QMainWindow {
-  background: #111111;
+  background: #b8b4aa;
   color: #F8F8F8;
   padding: 0;
   margin: 0;
@@ -8,7 +8,7 @@ QMainWindow {
 }
 
 QWidget {
-  background: #111111;
+  background: #b8b4aa;
   color: #F8F8F8;
   padding: 0;
   margin: 0;
@@ -22,8 +22,8 @@ QStackedWidget {
     
 /* Dialogs */
 QDialog {
-  background: #111111;
-  color: #F8F8F8;
+  background: #b8b4aa;
+  color: #5f008e;
   padding: 0;
   margin: 0;
   border: 1px solid #666;
@@ -31,7 +31,7 @@ QDialog {
     
 /* Form fields */
 QLabel {
-  background: #111111;
+  background: #b8b4aa;
   padding: 0;
   margin: 0;
 }
@@ -44,6 +44,7 @@ QCheckBox {
 
 
 QCheckBox:focus {
+  background: 6d00a4;
   color: #F8F8F8;
 }
 
@@ -67,8 +68,8 @@ color: #75ffb2; */
 /* background: #333;*/
 QPushButton {
   background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-  stop: 0 #333, stop: 0.49 #555,
-  stop: 0.50 #333, stop: 1.0 #555);
+  stop: 0 #48006c, stop: 0.49 #6d00a4,
+  stop: 0.50 #48006c, stop: 1.0 #6d00a4);
   border: 1px solid #666;
   padding: 0.4em;
   color: #F8F8F8;
@@ -85,8 +86,8 @@ QPushButton:pressed {
 /* QComboBox/QDateTime specials */
 QComboBox, QDateTimeEdit {
   background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-  stop: 0 #333, stop: 0.49 #555,
-  stop: 0.50 #333, stop: 1.0 #555);
+  stop: 0 #48006c, stop: 0.49 #6d00a4,
+  stop: 0.50 #48006c, stop: 1.0 #6d00a4);
   border: 1px solid #666;
   padding: 0.4em;
   color: #F8F8F8;
@@ -129,10 +130,10 @@ QSlider::handle:horizontal {
  }
 
 QGroupBox {
-  background: #111111; 
+  background: #b8b4aa; 
   padding: 0;
   margin: 0;
-  border: 1px solid #666;
+  border: 2px solid #5f008e;
   color: #F8F8F8;
  }
 
@@ -140,7 +141,7 @@ QGroupBox::title {
  subcontrol-origin: margin;
  subcontrol-position: top left; /* position at the top left */
  padding: 0 3px;
- background-color: #111111;
+ background-color: #b8b4aa;
  color: #F8F8F8;
  }
  

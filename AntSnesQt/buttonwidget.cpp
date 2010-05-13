@@ -80,7 +80,7 @@ quint32 buttonwidget::getSnesKeys( QMouseEvent* event )
 	{
 	quint32 key = 0;
 	__DEBUG3("buttonwidget, x pos, y pos", event->x(), event->y());
-	if ((event->y() < 280) && (event->y() > 80) )
+	if ((event->y() < 320) && (event->y() > 40) )
 		{ 
 		//Calculate distance from the center
 		qreal x = event->x() - KCenter_x;
@@ -124,13 +124,13 @@ quint32 buttonwidget::getSnesKeys( QMouseEvent* event )
 			key =  SNES_X_MASK;
 			}
 		}
-	else if( event->y() >= 280 )
+	else if( event->y() >= 320 )
 		{
 		//right button pressed
 		__DEBUG1("buttonwidget, TR WAS PRESSED");
 		key = SNES_TR_MASK;
 		}
-	else if( event->y() <= 80 )
+	else if( event->y() <= 40 )
 		{
 		if( event->x() < KCenter_x )
 			{

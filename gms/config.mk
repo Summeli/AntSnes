@@ -2,8 +2,8 @@ PROJECT_NAME = antsnes
 #valid target types are EXE, DLL and LIB(static lib)
 TARGET_TYPE = LIB
 UID2 = 0
-UID3 = 0xDEADBABE
-SECUREID = 0xDEADBABE
+UID3 = 0xE5712A80
+SECUREID = 0xE5712A80
 EPOCSTACKSIZE = 80000
 EPOCHEAPSIZE = 5000000 64000000
 CAPABILITY = LocalServices+NetworkServices
@@ -34,6 +34,8 @@ CXXSRCS = \
  fxinst.cpp \
  fxemu.cpp \
  symb_debug.cpp \
+ cheats.cpp \
+ cheats2.cpp \
  $(NULL)
 CSRCS = \
  gzio.c \
@@ -44,6 +46,7 @@ ASRCS = \
  spc700a.S \
  spc_decode.S \
  m3d_func.S  \
+ misc.S \
  $(NULL)
 RSS_TARGETS = $(DIST_PATH)/$(PROJECT_NAME).rsc $(DIST_PATH)/$(PROJECT_NAME)_reg.rsc
 LANG_MACRO = SC

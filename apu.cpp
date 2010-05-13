@@ -276,11 +276,6 @@ static inline bool8 S9xSetSoundMode (int channel, int mode)
     return (FALSE);
 }
 
-static inline void S9xSetSoundControl (int sound_switch)
-{
-    so.sound_switch = sound_switch;
-}
-
 static inline void S9xPlaySample (int channel)
 {
     Channel *ch = &SoundData.channels[channel];
