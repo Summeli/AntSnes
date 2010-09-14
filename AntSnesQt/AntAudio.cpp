@@ -137,7 +137,7 @@ TInt8 *CAntAudio::NextFrameL()
 #ifdef OUTPUT_TO_FILE	
 	return (TUint8*) iSoundBuffers[iEmptyBufQ[0]]->Ptr();
 #endif
-	if( (iEmptyBufQ.Count() < 1) )
+	if( (iEmptyBufQ.Count() < 2) )
 		{
 		__DEBUG1("CAntAudio: NextFrame is NULL");
 		return NULL;
@@ -194,7 +194,6 @@ void CAntAudio::MaoscOpenComplete(TInt aError)
 void CAntAudio::MaoscBufferCopied(TInt aError, const TDesC8& aBuffer)
 {
 	__DEBUG_IN
-	__DEBUG2("MaoscBufferCopied, error", aError );
 	if( aBuffer.Ptr() == iSoundBuffers[0]->Ptr())
 		iEmptyBufQ.Append(0);
 	else if(  aBuffer.Ptr() == iSoundBuffers[1]->Ptr() )
@@ -203,9 +202,6 @@ void CAntAudio::MaoscBufferCopied(TInt aError, const TDesC8& aBuffer)
 		iEmptyBufQ.Append(2);
 	else if(  aBuffer.Ptr() == iSoundBuffers[3]->Ptr() )
 		iEmptyBufQ.Append(3);
-
-	//if( !iPlaying )
-		iWait->AsyncStop();
 	__DEBUG_OUT
 }
 void CAntAudio::MaoscPlayComplete(TInt aError)

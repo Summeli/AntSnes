@@ -1,7 +1,11 @@
 TEMPLATE = app
 TARGET = AntSnesQt
+
+#CONFIG += mobility
+#MOBILITY += sensors \
+#			multimedia
 QT += core \
-    gui # multimedia
+    gui 
 HEADERS += buttonwidget.h \
 	dpadwidget.h \
 	QRemoteControlKeys.h \
@@ -76,9 +80,10 @@ symbian:LIBS += -lantsnes.lib \
 symbian:TARGET.EPOCHEAPSIZE = 0x200000 \
     0x800000
 
+symbian: TARGET.CAPABILITY = UserEnvironment
 #symbian:TARGET.CAPABILITY += SwEvent
 symbian:ICON = gfx/AntSnes_44.svg
 # symbian:TARGET.EPOCSTACKSIZE 80000
-symbian:INCLUDEPATH += ../
+symbian:INCLUDEPATH += ../snes9x_asm_optimized
 
 OTHER_FILES += summelistyle.qss

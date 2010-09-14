@@ -68,9 +68,6 @@ EmuSettings::EmuSettings(QWidget *parent)
 	connect(ui.aboutButton, SIGNAL(clicked()), this, SLOT(aboutClicked()));
 	connect(ui.saveSlotBox, SIGNAL(currentIndexChanged(int)), this, SLOT(saveSlotIndexChanged(int)));
 	
-	// audio is not supported in this release, so disable the button
-	ui.audioButton->setEnabled(FALSE);
-	
 	//connect audio settins
 	connect( audiosettings, SIGNAL(AudioOn(int)), this, SLOT( setAudioOn(int)));
 	connect( audiosettings, SIGNAL(SampleRate(int)), this, SLOT( setSampleRate(int)));
@@ -246,6 +243,8 @@ void EmuSettings::keyconfigDone()
 		__DEBUG2("keyconfigDone: keyID is ", keydialog->getKeyBind(i) );
 		antsettings.iScanKeyTable[i] = keydialog->getKeyBind(i);
 		}
+	//take the keyevents away, so it doesn't crash
+	remotecontrol->subscribeKeyEvent( this );
     //Delete the dialog
 	keydialog->hide();
     delete keydialog;
@@ -411,24 +410,24 @@ void EmuSettings::savecurrentSettings()
 	__DEBUG_IN
 
 	QSettings settings;
-	settings.setValue("version", KAntSettingsVersion );
+	settings.setValue("snes_version", KAntSettingsVersion );
 
 	for(int i=0;i<12;i++)
 		{
-	    QString keyval = "kebind";
+	    QString keyval = "snes_kebind";
 	    keyval.append( QString::number(i) );
 		settings.setValue(keyval, antsettings.iScanKeyTable[i]);
 		}
-	settings.setValue("lastrom",antsettings.iLastROM);
-	settings.setValue("lastslot",antsettings.iLastSlot);
-	settings.setValue("showfps",antsettings.iShowFPS);
-	settings.setValue("frameskip",antsettings.iFrameSkip);
-	settings.setValue("audioOn",antsettings.iAudioOn);
-	settings.setValue("enableSpeedHack",antsettings.iEnableSpeedHack);
-	settings.setValue("samplerate",antsettings.iSampleRate);
-	settings.setValue("stereo",antsettings.iStereo);
-	settings.setValue("volume",antsettings.iVolume);
-	settings.setValue("screensettings", antsettings.iScreenSettings);
+	settings.setValue("snes_lastrom",antsettings.iLastROM);
+	settings.setValue("snes_lastslot",antsettings.iLastSlot);
+	settings.setValue("snes_showfps",antsettings.iShowFPS);
+	settings.setValue("snes_frameskip",antsettings.iFrameSkip);
+	settings.setValue("snes_audioOn",antsettings.iAudioOn);
+	settings.setValue("snes_enableSpeedHack",antsettings.iEnableSpeedHack);
+	settings.setValue("snes_samplerate",antsettings.iSampleRate);
+	settings.setValue("snes_stereo",antsettings.iStereo);
+	settings.setValue("snes_volume",antsettings.iVolume);
+	settings.setValue("snes_screensettings", antsettings.iScreenSettings);
 	settings.sync();
 	__DEBUG_OUT
 	}
@@ -437,7 +436,7 @@ void EmuSettings::loadSettings()
 	{
 	__DEBUG_IN
 	QSettings settings;
-	int version = settings.value("version").toInt();
+	int version = settings.value("snes_version").toInt();
 	if( version != KAntSettingsVersion )
 		{
 		__DEBUG1("No version was set, creating default settings");
@@ -449,19 +448,19 @@ void EmuSettings::loadSettings()
 
 	for(int i=0;i<12;i++)
 		{
-	    QString keyval = "kebind";
+	    QString keyval = "snes_kebind";
 	    keyval.append( QString::number(i) );
 	    antsettings.iScanKeyTable[i] = settings.value(keyval).toUInt();
 		}
-	antsettings.iLastROM = settings.value("lastrom").toString();
-	antsettings.iLastSlot = settings.value("lastslot").toInt();
-	antsettings.iShowFPS = settings.value("showfps").toBool();
-	antsettings.iFrameSkip = settings.value("frameskip").toInt();
-	antsettings.iAudioOn = settings.value("audioOn").toBool();
-	antsettings.iEnableSpeedHack = settings.value("enableSpeedHack").toBool();
-	antsettings.iSampleRate = settings.value("samplerate").toInt();
-	antsettings.iStereo = settings.value("stereo").toBool();
-	antsettings.iVolume = settings.value("volume").toInt();
-	antsettings.iScreenSettings = settings.value("screensettings").toInt();
+	antsettings.iLastROM = settings.value("snes_lastrom").toString();
+	antsettings.iLastSlot = settings.value("snes_lastslot").toInt();
+	antsettings.iShowFPS = settings.value("snes_showfps").toBool();
+	antsettings.iFrameSkip = settings.value("snes_frameskip").toInt();
+	antsettings.iAudioOn = settings.value("snes_audioOn").toBool();
+	antsettings.iEnableSpeedHack = settings.value("snes_enableSpeedHack").toBool();
+	antsettings.iSampleRate = settings.value("snes_samplerate").toInt();
+	antsettings.iStereo = settings.value("snes_stereo").toBool();
+	antsettings.iVolume = settings.value("snes_volume").toInt();
+	antsettings.iScreenSettings = settings.value("snes_screensettings").toInt();
 	__DEBUG_OUT
 	}

@@ -698,35 +698,17 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
 	break;
     case 0x2132:
 	if (Byte != Memory.FillRAM [0x2132])
-	{
-					int redraw_needed=0;
-					int new_fixedcol;
-					//FLUSH_REDRAW ();
-	    // Colour data for fixed colour addition/subtraction
-					if (Byte & 0x80) {
-						//PPU.FixedColourBlue = Byte & 0x1f;
-						new_fixedcol=(Byte & 0x1f);
-						if (new_fixedcol!=PPU.FixedColourBlue) {if (!(Settings.os9x_hack&PPU_IGNORE_FIXEDCOLCHANGES)) FLUSH_REDRAW();PPU.FixedColourBlue=new_fixedcol;}
-					}
-					if (Byte & 0x40) {
-						//PPU.FixedColourGreen = Byte & 0x1f;
-						new_fixedcol=(Byte & 0x1f);
-						if (new_fixedcol!=PPU.FixedColourGreen) {if (!(Settings.os9x_hack&PPU_IGNORE_FIXEDCOLCHANGES)) FLUSH_REDRAW();PPU.FixedColourGreen=new_fixedcol;}
-					}
-					if (Byte & 0x20) {
-						new_fixedcol=(Byte & 0x1f);
-						if (new_fixedcol!=PPU.FixedColourRed) {if (!(Settings.os9x_hack&PPU_IGNORE_FIXEDCOLCHANGES)) FLUSH_REDRAW();PPU.FixedColourRed=new_fixedcol;}
-					}
+				{
+					FLUSH_REDRAW();
 
-					/*FLUSH_REDRAW ();
 					// Colour data for fixed colour addition/subtraction
 					if (Byte & 0x80)
 						PPU.FixedColourBlue = Byte & 0x1f;
 					if (Byte & 0x40)
 						PPU.FixedColourGreen = Byte & 0x1f;
 					if (Byte & 0x20)
-					PPU.FixedColourRed = Byte & 0x1f;*/
-	}
+						PPU.FixedColourRed = Byte & 0x1f;
+				}
 	break;
     case 0x2133:
 	// Screen settings

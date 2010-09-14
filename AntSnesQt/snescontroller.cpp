@@ -47,9 +47,6 @@ static int target_fps, target_frametime, too_fast;
 //extern int emu_was_reset;
 static int emu_cflags = 0; // emu control flags: reset_timing, saveload_pending, load
 static int sndLen = 0;
-#ifdef __STUPID_ANTAUDIO
-static short int* audioOut = 0;
-#endif
 static uint32 JoyPad;
 static bool audioEnabled;
 //to be removed
@@ -83,9 +80,6 @@ QSnesController::QSnesController( QBlitterWidget* widget, CAntAudio* antaudio, M
     iPaused = true;
     JoyPad = 0;
     iAdaptation = adaptation;
-#ifndef __STUPID_ANTAUDIO
-    audiobuf = NULL;
-#endif
     }
 
 void QSnesController::run()
@@ -101,17 +95,6 @@ void QSnesController::run()
 	connect(this, SIGNAL(audioFrameReady()), audio, SLOT(FrameMixed()), 
 			Qt::BlockingQueuedConnection );
 	
-	if( audioEnabled )
-		{
-#ifdef __STUPID_ANTAUDIO
-		connect(this, SIGNAL(resetAudio()), audio, SLOT(Reset()), 
-				Qt::BlockingQueuedConnection);
-		emit(resetAudio());
-#else
-		connect(qaudio,SIGNAL(stateChanged(QAudio::State)),this, SLOT(finishedPlaying(QAudio::State)));
-		audioOut = qaudio->start();
-#endif
-		}
     __DEBUG1("thread running");
     if( iSettings.iFrameSkip == 0 )
     	gameLoopAuto();
@@ -120,11 +103,7 @@ void QSnesController::run()
     
     if( audioEnabled )
     	{
-#ifdef __STUPID_ANTAUDIO
-		disconnect(this, SIGNAL(resetAudio()), audio, SLOT(reset()));
-#else
-		disconnect(qaudio,SIGNAL(stateChanged(QAudio::State)),this, SLOT(finishedPlaying(QAudio::State)));
-#endif
+
     	}
     disconnect(this, SIGNAL(frameblit()), blitter, SLOT(render()) );
     disconnect(this, SIGNAL(audioFrameReady()), audio, SLOT(FrameMixed()) );
@@ -184,9 +163,10 @@ void QSnesController::updateSettings( TAntSettings antSettings )
 	audioEnabled = antSettings.iAudioOn;
 	if( audioprv && !antSettings.iAudioOn )
 		{
-		//shot down the audio
+		//shut down the audio
 	    S9xSetSoundMute (TRUE);
 		}
+	 
     if( audioEnabled )
         {
         S9xSetSoundMute (FALSE);
@@ -211,10 +191,8 @@ void QSnesController::updateSettings( TAntSettings antSettings )
         //Create audio
         __DEBUG4("AudioSettings, samplerate, stereo, volume", antSettings.iSampleRate, antSettings.iStereo, antSettings.iVolume );
         audio->setAudioSettings( antSettings.iSampleRate, antSettings.iStereo, iSampleCount, antSettings.iVolume );
-        
         S9xSetPlaybackRate(so.playback_rate);
         }
-    
 	__DEBUG_OUT
 	}
 
@@ -261,9 +239,9 @@ __DEBUG_IN
     emit( setPal(  Settings.PAL ) );
     
     //apu executing
-    if( audioEnabled )
+   if( audioEnabled )
         {
-#ifdef __STUPID_ANTAUDIO
+        
         S9xSetSoundMute (FALSE);
         
         if( iSettings.iEnableSpeedHack )
@@ -283,58 +261,13 @@ __DEBUG_IN
         so.playback_rate = Settings.SoundPlaybackRate;
         unsigned int frame_limit = (Settings.PAL?50:60);
         g_samplecount = iSampleCount;
-        //Create audio
         __DEBUG4("AudioSettings, samplerate, stereo, volume", antSettings.iSampleRate, antSettings.iStereo, antSettings.iVolume );
-        audio->setAudioSettings( antSettings.iSampleRate, antSettings.iStereo, iSampleCount, antSettings.iVolume );
-        
-        S9xSetPlaybackRate(so.playback_rate);
-#else
-        S9xSetSoundMute (FALSE);
-        
-        if( iSettings.iEnableSpeedHack )
-            CPU.APU_APUExecuting = Settings.APUEnabled = 3;
-        else
-            CPU.APU_APUExecuting = Settings.APUEnabled = 1;
-        //if sound is on
-        Settings.SoundPlaybackRate = antSettings.iSampleRate;
-        Settings.SoundSync = FALSE;
-        Settings.SixteenBitSound=true;
-        Settings.Stereo= iSettings.iStereo;
-        iSampleCount=Settings.SoundPlaybackRate/(Settings.PAL?50:60); //if pal, then 50
-        iTargetFPS = Settings.PAL?50:60;
-        if (Settings.Stereo)
-            iSampleCount = iSampleCount * 2;
-        so.stereo = Settings.Stereo;
-        so.playback_rate = Settings.SoundPlaybackRate;
-        unsigned int frame_limit = (Settings.PAL?50:60);
-        g_samplecount = iSampleCount;
-        //Create audio
-        __DEBUG4("AudioSettings, samplerate, stereo, volume", antSettings.iSampleRate, antSettings.iStereo, antSettings.iVolume );
-        //audio->setAudioSettings( antSettings.iSampleRate, antSettings.iStereo, iSampleCount, antSettings.iVolume );
 
-        audioformat.setFrequency(antSettings.iSampleRate);
-        audioformat.setChannels(1 + (int) antSettings.iStereo);
-        audioformat.setSampleSize(iSampleCount);
-        audioformat.setCodec("audio/pcm");
-        audioformat.setByteOrder(QAudioFormat::LittleEndian);
-        audioformat.setSampleType(QAudioFormat::UnSignedInt);
-  
-        if( qaudio )
-        	{
-			delete qaudio;
-			qaudio = NULL;
-        	}
-        if( audiobuf )
-        	{
-			free( audiobuf );
-			audiobuf = NULL;
-        	}
-        qaudio = new QAudioOutput(audioformat, this);
-        audiobuf = (quint8*) malloc( iSampleCount );
-        S9xSetPlaybackRate(so.playback_rate);
-#endif
+        S9xSetPlaybackRate( so.playback_rate );
+        audio->setAudioSettings( antSettings.iSampleRate, antSettings.iStereo, iSampleCount, antSettings.iVolume );
+        audio->Reset();
         }
-    else
+   else
         CPU.APU_APUExecuting = Settings.APUEnabled = 0;
     
     saveLoadGame(1, 7); //load state
@@ -394,6 +327,10 @@ void QSnesController::gameLoopAuto()
   	const long frame_speed = Settings.FrameTime;
 	int skipper = 0;
 	int skipcount = 0;
+	short int* aframe;
+	
+	//audio stuff!
+	S9xSetSoundMute (FALSE);
 	
     while(!iPaused)
         {
@@ -437,27 +374,22 @@ void QSnesController::gameLoopAuto()
 		  frame_ticks_total = 0;
 		  }
 	  
-		//IPPU.RenderThisFrame=TRUE;
         S9xMainLoop();
+        
         if( audioEnabled )
             {
-
-#ifdef __STUPID_ANTAUDIO
-        
-           audioOut = (short int*) audio->NextFrameL();   
-            if(audioOut)
-                {
-                S9xMixSamplesO( audioOut, iSampleCount, 0);
-                emit(audioFrameReady());     
-                }
-#else
-			S9xMixSamplesO(audiobuf, iSampleCount, 0);
-			audioOut->write( (char*) audiobuf, iSampleCount );
-#endif
-			
-            } 
-            
-    
+        	aframe = (short int*) audio->NextFrameL();
+        	if( aframe )
+        		{
+        		S9xMixSamplesO( aframe , iSampleCount, 0 );
+        		emit audioFrameReady();
+        		}
+        	else
+        		{
+        		__DEBUG1("audiobuffers owerflow");
+        		}
+            }
+   
         }
     __DEBUG_OUT
 	}
@@ -492,17 +424,8 @@ void QSnesController::gameLoopSkip( int frameskip )
 		S9xMainLoop();
 		if( audioEnabled )
 			{
-#ifdef __STUPID_ANTAUDIO
-			audioOut = (short int*) audio->NextFrameL();   
-			if(audioOut)
-			  {
-			  S9xMixSamplesO(audioOut, iSampleCount, 0);
-			  emit(audioFrameReady());     
-			   }
-#else
-			S9xMixSamplesO(audiobuf, iSampleCount, 0);
-			audioOut->write( (char*) audiobuf, iSampleCount );
-#endif
+			S9xMixSamplesO((short int* ) audio->NextFrameL(), iSampleCount, 0 );
+			emit audioFrameReady();
 			 } 
 		 counter--;
 		}
@@ -534,19 +457,6 @@ void QSnesController::Stop()
     iPaused = true;
     __DEBUG_OUT
     }
-#ifndef __STUPID_ANTAUDIO
-void QSnesController::finishedPlaying( QAudio::State audiostate )
-	{
-    __DEBUG_IN
-    if(audiostate == QAudio::IdleState) {
-      qaudio->stop();
-      delete qaudio;
-      qaudio = NULL;
-    }
-
-    __DEBUG_OUT
-	}
-#endif
 
 void MainInit()
 {

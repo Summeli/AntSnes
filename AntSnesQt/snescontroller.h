@@ -22,12 +22,6 @@
 #include <QObject>
 #include <QThread>
 
-#define __STUPID_ANTAUDIO
-
-#ifndef __STUPID_ANTAUDIO
-#include <QAudioOutput>
-#endif
-
 #include "antsettings.h"
 
 #include "QBlitterWidget.h"
@@ -68,9 +62,17 @@ public slots:
     
     void SaveStateL( int aState );
     void LoadStateL( int aState );
-#ifndef __STUPID_ANTAUDIO
-    void finishedPlaying( QAudio::State audiostate );
+    
+#ifdef ENABLE_AUDIO
+    void audiocallback( QAudio::State state );
+    void initAudio();
+    void checkAudioDevices();
+
+public slots:
+   void audioStateChanged ( QAudio::State state );
+   void audioNotify();
 #endif
+    
 signals:
 	void frameblit();
 	void setPal( bool pal );
@@ -97,12 +99,7 @@ private: // Data
     MEmulatorAdaptation* iAdaptation;
     CAntAudio* audio;
     TAntSettings iSettings;
-#ifndef __STUPID_ANTAUDIO
-    QAudioOutput* qaudio;
-    QAudioFormat audioformat;
-    QIODevice* audioOut;
-    quint8* audiobuf;
-#endif
+
     QString iSelectedROM;
     QBlitterWidget* blitter; //not owned
 };

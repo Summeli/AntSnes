@@ -402,7 +402,7 @@ INLINE void S9xSetWord (uint16 Word, uint32 Address)
 	CPU.Cycles += Memory.MemorySpeed [block] << 1;
 #endif
 #if defined(CPU_SHUTDOWN) && defined(USE_SA1)
-	uint8 *SetAddressSA1 += Address & 0xffff;
+	uint8 *SetAddressSA1 = (uint8 *)(Address & 0xffff);
 	if (SetAddressSA1 == SA1.WaitByteAddress1 ||
 	    SetAddressSA1 == SA1.WaitByteAddress2)
 	{

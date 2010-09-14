@@ -161,13 +161,14 @@ EXTERN_C void S9xGenerateSound ();
 //#define EXECUTE_SUPERFX_PER_LINE
 //#define SPC700_C
 
-#ifdef CPU_ASM
+//#ifdef CPU_ASM
 #define ASM_SPC700
+/*
 #else
 #define SPC700_SHUTDOWN
 #define USE_SA1
 #endif
-
+*/
 
 #ifndef TITLE
 #define TITLE "Snes9x"

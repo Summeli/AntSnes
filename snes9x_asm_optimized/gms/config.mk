@@ -36,6 +36,7 @@ CXXSRCS = \
  symb_debug.cpp \
  cheats.cpp \
  cheats2.cpp \
+# sa1.cpp \
  $(NULL)
 CSRCS = \
  gzio.c \
