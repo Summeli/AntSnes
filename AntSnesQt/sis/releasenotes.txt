@@ -1,4 +1,4 @@
-AntSnesQt v. 0.6.0
+AntSnesQt v. 0.7.0
 
 Follow my blog for updates:
 http://www.summeli.fi
@@ -41,19 +41,7 @@ Additional thanks
 
 * ZodTTD I used the same version of CPU core as his Snes4Iphone project
 * Mark and Jean-loup for zlib library.
-* My GF for understanding me at long nights of development
 
-
-Translations
----------------
-Danish - Jens kikkenborg: flanke (atsymbol) gmail.com 
-Brazilian Portuguese - Rodrigo Caruso: rodrigo.caruso (atsymbol) yahoo.com.br
-Hungarian - Attila Molnár: bim (atsymbol) devblog.hu
-Indonesian - Antok: antok (atsymbol) elect-eng.its.ac.id
-Russian  - Chepelev Anton
-Polish  - Krzysztof Urbanowicz
-Bulgarian - LiL Stenly
-Greek - B_Lizzard 
 
 Legal / Disclaimer
 ------------------

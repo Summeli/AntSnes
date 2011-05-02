@@ -32,61 +32,23 @@ buttonwidget::buttonwidget(QWidget *parent)
     : QWidget(parent)
 {
 	ui.setupUi(this);
-	prevkeys = 0;
 }
 
 buttonwidget::~buttonwidget()
 {
-
 }
 
-void buttonwidget::mousePressEvent(QMouseEvent* event )
-	{
-	__DEBUG_IN
-	processbuttons( event );
-	__DEBUG_OUT
-	}
-
-void buttonwidget::mouseReleaseEvent(QMouseEvent* event )
-	{
-	__DEBUG_IN
-	 emit(virtualKeyEvent(prevkeys,false));
-	 prevkeys = 0;
-	__DEBUG_OUT
-	}
-
-void buttonwidget::mouseMoveEvent(QMouseEvent* event)
-	{
-	__DEBUG_IN
-	processbuttons( event );
-	__DEBUG_OUT
-	}
-
-void buttonwidget::processbuttons( QMouseEvent* event )
-	{
-	quint32 key = getSnesKeys( event );
-	if( key != prevkeys )
-		{
-		//release old keys
-		emit(virtualKeyEvent(prevkeys,false));
-		
-		//send new key
-		emit(virtualKeyEvent(key,true));
-		}
-	prevkeys = key;
-	}
-
-quint32 buttonwidget::getSnesKeys( QMouseEvent* event )
+quint32 buttonwidget::getSnesKey( int x, int y )
 	{
 	quint32 key = 0;
-	__DEBUG3("buttonwidget, x pos, y pos", event->x(), event->y());
-	if ((event->y() < 320) && (event->y() > 40) )
+	__DEBUG3("buttonwidget, x pos, y pos", x, y);
+	if ((y < 270) && (y > 80) )
 		{ 
 		//Calculate distance from the center
-		qreal x = event->x() - KCenter_x;
-		qreal y = event->y() - KCenter_y;
+		qreal rx = x - KCenter_x;
+		qreal ry = y - KCenter_y;
 	
-		qreal r = qAtan2(y,x);
+		qreal r = qAtan2(ry,rx);
 		r = (r * 180 )/ KPi; //convert radians to degrees
 	
 		//lets use full circle instead of negative angles
@@ -124,15 +86,15 @@ quint32 buttonwidget::getSnesKeys( QMouseEvent* event )
 			key =  SNES_X_MASK;
 			}
 		}
-	else if( event->y() >= 320 )
+	else if( y >= 310 )
 		{
 		//right button pressed
 		__DEBUG1("buttonwidget, TR WAS PRESSED");
 		key = SNES_TR_MASK;
 		}
-	else if( event->y() <= 40 )
+	else if( y <= 60 )
 		{
-		if( event->x() < KCenter_x )
+		if( x > KCenter_x )
 			{
 			//start
 			__DEBUG1("buttonwidget, START WAS PRESSED");

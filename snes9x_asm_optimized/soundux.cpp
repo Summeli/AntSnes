@@ -61,6 +61,12 @@ extern void memset32(uint32_t *dest, int c, int count);
 }
 #endif
 
+static inline void sounduxmemset32(void *d, unsigned long v, unsigned long c)
+{	
+	unsigned long *dl=(unsigned long *)d;		
+	for (; c; --c) *dl++=v;
+}
+
 #include "port.h"
 
 #define CLIP16(v) \
@@ -261,7 +267,7 @@ static void DecodeBlock (Channel *ch)
 	ch->last_block = TRUE;
 	ch->loop = FALSE;
 	ch->block = ch->decoded;
-		memset32 ((uint32_t *) ch->decoded, 0, 8);
+		sounduxmemset32 ((uint32_t *) ch->decoded, 0, 8);
 	return;
     }
     signed char *compressed = (signed char *) &IAPU.RAM [ch->block_pointer];
@@ -953,13 +959,13 @@ void S9xMixSamplesO (signed short *buffer, int sample_count, int sample_offset)
 
 	if (so.mute_sound)
 	{
-		memset32((uint32_t*)buffer, 0, sample_count>>1);
+		sounduxmemset32((uint32_t*)buffer, 0, sample_count>>1);
 		return;
 	}
 
-	memset32 ((uint32_t*)MixBuffer, 0, sample_count);
+	sounduxmemset32 ((uint32_t*)MixBuffer, 0, sample_count);
 	if (SoundData.echo_enable)
-		memset32 ((uint32_t*)EchoBuffer, 0, sample_count);
+		sounduxmemset32 ((uint32_t*)EchoBuffer, 0, sample_count);
 
 	if (so.stereo)
 		MixStereo (sample_count);

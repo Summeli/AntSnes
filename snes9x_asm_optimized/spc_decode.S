@@ -58,7 +58,8 @@ DecodeBlockAsm:
 	STR		R3,[R1]
 		
 	LDMFD		SP!,{R4,LR}
-	MOV		PC,LR	
+	BX      LR
+;	MOV		PC,LR
 
 BREWave:	
 	STMFD	SP!,{R5,R6,R7}
@@ -139,7 +140,8 @@ Method0loop:
 	MOV	R3,R4,LSL #16
 	MOV	R3,R3,ASR #16		
 	LDMFD	SP!,{R5,R6,R7}
-	MOV	PC,LR
+    BX      LR
+;	MOV		PC,LR
 
 @ ALIGN	16
 @ 	;[Delta]+[Smp-1](15/16) -----------------
@@ -199,7 +201,8 @@ Method1loop:
 	MOV	R3,R3,ASR #16
 	
 	LDMFD	SP!,{R5,R6,R7}
-	MOV	PC,LR
+    BX      LR
+;	MOV		PC,LR
 
 @ ALIGN	16
 	@ ;[Delta]+[Smp-1](61/32)-[Smp-2](30/32) --
@@ -281,7 +284,8 @@ Method2loop:
 	SUBS	R6,R6,#1
 	BNE	Method2loop
 	LDMFD	SP!,{R5,R6,R7}
-	MOV	PC,LR
+    BX      LR
+;	MOV		PC,LR
 
 @ ALIGN	16
 	@ ;[Delta]+[Smp-1](115/64)-[Smp-2](52/64) -
@@ -376,7 +380,8 @@ Method3loop:
 	BNE	Method3loop
 	
 	LDMFD	SP!,{R5,R6,R7}
-	MOV	PC,LR	
+    BX      LR
+;	MOV		PC,LR
 
 
 DecodeBlockAsm2:
@@ -415,7 +420,8 @@ DecodeBlockAsm2:
 	STR		R3,[R1]
 		
 	LDMFD		SP!,{R4,R11,LR}
-	MOV		PC,LR	
+    BX      LR
+;	MOV		PC,LR
 	@ ret
 
 @ ALIGN	16
@@ -503,7 +509,8 @@ Method022:
 	MOV	R3,R4
 	
 	@ Ret
-	MOV	PC,LR
+    BX      LR
+;	MOV		PC,LR
 
 @ ALIGN	16
 @ 	;[Delta]+[Smp-1](15/16) -----------------
@@ -563,7 +570,8 @@ Method12loop:
 	MOV	R3,R3,LSL #16		
 	LDMFD	SP!,{R5,R6}
 	MOV	R3,R3,ASR #16
-	MOV	PC,LR
+    BX      LR
+;	MOV		PC,LR
 
 @ ALIGN	16
 @ 	;[Delta]+[Smp-1](61/32)-[Smp-2](30/32) --
@@ -662,7 +670,8 @@ Method22loop:
 @ 	Pop	CX
 @ 	Ret	
 	LDMFD	SP!,{R5,R6}
-	MOV	PC,LR
+    BX      LR
+;	MOV		PC,LR
 
 @ ALIGN	16
 @ 	;[Delta]+[Smp-1](115/64)-[Smp-2](52/64) -
@@ -763,7 +772,8 @@ Method32loop:
 @ 	Pop	CX
 @ 	Ret		
 	LDMFD	SP!,{R5,R6}
-	MOV	PC,LR
+    BX      LR
+;	MOV		PC,LR
 
 /*SMP12CLIP16:
 	cmp eax, -32768

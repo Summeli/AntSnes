@@ -25,7 +25,7 @@
 #include "emusettings.h"
 #include "debug.h"
 
-#define KAntSettingsVersion 3
+#define KAntSettingsVersion 4
 
 EmuSettings::EmuSettings(QWidget *parent)
     : QMainWindow(parent)
@@ -335,6 +335,9 @@ void EmuSettings::saveSlotIndexChanged( int index )
 void EmuSettings::loadStateButtonClicked()
 	{
 	__DEBUG_IN
+    if( !romloaded )
+        return;
+	
 	antsettings.iLastSlot = ui.saveSlotBox->currentIndex();
 	savecurrentSettings();
     if( settingsChanged )
@@ -350,6 +353,9 @@ void EmuSettings::loadStateButtonClicked()
 void EmuSettings::saveStateButtonClicked()
 	{
 	__DEBUG_IN
+    if( !romloaded )
+        return;
+    
 	antsettings.iLastSlot = ui.saveSlotBox->currentIndex();
 	savecurrentSettings();
 	if( settingsChanged )
@@ -402,7 +408,7 @@ void EmuSettings::setDefaultSettings()
 	antsettings.iSampleRate = 22050;
 	antsettings.iStereo = false;
 	antsettings.iVolume = 4;
-	antsettings.iScreenSettings = 0;
+	antsettings.iScreenSettings = 1;
 	}
 
 void EmuSettings::savecurrentSettings()

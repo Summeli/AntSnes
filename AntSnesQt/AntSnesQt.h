@@ -51,8 +51,11 @@ public:
     void setRemoteControl( QRemoteControlKeys* remote );
     void keyPressEvent( QKeyEvent * event);
     void keyReleaseEvent(QKeyEvent* event);
+    bool event(QEvent *event);
+
 public: //From MEmulatorAdaptation
     int getKeyEvent( antKeyEvent& keyEvent );
+    quint32 getSnesKeys();
     
 public:
     void LoadROM(QString rom, TAntSettings antSettings);
@@ -76,7 +79,7 @@ private slots:
     
 private:
     Ui::AntSnesQtClass ui;
-    QBlitterWidget* widget;
+    QGLBlitterWidget* widget;
     CAntAudio* antaudio;
     QSnesController* control;
     
@@ -88,6 +91,8 @@ private:
     smalloptionswidget* smallwidget;
     smalloptionswidget* smallwidget2;
     largepad* lpad;
+    
+    quint32 iSnesKeys;
 };
 
 #endif // ANTSNESQT_H

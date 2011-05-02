@@ -2585,10 +2585,10 @@ static long ReadInt (FILE *f, unsigned nbytes)
 void CMemory::CheckForIPSPatch (const char *rom_filename, bool8_32 header,
 				int32 &rom_size)
 {
-    char  dir [_MAX_DIR + 1];
-    char  drive [_MAX_DRIVE + 1];
-    char  name [_MAX_FNAME + 1];
-    char  ext [_MAX_EXT + 1];
+    //char  dir [_MAX_DIR + 1];
+    //char  drive [_MAX_DRIVE + 1];
+    //char  name [_MAX_FNAME + 1];
+    //char  ext [_MAX_EXT + 1];
     char  fname [_MAX_PATH + 1];
     FILE  *patch_file  = NULL;
     long  offset = header ? 512 : 0;

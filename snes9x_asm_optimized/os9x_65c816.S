@@ -4580,7 +4580,8 @@ endmainLoop:
 /********end*/
 	SAVE_REGS
 	LDMFD		R13!,{R4-R11,LR}
-	MOV		PC,LR
+	BX			LR
+	/*MOV		PC,LR*/
 .pool
 
 @ void test_opcode(struct asm_cpu_var *asm_var);

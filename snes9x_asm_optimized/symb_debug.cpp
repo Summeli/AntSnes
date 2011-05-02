@@ -41,7 +41,7 @@ static const wchar_t * const exception_names[] = {
 };
 
 
-static void getASpace(TUint *code_start, TUint *code_end, TUint *stack_start, TUint *stack_end)
+/*static void getASpace(TUint *code_start, TUint *code_end, TUint *stack_start, TUint *stack_end)
 {
 	TUint pc, sp;
 	RChunk chunk;
@@ -64,6 +64,7 @@ static void getASpace(TUint *code_start, TUint *code_end, TUint *stack_start, TU
 		chunk.Close();
 	}
 }
+*/
 
 // our very own exception handler
 void ExceptionHandler(TExcType exc)

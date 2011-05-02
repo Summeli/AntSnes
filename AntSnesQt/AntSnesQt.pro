@@ -1,11 +1,8 @@
 TEMPLATE = app
 TARGET = AntSnesQt
-
-#CONFIG += mobility
-#MOBILITY += sensors \
-#			multimedia
 QT += core \
-    gui 
+    gui \
+    opengl
 HEADERS += buttonwidget.h \
 	dpadwidget.h \
 	QRemoteControlKeys.h \
@@ -14,12 +11,11 @@ HEADERS += buttonwidget.h \
     videosettings.h \
     AntAudio.h \
     audiosettings.h \
-    AntSnesQt.loc \
     keyconfigdialog.h \
     viewcontroller.h \
     emusettings.h \
     symb_adaptation.h \
-    QBlitterWidget.h \
+    QGLBlitterWidget.h \
     AntSettings.h \
     snescontroller.h \
     AntSnesQt.h \
@@ -39,7 +35,7 @@ SOURCES += buttonwidget.cpp \
     emusettings.cpp \
     debug.cpp \
     symb_adaptation.cpp \
-    QBlitterWidget.cpp \
+    QGLBlitterWidget.cpp \
     snescontroller.cpp \
     main.cpp \
     AntSnesQt.cpp \
@@ -78,10 +74,9 @@ symbian:LIBS += -lantsnes.lib \
     = \
     0xE4270701
 symbian:TARGET.EPOCHEAPSIZE = 0x200000 \
-    0x800000
+    0x1000000
 
 symbian: TARGET.CAPABILITY = UserEnvironment
-#symbian:TARGET.CAPABILITY += SwEvent
 symbian:ICON = gfx/AntSnes_44.svg
 # symbian:TARGET.EPOCSTACKSIZE 80000
 symbian:INCLUDEPATH += ../snes9x_asm_optimized

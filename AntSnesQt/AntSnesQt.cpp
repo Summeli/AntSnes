@@ -18,11 +18,19 @@
  */
 
 #include "AntSnesQt.h"
-
 #include "snescontroller.h"
 #include "debug.h"
-
 #include "snes9x.h"
+
+const int SCREEN_TOP = 0;
+const int SCREEN_HEIGHT = 360;
+const int DPAD_LEFT_POS = 0;
+const int DPAD_WIDTH = 128;
+const int LDPAD_WIDTH = 256;
+const int BUTTON_LEFT_POS = 512;
+const int BUTTON_WIDTH = 128;
+const int GL_LEFT_POS = 128;
+const int GL_WIDTH = 384;
 
 
 uint KAntKeyTable[12]={SNES_UP_MASK,SNES_DOWN_MASK,SNES_LEFT_MASK,SNES_RIGHT_MASK,SNES_A_MASK,
@@ -31,72 +39,110 @@ uint KAntKeyTable[12]={SNES_UP_MASK,SNES_DOWN_MASK,SNES_LEFT_MASK,SNES_RIGHT_MAS
 AntSnesQt::AntSnesQt(QWidget *parent)
     : QMainWindow(parent)
 {
+    QMainWindow::setAttribute(Qt::WA_AcceptTouchEvents);
+
 	QThread::currentThread()->setPriority( QThread::NormalPriority );
 	ui.setupUi(this);
 	showFullScreen();
 	
 	QMainWindow::setStyleSheet("QMainWindow { background: #111111; }");
-    //create button widgets
-    dpad = new DPadWidget( this );
-    dpad->setGeometry(QRect(0, 0, 128, 360));
+
+	dpad = new DPadWidget( this );
+    dpad->setGeometry(QRect(DPAD_LEFT_POS, SCREEN_TOP, DPAD_WIDTH, SCREEN_HEIGHT));
     dpad->show();
     connect(dpad, SIGNAL(showMenu()), this, SLOT( showAntSnesMenu()) );
-    connect(dpad, SIGNAL(virtualKeyEvent(quint32, bool)), this, SLOT( virtualKeyEvent(quint32, bool)) );
     
     lpad = new largepad( this );
-    lpad->setGeometry(QRect(0, 0, 256, 360));
+    lpad->setGeometry(QRect(DPAD_LEFT_POS, SCREEN_TOP, LDPAD_WIDTH, SCREEN_HEIGHT));
     lpad->hide();
     connect(lpad, SIGNAL(showMenu()), this, SLOT( showAntSnesMenu()) );
     connect(lpad, SIGNAL(virtualKeyEvent(quint32, bool)), this, SLOT( virtualKeyEvent(quint32, bool)) );
         
     buttons = new buttonwidget( this );
-    buttons->setGeometry(QRect(512, 0, 128, 360));
+    buttons->setGeometry(QRect(BUTTON_LEFT_POS, SCREEN_TOP, BUTTON_WIDTH, SCREEN_HEIGHT));
     buttons->show();
-    connect(buttons, SIGNAL(virtualKeyEvent(quint32, bool)), this, SLOT( virtualKeyEvent(quint32, bool)) );
     
     smallwidget = new smalloptionswidget( this );
-    smallwidget->setGeometry(QRect(0, 0, 128, 360));
+    smallwidget->setGeometry(QRect(0, SCREEN_TOP, 128, SCREEN_HEIGHT));
     smallwidget->hide();
     connect(smallwidget, SIGNAL(showMenu()), this, SLOT( showAntSnesMenu()) );
     
     smallwidget2 =  new smalloptionswidget( this );
-    smallwidget2->setGeometry(QRect(512, 0, 128, 360));
+    smallwidget2->setGeometry(QRect(512, SCREEN_TOP, 128, SCREEN_HEIGHT));
     smallwidget2->hide();
     connect(smallwidget2, SIGNAL(showMenu()), this, SLOT( showAntSnesMenu()) );
     
-    widget = new QBlitterWidget();
-    widget->setObjectName(QString::fromUtf8("QBlitterWidget"));
-    widget->setGeometry(QRect(0, 0, 384, 360));
-   // ui.menuButton->setEditFocus(false);
+    widget = new QGLBlitterWidget(this);
+    widget->setObjectName(QString::fromUtf8("QGLBlitterWidget"));
+    widget->setGeometry(QRect(GL_LEFT_POS, SCREEN_TOP, GL_WIDTH, SCREEN_HEIGHT));
+    widget->show();
     
     antaudio = new CAntAudio();
-    //connect buttons from the ui
-   // connect(ui.menuButton, SIGNAL(clicked()), this, SLOT( showAntSnesMenu()) );
-    
-    //the widget cam be repainted with repaint or update commands
-    //widget->repaint();    
+
     control = new QSnesController( widget, antaudio, this );
-    //TODO: use Qt::QueuedConnection in here?
-    connect(this, SIGNAL(Start()), widget, SLOT(startDSA()) );
-    connect(this, SIGNAL(Stop()), widget, SLOT(stopDSA()) );
-    
+
     connect(this, SIGNAL(Start()), control, SLOT(Start()) );
     connect(this, SIGNAL(Stop()), control, SLOT(Stop()) );
-    
     connect(this, SIGNAL(Start()), this, SLOT(listencontrols()) );
-    
     connect(this, SIGNAL(doLoadROM( QString,TAntSettings)), control, SLOT(LoadRom(QString,TAntSettings)) );
-    
 }
 
 AntSnesQt::~AntSnesQt()
 {
-	delete widget;
 	delete control;
+    delete widget;
 	delete smallwidget;
 	delete smallwidget2;
 	delete dpad;
 	delete antaudio;
+}
+
+bool AntSnesQt::event(QEvent *event)
+{
+    switch (event->type())
+    {
+        case QEvent::TouchBegin:
+        case QEvent::TouchUpdate:
+        {
+            QList<QTouchEvent::TouchPoint> touchPoints = (static_cast<QTouchEvent*>(event))->touchPoints();
+#ifdef _DEBUG
+            RDebug::Printf("Event %s - Number of points: %d", (event->type() == QEvent::TouchBegin) ? "TouchBegin" : "TouchUpdate", touchPoints.length());
+#endif
+            iSnesKeys = 0;
+            for ( int i = 0; i < touchPoints.length(); i++ )
+            {
+                QTouchEvent::TouchPoint tp = touchPoints[i];
+#ifdef _DEBUG
+                RDebug::Printf("TouchPoint %d - State: %d - Pos: %fx%f", i, tp.state(), tp.screenPos().x(), tp.screenPos().y());
+#endif
+                if ( tp.state() == Qt::TouchPointPressed || tp.state() == Qt::TouchPointMoved || tp.state() == Qt::TouchPointStationary)
+                {
+                    if ( tp.screenPos().x() < DPAD_WIDTH )
+                    {
+                        iSnesKeys |= dpad->getSnesKey(tp.screenPos().x(), tp.screenPos().y());
+                    }
+                    else if ( tp.screenPos().x() > BUTTON_LEFT_POS )
+                    {
+                        iSnesKeys |= buttons->getSnesKey(tp.screenPos().x() - BUTTON_LEFT_POS, tp.screenPos().y());
+                    }
+                }
+            }
+
+            event->accept();
+            return true;
+        }
+        case QEvent::TouchEnd:
+        {
+#ifdef _DEBUG
+            RDebug::Printf("Event TouchEnd");
+#endif
+            iSnesKeys = 0;
+            break;
+        }
+        default:
+            break;
+    }
+    return QWidget::event(event);
 }
 
 void AntSnesQt::setRemoteControl( QRemoteControlKeys* remote )
@@ -251,6 +297,10 @@ int AntSnesQt::getKeyEvent( antKeyEvent& keyEvent )
 	 return 1;
 	}
 
+quint32 AntSnesQt::getSnesKeys()
+    {
+    return iSnesKeys;
+    }
 
 void AntSnesQt::listencontrols()
 	{

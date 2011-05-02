@@ -25,7 +25,7 @@
 void initdebug();
 
 #include <QDebug>
-#ifdef _DEBUG
+#if 0 //def _DEBUG
 #define __DEBUG_IN        qDebug() << __PRETTY_FUNCTION__ << "in";
 #define __DEBUG_OUT       qDebug() << __PRETTY_FUNCTION__ << "out";
 #define __DEBUG1(a)        qDebug() << a;

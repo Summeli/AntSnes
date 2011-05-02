@@ -17,41 +17,64 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
  
+// Assembly optimised CPU
+#define 		CPU_ASM
+MACRO			CPU_ASM
+
+// GCCE Compiler optimizations
+#define 		GCCE_OPTIMIZE
+
+
+
 TARGET			antsnes.lib
 TARGETTYPE 		LIB
 
-EPOCHEAPSIZE 6000000 64000000
-EPOCSTACKSIZE   0x8000
-//lol, we have to use 0 optimizations and then manually put all optimizations back on :D 
-//othervise the stack will be misaligned
-OPTION GCCE -march=armv5t -O0 -fexpensive-optimizations -finline -finline-function -ffast-math -msoft-float -falign-functions=32 -falign-loops -falign-labels -falign-jumps -fomit-frame-pointer
-
-//#define CPU_ASM //ASM optimnized CPU
+#if defined(GCCE_OPTIMIZE)
+OPTION			GCCE -march=armv5t -O2
+//OPTION		GCCE -march=armv5t -O0 -fcprop-registers -fdefer-pop -fguess-branch-probability -fif-conversion -fif-conversion2 -fmerge-constants -ftree-ccp -ftree-ch -ftree-copyrename -ftree-dce -ftree-dominator-opts -ftree-dse -ftree-fre -ftree-sra -ftree-ter -floop-optimize -fomit-frame-pointer -ftree-lrs -falign-functions -falign-jumps -falign-labels -falign-loops -fcaller-saves -fcrossjumping -fcse-follow-jumps -fcse-skip-blocks -fdelete-null-pointer-checks -fexpensive-optimizations -fgcse -fgcse-lm -fgcse-sm -foptimize-sibling-calls -fpeephole2 -fregmove -freorder-blocks -freorder-functions -frerun-cse-after-loop -frerun-loop-opt -fsched-interblock -fsched-spec -fschedule-insns -fschedule-insns2 -fstrength-reduce -fstrict-aliasing -fthread-jumps -ftree-pre -funit-at-a-time -fweb -fauto-inc-dec -fdce -fdse -fguess-branch-probability -fipa-pure-const -fipa-reference -fsplit-wide-types -ftree-builtin-call-dce -funit-at-a-time -findirect-inlining -fstrict-overflow -ftree-switch-conversion -ftree-vrp
+#else
+OPTION			GCCE -march=armv5t -O0
+#endif
 
 EPOCALLOWDLLDATA
+EPOCHEAPSIZE 	6000000 64000000
+EPOCSTACKSIZE   0x8000
+DEBUGGABLE_UDEBONLY
 
 USERINCLUDE     .
-USERINCLUDE		AntSnes\inc\
 
 SYSTEMINCLUDE	\epoc32\include
 SYSTEMINCLUDE	\epoc32\include\libc
+SYSTEMINCLUDE	\epoc32\include\platform\
 
 SOURCEPATH      .
+
+#ifdef GCCE_OPTIMIZE
+SOURCE			ppu_asm.s
+#else
+SOURCE			ppu.cpp
+#endif
+#ifdef CPU_ASM
+SOURCE			os9x_asm_cpu.cpp
+SOURCE			cpuexec.cpp
+SOURCE			os9x_65c816.s
+SOURCE          spc700a.s
+SOURCE          spc_decode.s
+#else
+MACRO			USE_SA1
+SOURCE			cpuexec_cpp.cpp
+SOURCE			cpuops.cpp
+SOURCE			sa1.cpp
+SOURCE			sa1cpu.cpp
+#endif
+
 //SNES stuff (c-based)
 SOURCE			apu.cpp
 SOURCE			c4emu.cpp
 SOURCE			c4.cpp
 SOURCE		 	clip.cpp
 SOURCE			cpu.cpp
-#ifdef CPU_ASM
-SOURCE			cpuexec.cpp
-SOURCE			os9x_65c816.s spc700a.s spc_decode.s
-#else
-SOURCE			cpuexec_cpp.cpp
-SOURCE			cpuops.cpp
-SOURCE			sa1.cpp
-SOURCE			sa1cpu.cpp
-#endif
+SOURCE          cheats2.cpp
 SOURCE			data.cpp
 SOURCE			dma.cpp
 SOURCE			gfx.cpp
@@ -60,27 +83,16 @@ SOURCE			spc700.cpp
 SOURCE			srtc.cpp
 SOURCE			globals.cpp
 SOURCE			memmap.cpp
-SOURCE			ppu.cpp
 SOURCE			tile.cpp
 SOURCE			dsp1.cpp
 SOURCE			sdd1.cpp
 SOURCE			sdd1emu.cpp
 SOURCE			snapshot.cpp
 SOURCE			m3d_func.s 
-//if GCCE4 is used, division.c is required
-//SOURCE			division.c
-
-#ifdef CPU_ASM
-SOURCE			os9x_asm_cpu.cpp
-#endif
 
 // Super FX
-SOURCE		  fxinst.cpp
-SOURCE		  fxemu.cpp
+SOURCE		    fxinst.cpp
+SOURCE			fxemu.cpp
 
-// zlib and unzip , TODO: can use platform components also
-SOURCE		 zlib\gzio.c
-SOURCE		 unzip.c
-
-// and Symbian stuff
+// Symbian stuff
 SOURCE		symb_debug.cpp

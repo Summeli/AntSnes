@@ -40,8 +40,6 @@ CAntAudio::CAntAudio()
 	
 	iMdaAudioOutputStream = CMdaAudioOutputStream::NewL(*this);
 	
-	for (TInt i=0 ; i<KSoundBuffers+1 ; i++)
-		iSoundBuffers[i] = NULL;
 	
 	iWait = new (ELeave) CActiveSchedulerWait;
 	
@@ -62,7 +60,7 @@ CAntAudio::~CAntAudio()
 		delete iMdaAudioOutputStream;
 		}
 
-	for (TInt i=0 ; i<KSoundBuffers+1 ; i++)
+	for (TInt i=0 ; i<KSoundBuffers ; i++)
 		delete iSoundBuffers[i];
 
 	delete iWait;
@@ -95,7 +93,7 @@ void CAntAudio::setAudioSettings(TInt aRate, TBool aStereo, TInt aPcmFrames, TIn
 	iMdaAudioDataSettings.iFlags      = TMdaAudioDataSettings::ENoNetworkRouting;
 	
 	//TInt	bytesPerFrame = iStereo ? iPcmFrames << 2 : iPcmFrames << 1;
-	TInt bytesPerFrame = iPcmFrames;
+	TInt bytesPerFrame = iPcmFrames * 2;
 	
 	iEmptyBufQ.Reset();
 	
@@ -125,7 +123,7 @@ void CAntAudio::Reset()
     iWait->Start();
 	iMdaAudioOutputStream->SetPriority(EPriorityMuchMore, EMdaPriorityPreferenceNone);
 	TInt MaxVol = iMdaAudioOutputStream->MaxVolume();
-	TInt vol = (MaxVol * iVolume) / MaxVol;
+	TInt vol = (MaxVol * iVolume) / 10;
 	iMdaAudioOutputStream->SetVolume(vol);
 	__DEBUG_OUT
 	}
@@ -151,10 +149,8 @@ void CAntAudio::FrameMixed()
 #ifdef OUTPUT_TO_FILE	
 	TInt err = iFile.Write(*iSoundBuffers[0]);
 #else
-	TInt nextFrame = 0;
-	TBool bufferComplete = EFalse;
 	
-	nextFrame = iEmptyBufQ[0];
+	TInt nextFrame = iEmptyBufQ[0];
 	iEmptyBufQ.Remove(0);
 	iEmptyBufQ.Compress();
 	iMdaAudioOutputStream->WriteL(*iSoundBuffers[nextFrame]);

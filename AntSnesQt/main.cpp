@@ -45,5 +45,9 @@ int main(int argc, char *argv[])
     
     ViewController* vc = new ViewController();
 
-    return a.exec();
+    int ret = a.exec();
+    
+    delete vc;
+    
+    return ret;
 }

@@ -31,23 +31,13 @@ class DPadWidget : public QWidget
 public:
     DPadWidget(QWidget *parent = 0);
     ~DPadWidget();
+    quint32 getSnesKey(int x, int y);
 
 signals:
-	void virtualKeyEvent( quint32 aKey, bool isDown );
 	void showMenu();
-	
-protected:
-	void mousePressEvent(QMouseEvent* event );
-	void mouseReleaseEvent(QMouseEvent* event );
-	void mouseMoveEvent(QMouseEvent* event);
-	
-private:
-	void processbuttons( QMouseEvent* event );
-	quint32 getSnesKeys( QMouseEvent* event );
 	
 private:
     Ui::DPadWidgetClass ui;
-    quint32 prevkeys;
 };
 
 #endif // DPADWIDGET_H

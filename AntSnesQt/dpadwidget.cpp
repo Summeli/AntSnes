@@ -27,14 +27,12 @@
 #define KCenter_x 64
 #define KCenter_y 180
 
-
-DPadWidget::DPadWidget(QWidget *parent)
-    : QWidget(parent)
+DPadWidget::DPadWidget(QWidget *parent) :
+    QWidget(parent)
 {
-	__DEBUG_IN
-	ui.setupUi(this);
-	prevkeys = 0;
-	__DEBUG_OUT
+    __DEBUG_IN
+    ui.setupUi(this);
+    __DEBUG_OUT
 }
 
 DPadWidget::~DPadWidget()
@@ -42,132 +40,87 @@ DPadWidget::~DPadWidget()
 
 }
 
+quint32 DPadWidget::getSnesKey(int x, int y)
+{
+    quint32 key = 0;
+    if (y < 45)
+    {
+        emit(showMenu());
+        return 0;
+    }
+    else if (y >= 310)
+    {
+        //left key pressed
+        key = SNES_TL_MASK;
+    }
+    else if ((y > 160) && (y < 180) && (x > 50)
+            && (x < 80))
+    {
+        // Inside center circle of dpad
+    }
+    else if (y > 90 && y < 250)
+    {
+        qreal rx = x - KCenter_x;
+        qreal ry = y - KCenter_y;
 
-void DPadWidget::mousePressEvent(QMouseEvent* event )
-	{
-	__DEBUG_IN
-	processbuttons( event );
-	__DEBUG_OUT
-	}
+        qreal r = qAtan2(ry, rx);
 
-void DPadWidget::mouseReleaseEvent(QMouseEvent* event )
-	{
-	__DEBUG_IN
-	 if( event->y() > 20 )
-		 {
-		 emit(virtualKeyEvent(prevkeys,false));
-	     prevkeys = 0;
-	     }
-	__DEBUG_OUT
-	}
+        r = (r * 180) / KPi; //convert radians to degrees
 
-void DPadWidget::mouseMoveEvent(QMouseEvent* event)
-	{
-	__DEBUG_IN
-	processbuttons( event );
-	__DEBUG_OUT
-	}
+        //lets use full circle instead of negative angles
+        if (r < 0)
+        {
+            r = 360 + r;
+        }
 
-void DPadWidget::processbuttons( QMouseEvent* event )
-	{
-	__DEBUG_IN
-	if( event->y() < 20 )
-		{
-		emit(showMenu() );
-		return;
-		}
-	else
-		{
-		quint32 key = getSnesKeys( event );
-		if( key != prevkeys )
-			{
-			//release old keys
-			quint32 release = prevkeys;
-			release &= ~(key & prevkeys);
-			emit(virtualKeyEvent(release,false));
-			
-			//send new key
-			quint32 newkey = key;
-			newkey &=  ~(key & prevkeys);
-			emit(virtualKeyEvent(newkey,true));
-			}
-		prevkeys = key;
-		}
-	__DEBUG_OUT
-	}
+        qint32 angle = qRound(r);
 
-quint32 DPadWidget::getSnesKeys( QMouseEvent* event )
-	{
-	quint32 key = 0;
-	if(  event->y() >= 320 )
-	        {
-	        //left key pressed
-			key = SNES_TL_MASK;
-	        }
-	else
-		{
-		qreal x = event->x() - KCenter_x;
-		qreal y = event->y() - KCenter_y;
-		
-		qreal r = qAtan2(y,x);
-		
-		r = (r * 180 )/ KPi; //convert radians to degrees
-	
-		//lets use full circle instead of negative angles
-		if (r < 0)
-			{
-			r = 360 + r;
-			}
-		
-		qint32 angle = qRound(r);
-	
-	
-		//360 degrees is divided into 8 sectors.
-		if (angle > 337 || angle < 23)
-			{
-			//right key was pressed
-			key += SNES_RIGHT_MASK;
-			}
-		else if (angle >= 23 && angle < 68)
-			{
-			//right and down was pressed
-			key += SNES_RIGHT_MASK;
-			key += SNES_DOWN_MASK;
-			}
-		else if (angle >= 68 && angle < 113)
-			{
-			//Down key was pressed
-			key += SNES_DOWN_MASK;
-			}
-		else if (angle >= 113 && angle < 158)
-			{
-			//Down and left key was pressed
-			key += SNES_DOWN_MASK;
-			key += SNES_LEFT_MASK;
-			}
-		else if (angle >= 158 && angle < 203)
-			{
-			//Left key was pressed
-			key += SNES_LEFT_MASK;
-			}
-		else if (angle >= 203 && angle < 248)
-			{
-			//left and up key was pressed
-			key += SNES_LEFT_MASK;
-			key += SNES_UP_MASK;
-			}
-		else if (angle >= 248 && angle < 293)
-			{
-			//up key was pressed
-			key += SNES_UP_MASK;
-			}
-		else if (angle >= 293 && angle <= 337)
-			{
-			//up and right key was pressed
-			key += SNES_UP_MASK;
-			key += SNES_RIGHT_MASK;
-			}
-		}
-		return key;
-	}
+        //360 degrees is divided into 8 sectors.
+        if (angle > 337 || angle < 23)
+        {
+            //right key was pressed
+            key += SNES_RIGHT_MASK;
+        }
+        else if (angle >= 23 && angle < 68)
+        {
+            //right and down was pressed
+            key += SNES_RIGHT_MASK;
+            key += SNES_DOWN_MASK;
+        }
+        else if (angle >= 68 && angle < 113)
+        {
+            //Down key was pressed
+            key += SNES_DOWN_MASK;
+        }
+        else if (angle >= 113 && angle < 158)
+        {
+            //Down and left key was pressed
+            key += SNES_DOWN_MASK;
+            key += SNES_LEFT_MASK;
+        }
+        else if (angle >= 158 && angle < 203)
+        {
+            //Left key was pressed
+            key += SNES_LEFT_MASK;
+        }
+        else if (angle >= 203 && angle < 248)
+        {
+            //left and up key was pressed
+            key += SNES_LEFT_MASK;
+            key += SNES_UP_MASK;
+        }
+        else if (angle >= 248 && angle < 293)
+        {
+            //up key was pressed
+            key += SNES_UP_MASK;
+        }
+        else if (angle >= 293 && angle <= 337)
+        {
+            //up and right key was pressed
+            key += SNES_UP_MASK;
+            key += SNES_RIGHT_MASK;
+        }
+    }
+    return key;
+}
 

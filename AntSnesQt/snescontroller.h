@@ -24,7 +24,7 @@
 
 #include "antsettings.h"
 
-#include "QBlitterWidget.h"
+#include "QGLBlitterWidget.h"
 #include "MEmulatorAdaptation.h"
 #include "AntAudio.h"
 
@@ -33,14 +33,14 @@ class QSnesController : public QThread
     Q_OBJECT
 public:
     
-    QSnesController( QBlitterWidget* widget, CAntAudio* antaudio, MEmulatorAdaptation* adaptation ); 
+    QSnesController( QGLBlitterWidget* widget, CAntAudio* antaudio, MEmulatorAdaptation* adaptation ); 
     
     virtual ~QSnesController();
     virtual void run();
   
 public:
-    void renderSnesFrame();
-    void readJoyPad();
+    void renderSnesFrame(int width, int height);
+    uint32 readJoyPad();
     void updateSettings( TAntSettings antSettings );
     
 public slots:
@@ -74,16 +74,17 @@ public slots:
 #endif
     
 signals:
-	void frameblit();
+	void frameblit(int width, int height);
 	void setPal( bool pal );
 	void audioFrameReady();
 	void resetAudio();
 	
 private:
-    void gameLoopAuto();
-    void gameLoopSkip( int frameskip );
+    void gameLoop();
     void doLoadRom( QString aFileName, TAntSettings antSettings );
-    
+    void defaultSettings();
+    void updateAudioSettings();
+    void MainExit();
       
 private: // Data
     bool iRomLoaded;
@@ -91,17 +92,15 @@ private: // Data
     bool iInitialized;
     
     int iFrames;
-    int iFrameTime;
     int iFPS;
     
-    int iTargetFPS;
     int iSampleCount;
     MEmulatorAdaptation* iAdaptation;
     CAntAudio* audio;
     TAntSettings iSettings;
-
+    
     QString iSelectedROM;
-    QBlitterWidget* blitter; //not owned
+    QGLBlitterWidget* blitter; //not owned
 };
 
 #endif /* SNESCONTROLLER_H_ */

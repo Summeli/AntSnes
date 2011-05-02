@@ -142,6 +142,7 @@ INLINE uint8 S9xGetByte (uint32 Address)
 
 INLINE uint16 S9xGetWord (uint32 Address)
 {
+    uint16 ret;
 #ifdef __show_io__
 	char str[64];
 	sprintf(str,"rd @ %04X",Address);
@@ -153,7 +154,8 @@ INLINE uint16 S9xGetWord (uint32 Address)
 #endif	
     if ((Address & 0x1fff) == 0x1fff)
     {
-	return (S9xGetByte (Address) | (S9xGetByte (Address + 1) << 8));
+    uint8 firstByte = S9xGetByte(Address);
+	return (firstByte | (S9xGetByte (Address + 1) << 8));
     }
 #if defined(VAR_CYCLES) || defined(CPU_SHUTDOWN)
     int block;
@@ -185,20 +187,23 @@ INLINE uint16 S9xGetWord (uint32 Address)
 	if (!CPU.InDMA)
 	    CPU.Cycles += TWO_CYCLES;
 #endif	
-	return (S9xGetPPU (Address & 0xffff) |
-		(S9xGetPPU ((Address + 1) & 0xffff) << 8));
+		ret = S9xGetPPU (Address & 0xffff);
+		ret |= (S9xGetPPU ((Address + 1) & 0xffff) << 8);
+		return ret;
     case CMemory::MAP_CPU:
 #ifdef VAR_CYCLES   
 	CPU.Cycles += TWO_CYCLES;
 #endif
-	return (S9xGetCPU (Address & 0xffff) |
-		(S9xGetCPU ((Address + 1) & 0xffff) << 8));
+		ret = S9xGetCPU (Address & 0xffff);
+		ret |= (S9xGetCPU ((Address + 1) & 0xffff) << 8);
+		return ret;
     case CMemory::MAP_DSP:
 #ifdef VAR_CYCLES
 	CPU.Cycles += SLOW_ONE_CYCLE * 2;
 #endif	
-	return (S9xGetDSP (Address & 0xffff) |
-		(S9xGetDSP ((Address + 1) & 0xffff) << 8));
+		ret = S9xGetDSP (Address & 0xffff);
+		ret |= (S9xGetDSP ((Address + 1) & 0xffff) << 8);
+		return ret;
     case CMemory::MAP_SA1RAM:
     case CMemory::MAP_LOROM_SRAM:
 #ifdef VAR_CYCLES
@@ -232,8 +237,9 @@ INLINE uint16 S9xGetWord (uint32 Address)
 
 //#ifndef __GP32__
     case CMemory::MAP_C4:
-	return (S9xGetC4 (Address & 0xffff) |	
-		(S9xGetC4 ((Address + 1) & 0xffff) << 8));
+		ret = S9xGetC4 (Address & 0xffff);
+		ret |= (S9xGetC4 ((Address + 1) & 0xffff) << 8);
+		return ret;
 //#endif    
     default:
     case CMemory::MAP_NONE:
@@ -464,12 +470,8 @@ INLINE void S9xSetWord (uint16 Word, uint32 Address)
 #endif
 	if (CPU.Memory_SRAMMask)
 	{
-	    *(Memory.SRAM + 
-	      (((Address & 0x7fff) - 0x6000 +
-		((Address & 0xf0000) >> MEMMAP_SHIFT) & CPU.Memory_SRAMMask))) = (uint8) Word;
-	    *(Memory.SRAM + 
-	      ((((Address + 1) & 0x7fff) - 0x6000 +
-		(((Address + 1) & 0xf0000) >> MEMMAP_SHIFT) & CPU.Memory_SRAMMask))) = (uint8) (Word >> 8);
+	    *(Memory.SRAM + (((((Address & 0x7fff) - 0x6000) + ((Address & 0xf0000) >> MEMMAP_SHIFT)) & CPU.Memory_SRAMMask))) = (uint8) Word;
+	    *(Memory.SRAM + ((((((Address + 1) & 0x7fff) - 0x6000) + (((Address + 1) & 0xf0000) >> MEMMAP_SHIFT)) & CPU.Memory_SRAMMask))) = (uint8) (Word >> 8);
 	    CPU.SRAMModified = TRUE;
 	}
 	return;

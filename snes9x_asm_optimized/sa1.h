@@ -46,12 +46,12 @@
 struct SSA1Registers {
     uint8   PB;
     uint8   DB;
-    pair    P;
-    pair    A;
-    pair    D;
-    pair    S;
-    pair    X;
-    pair    Y;
+    mypair    P;
+    mypair    A;
+    mypair    D;
+    mypair    S;
+    mypair    X;
+    mypair    Y;
     uint16  PC;
 };
 

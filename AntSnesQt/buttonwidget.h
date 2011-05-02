@@ -8,25 +8,13 @@ class buttonwidget : public QWidget
 {
     Q_OBJECT
 
-public:
-    buttonwidget(QWidget *parent = 0);
-    ~buttonwidget();
+    public:
+        buttonwidget(QWidget *parent = 0);
+        ~buttonwidget();
+        quint32 getSnesKey(int x, int y);
 
-signals:
-	void virtualKeyEvent( quint32 aKey, bool isDown );
-    	
-protected:
-	void mousePressEvent(QMouseEvent* event );
-	void mouseReleaseEvent(QMouseEvent* event );
-	void mouseMoveEvent(QMouseEvent* event);
-    	
-private:
-	void processbuttons( QMouseEvent* event );
-	quint32 getSnesKeys( QMouseEvent* event );
-	
-private:
-    Ui::buttonwidgetClass ui;
-    quint32 prevkeys;
+    private:
+        Ui::buttonwidgetClass ui;
 };
 
 #endif // BUTTONWIDGET_H

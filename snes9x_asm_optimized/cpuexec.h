@@ -58,14 +58,15 @@ struct SOpcodes {
 
 struct SICPU
 {
-/*
+#ifndef CPU_ASM
     uint8  *Speed;
-    struct SOpcodes *S9xOpcodes;
     uint8  _Carry;
     uint8  _Zero;
     uint8  _Negative;
     uint8  _Overflow;
-*/
+    struct SOpcodes *S9xOpcodes;
+#endif
+    
 	bool8  CPUExecuting;
     uint32 ShiftedPB;
     uint32 ShiftedDB;
