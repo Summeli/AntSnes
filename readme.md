@@ -25,4 +25,4 @@ Credits
 
 [snes9x]: http://www.snes9x.com/ "Snes9x Homepage"
 [drpsnes]: http://reesy.gp32x.de/DrPocketSnes.html "DrPocketSNES"
-[summeli]: www.summeli.fi
+[summeli]: http://www.summeli.fi "www.summeli.fi"
