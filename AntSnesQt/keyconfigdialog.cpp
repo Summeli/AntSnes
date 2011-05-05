@@ -25,10 +25,10 @@
 keyconfigdialog::keyconfigdialog(QWidget *parent)
     : QWidget(parent)
 {
-	ui.setupUi(this);
-	
-	connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(cancelClicked()));
-	round = 0;
+    ui.setupUi(this);
+
+    connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(cancelClicked()));
+    round = 0;
 }
 
 keyconfigdialog::~keyconfigdialog()
@@ -37,75 +37,75 @@ keyconfigdialog::~keyconfigdialog()
 }
 
 void keyconfigdialog::keyPressEvent( QKeyEvent * event)
+{
+    updateText();
+
+    if( event->key() != 0 )
     {
-	updateText();
-	
-	if( event->key() != 0 )
-		{
-		__DEBUG2("keyPressEvent: native scancode is:", event->nativeScanCode());
-		scanKeyTable[round] = event->nativeScanCode();
-		}
-	
+        __DEBUG2("keyPressEvent: native scancode is:", event->nativeScanCode());
+        scanKeyTable[round] = event->nativeScanCode();
+    }
+
     if( round == 11 )
         emit(configDone());
     
     round++;
-    }
+}
 
 void keyconfigdialog::cancelClicked()
-	{
-	updateText();
-	scanKeyTable[round] = 0;
+{
+    updateText();
+    scanKeyTable[round] = 0;
     if( round == 11 )
         emit(configDone());
-	round++;
+    round++;
 
-	}
+}
 
 quint32 keyconfigdialog::getKeyBind( int key )
-	{
-	return scanKeyTable[key];
-	}
+{
+    return scanKeyTable[key];
+}
 
 void keyconfigdialog::updateText()
-	{
-	switch( round )
-		{
-		case 0:
-			 ui.keyLabel->setText("Press Down, or \n Press Skip to skip this button ");
-			 break;
-		case 1:
-			ui.keyLabel->setText("Press Left, or \n Press Skip to skip this button ");
-			break;
-		case 2:
-			ui.keyLabel->setText("Press Right, or \n Press Skip to skip this button ");
-			break;
-		case 3:
-			ui.keyLabel->setText("Press A button, or \n Press Skip to skip this button ");
-			break;
-		case 4:
-			ui.keyLabel->setText("Press X button, or \n Press Skip to skip this button ");
-			break;
-		case 5:
-			ui.keyLabel->setText("Press Y button, or \n Press Skip to skip this button ");
-			break;
-		case 6:
-			ui.keyLabel->setText("Press B button, or \n Press Skip to skip this button ");
-			break;
-		case 7:
-			ui.keyLabel->setText("Press START button, or \n Press Skip to skip this button ");
-			break;
-		case 8:
-			ui.keyLabel->setText("Press SELECT button, or \n Press Skip to skip this button ");
-			break;
-		case 9:
-			ui.keyLabel->setText("Press TL button, or \n Press Skip to skip this button ");
-			break;
-		case 10:
-			ui.keyLabel->setText("Press TR button, or \n Press Skip to skip this button ");
-			break;
-		case 11:
-			break;
-		}
-	
-	}
+{
+    switch( round )
+    {
+    case 0:
+        ui.keyLabel->setText("Press Down, or \n Press Skip to skip this button ");
+        break;
+    case 1:
+        ui.keyLabel->setText("Press Left, or \n Press Skip to skip this button ");
+        break;
+    case 2:
+        ui.keyLabel->setText("Press Right, or \n Press Skip to skip this button ");
+        break;
+    case 3:
+        ui.keyLabel->setText("Press A button, or \n Press Skip to skip this button ");
+        break;
+    case 4:
+        ui.keyLabel->setText("Press X button, or \n Press Skip to skip this button ");
+        break;
+    case 5:
+        ui.keyLabel->setText("Press Y button, or \n Press Skip to skip this button ");
+        break;
+    case 6:
+        ui.keyLabel->setText("Press B button, or \n Press Skip to skip this button ");
+        break;
+    case 7:
+        ui.keyLabel->setText("Press START button, or \n Press Skip to skip this button ");
+        break;
+    case 8:
+        ui.keyLabel->setText("Press SELECT button, or \n Press Skip to skip this button ");
+        break;
+    case 9:
+        ui.keyLabel->setText("Press TL button, or \n Press Skip to skip this button ");
+        break;
+    case 10:
+        ui.keyLabel->setText("Press TR button, or \n Press Skip to skip this button ");
+        break;
+    case 11:
+        break;
+    }
+
+}

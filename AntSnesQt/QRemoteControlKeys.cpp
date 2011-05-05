@@ -36,7 +36,7 @@
 QRemoteControlKeys::QRemoteControlKeys()
 	: CActive ( EPriorityNormal )
 	{
-	CActiveScheduler::Add( this );
+    CActiveScheduler::Add( this );
     iInterfaceSelector = CRemConInterfaceSelector::NewL();
     iRemConCore = CRemConCoreApiTarget::NewL(*iInterfaceSelector, *this);
     iInterfaceSelector->OpenTargetL(); 
@@ -56,14 +56,14 @@ QRemoteControlKeys::QRemoteControlKeys()
 	}
 
 QRemoteControlKeys::~QRemoteControlKeys()
-	{
-	// TODO Auto-generated destructor stub
+{
+    // TODO Auto-generated destructor stub
     delete iInterfaceSelector;
     iRemConCore = NULL; //owned by interfaceselector
-	Cancel();
-	iResponseQ.Reset();
-	iResponseQ.Close();
-	}
+    Cancel();
+    iResponseQ.Reset();
+    iResponseQ.Close();
+}
 
 void QRemoteControlKeys::subscribeKeyEvent(QObject* aObject )
 	{
@@ -339,71 +339,71 @@ void QRemoteControlKeys::MrccatoSelectAudioInputFunction(TUint8 aAudioInputSigna
 void QRemoteControlKeys::CompleteMediaKeyEvent( TRemConCoreApiOperationId aOperationId )
 	{
 	if	( !IsActive() )
-		{
-		switch ( aOperationId )
-			{
-			case ERemConCoreApiVolumeUp:
-				{
-				iRemConCore->VolumeUpResponse( iStatus, KErrNone );
-				SetActive();
-				}
-				break;
-	
-			case ERemConCoreApiVolumeDown:
-				{
-				iRemConCore->VolumeDownResponse( iStatus, KErrNone );	
-				SetActive();
-				}
-				break;
-			case ERemConCoreApiPlay:
-				{
-				iRemConCore-> PlayResponse(iStatus, KErrNone);
-				SetActive();
-				}
-				break;
-			case ERemConCoreApiStop:
-				{
-				iRemConCore->StopResponse(iStatus, KErrNone);
-				SetActive();
-				}
-				break;
-			
-			case ERemConCoreApiPause:
-				{
-				iRemConCore->PauseResponse(iStatus, KErrNone);
-				SetActive();
-				}
-				break;
-			case ERemConCoreApiRewind:
-				{
-				iRemConCore->RewindResponse(iStatus, KErrNone);
-				SetActive();
-				}
-				break;
-			case ERemConCoreApiFastForward:
-				{
-				iRemConCore->FastForwardResponse(iStatus, KErrNone);
-				SetActive();
-				}
-				break;
-			case ERemConCoreApiForward:
-				{
-				iRemConCore->ForwardResponse( iStatus, KErrNone );
-				SetActive();
-				}
-				break;
-			case ERemConCoreApiBackward:
-				{
-				iRemConCore->BackwardResponse(iStatus, KErrNone );
-				SetActive();
-				}
-				break;
-			default:
-				{
-				}
-				break;
-			}
-		}
+            {
+            switch ( aOperationId )
+                {
+                case ERemConCoreApiVolumeUp:
+                    {
+                    iRemConCore->VolumeUpResponse( iStatus, KErrNone );
+                    SetActive();
+                    }
+                    break;
+
+                case ERemConCoreApiVolumeDown:
+                    {
+                    iRemConCore->VolumeDownResponse( iStatus, KErrNone );
+                    SetActive();
+                    }
+                    break;
+                case ERemConCoreApiPlay:
+                    {
+                    iRemConCore-> PlayResponse(iStatus, KErrNone);
+                    SetActive();
+                    }
+                    break;
+                case ERemConCoreApiStop:
+                    {
+                    iRemConCore->StopResponse(iStatus, KErrNone);
+                    SetActive();
+                    }
+                    break;
+
+                case ERemConCoreApiPause:
+                    {
+                    iRemConCore->PauseResponse(iStatus, KErrNone);
+                    SetActive();
+                    }
+                    break;
+                case ERemConCoreApiRewind:
+                    {
+                    iRemConCore->RewindResponse(iStatus, KErrNone);
+                    SetActive();
+                    }
+                    break;
+                case ERemConCoreApiFastForward:
+                    {
+                    iRemConCore->FastForwardResponse(iStatus, KErrNone);
+                    SetActive();
+                    }
+                    break;
+                case ERemConCoreApiForward:
+                    {
+                    iRemConCore->ForwardResponse( iStatus, KErrNone );
+                    SetActive();
+                    }
+                    break;
+                case ERemConCoreApiBackward:
+                    {
+                    iRemConCore->BackwardResponse(iStatus, KErrNone );
+                    SetActive();
+                    }
+                    break;
+                default:
+                    {
+                    }
+                    break;
+                }
+            }
 	else
 		{
 		//active, append to queue
@@ -414,12 +414,12 @@ void QRemoteControlKeys::CompleteMediaKeyEvent( TRemConCoreApiOperationId aOpera
 void QRemoteControlKeys::RunL()
 	{
 	 if ( iResponseQ.Count() )
-		{
-		CompleteMediaKeyEvent( iResponseQ[0] );
-		//remove old response from que
-		iResponseQ.Remove(0);
-		iResponseQ.Compress();
-		}
+            {
+            CompleteMediaKeyEvent( iResponseQ[0] );
+            //remove old response from que
+            iResponseQ.Remove(0);
+            iResponseQ.Compress();
+            }
 	}
 
 void QRemoteControlKeys::DoCancel()

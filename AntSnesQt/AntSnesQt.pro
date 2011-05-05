@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = AntSnesQt
+TARGET = AntSnes
 QT += core \
     gui \
     opengl
@@ -18,9 +18,7 @@ HEADERS += buttonwidget.h \
     QGLBlitterWidget.h \
     AntSettings.h \
     snescontroller.h \
-    AntSnesQt.h \
-    smalloptionswidget.h \
-    largepad.h
+    AntSnesQt.h
     
 SOURCES += buttonwidget.cpp \
 	dpadwidget.cpp \
@@ -39,9 +37,7 @@ SOURCES += buttonwidget.cpp \
     snescontroller.cpp \
     main.cpp \
     AntSnesQt.cpp \
-    AntBlit.cpp \
-    smalloptionswidget.cpp \
-    largepad.cpp
+    AntBlit.cpp
     
 FORMS += buttonwidget.ui \
 	dpadwidget.ui \
@@ -51,9 +47,7 @@ FORMS += buttonwidget.ui \
     keyconfigdialog.ui \
     audiosettings.ui \
     emusettings.ui \
-    AntSnesQt.ui \
-    smalloptionswidget.ui \
-    largepad.ui
+    AntSnesQt.ui
 
 RESOURCES += atnresources.qrc
 

@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>controlsettingsClass</class>
- <widget class="QWidget" name="controlsettingsClass" >
-  <property name="geometry" >
+ <widget class="QWidget" name="controlsettingsClass">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,11 +10,11 @@
     <height>150</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>controlsettings</string>
   </property>
-  <widget class="QLabel" name="Controllabel" >
-   <property name="geometry" >
+  <widget class="QLabel" name="Controllabel">
+   <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
@@ -21,15 +22,15 @@
      <height>150</height>
     </rect>
    </property>
-   <property name="styleSheet" >
-    <string notr="true" />
+   <property name="styleSheet">
+    <string notr="true"/>
    </property>
-   <property name="text" >
+   <property name="text">
     <string/>
    </property>
   </widget>
-  <widget class="QPushButton" name="keyconfigButton" >
-   <property name="geometry" >
+  <widget class="QPushButton" name="keyconfigButton">
+   <property name="geometry">
     <rect>
      <x>370</x>
      <y>20</y>
@@ -37,12 +38,12 @@
      <height>61</height>
     </rect>
    </property>
-   <property name="text" >
+   <property name="text">
     <string>Run Key Config</string>
    </property>
   </widget>
-  <widget class="QComboBox" name="screensettings" >
-   <property name="geometry" >
+  <widget class="QComboBox" name="screensettings">
+   <property name="geometry">
     <rect>
      <x>10</x>
      <y>20</y>
@@ -51,23 +52,18 @@
     </rect>
    </property>
    <item>
-    <property name="text" >
-     <string>use big D-pad</string>
-    </property>
-   </item>
-   <item>
-    <property name="text" >
+    <property name="text">
      <string>use D-pad and XYAB-pad</string>
     </property>
    </item>
    <item>
-    <property name="text" >
+    <property name="text">
      <string>hide both PADs</string>
     </property>
    </item>
   </widget>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="6" margin="11"/>
  <resources/>
  <connections/>
 </ui>

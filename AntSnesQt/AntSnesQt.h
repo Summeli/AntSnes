@@ -35,9 +35,7 @@
 #include "QRemoteControlKeys.h"
 
 #include "dpadwidget.h"
-#include "smalloptionswidget.h"
 #include "buttonwidget.h"
-#include "largepad.h"
 
 class AntSnesQt : public QMainWindow, MEmulatorAdaptation
 {
@@ -53,8 +51,9 @@ public:
     void keyReleaseEvent(QKeyEvent* event);
     bool event(QEvent *event);
 
+    //event filtter for debugging where my events are going to
+    bool eventFilter(QObject *obj, QEvent *event);
 public: //From MEmulatorAdaptation
-    int getKeyEvent( antKeyEvent& keyEvent );
     quint32 getSnesKeys();
     
 public:
@@ -74,8 +73,9 @@ public slots:
     void showAntSnesMenu();
     void updateSettings( TAntSettings );
     void virtualKeyEvent( quint32 aKey, bool isDown );
+
 private slots:
-	void listencontrols();
+    void listencontrols();
     
 private:
     Ui::AntSnesQtClass ui;
@@ -88,11 +88,9 @@ private:
     QRemoteControlKeys* remotecontrol;
     DPadWidget* dpad;
     buttonwidget* buttons;
-    smalloptionswidget* smallwidget;
-    smalloptionswidget* smallwidget2;
-    largepad* lpad;
     
     quint32 iSnesKeys;
+    quint32 iHardKeys;
 };
 
 #endif // ANTSNESQT_H

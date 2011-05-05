@@ -31,7 +31,6 @@ TARGETTYPE 		LIB
 
 #if defined(GCCE_OPTIMIZE)
 OPTION			GCCE -march=armv5t -O2
-//OPTION		GCCE -march=armv5t -O0 -fcprop-registers -fdefer-pop -fguess-branch-probability -fif-conversion -fif-conversion2 -fmerge-constants -ftree-ccp -ftree-ch -ftree-copyrename -ftree-dce -ftree-dominator-opts -ftree-dse -ftree-fre -ftree-sra -ftree-ter -floop-optimize -fomit-frame-pointer -ftree-lrs -falign-functions -falign-jumps -falign-labels -falign-loops -fcaller-saves -fcrossjumping -fcse-follow-jumps -fcse-skip-blocks -fdelete-null-pointer-checks -fexpensive-optimizations -fgcse -fgcse-lm -fgcse-sm -foptimize-sibling-calls -fpeephole2 -fregmove -freorder-blocks -freorder-functions -frerun-cse-after-loop -frerun-loop-opt -fsched-interblock -fsched-spec -fschedule-insns -fschedule-insns2 -fstrength-reduce -fstrict-aliasing -fthread-jumps -ftree-pre -funit-at-a-time -fweb -fauto-inc-dec -fdce -fdse -fguess-branch-probability -fipa-pure-const -fipa-reference -fsplit-wide-types -ftree-builtin-call-dce -funit-at-a-time -findirect-inlining -fstrict-overflow -ftree-switch-conversion -ftree-vrp
 #else
 OPTION			GCCE -march=armv5t -O0
 #endif
@@ -51,7 +50,11 @@ SOURCEPATH      .
 
 #ifdef GCCE_OPTIMIZE
 SOURCE			ppu_asm.s
+SOURCE			soundux_asm.s
+SOURCE			spc700_asm.s
 #else
+SOURCE			spc700.cpp
+SOURCE			soundux.cpp
 SOURCE			ppu.cpp
 #endif
 #ifdef CPU_ASM
@@ -78,8 +81,6 @@ SOURCE          cheats2.cpp
 SOURCE			data.cpp
 SOURCE			dma.cpp
 SOURCE			gfx.cpp
-SOURCE			soundux.cpp
-SOURCE			spc700.cpp
 SOURCE			srtc.cpp
 SOURCE			globals.cpp
 SOURCE			memmap.cpp

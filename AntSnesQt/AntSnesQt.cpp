@@ -24,6 +24,7 @@
 
 const int SCREEN_TOP = 0;
 const int SCREEN_HEIGHT = 360;
+const int SCREEN_WIDTH = 640;
 const int DPAD_LEFT_POS = 0;
 const int DPAD_WIDTH = 128;
 const int LDPAD_WIDTH = 256;
@@ -41,42 +42,28 @@ AntSnesQt::AntSnesQt(QWidget *parent)
 {
     QMainWindow::setAttribute(Qt::WA_AcceptTouchEvents);
 
-	QThread::currentThread()->setPriority( QThread::NormalPriority );
-	ui.setupUi(this);
-	showFullScreen();
-	
-	QMainWindow::setStyleSheet("QMainWindow { background: #111111; }");
+    QThread::currentThread()->setPriority( QThread::NormalPriority );
+    ui.setupUi(this);
+    showFullScreen();
+    setFocusPolicy(Qt::StrongFocus);
 
-	dpad = new DPadWidget( this );
+    QMainWindow::setStyleSheet("QMainWindow { background: #111111; }");
+
+    dpad = new DPadWidget( this );
     dpad->setGeometry(QRect(DPAD_LEFT_POS, SCREEN_TOP, DPAD_WIDTH, SCREEN_HEIGHT));
     dpad->show();
     connect(dpad, SIGNAL(showMenu()), this, SLOT( showAntSnesMenu()) );
-    
-    lpad = new largepad( this );
-    lpad->setGeometry(QRect(DPAD_LEFT_POS, SCREEN_TOP, LDPAD_WIDTH, SCREEN_HEIGHT));
-    lpad->hide();
-    connect(lpad, SIGNAL(showMenu()), this, SLOT( showAntSnesMenu()) );
-    connect(lpad, SIGNAL(virtualKeyEvent(quint32, bool)), this, SLOT( virtualKeyEvent(quint32, bool)) );
         
     buttons = new buttonwidget( this );
     buttons->setGeometry(QRect(BUTTON_LEFT_POS, SCREEN_TOP, BUTTON_WIDTH, SCREEN_HEIGHT));
     buttons->show();
     
-    smallwidget = new smalloptionswidget( this );
-    smallwidget->setGeometry(QRect(0, SCREEN_TOP, 128, SCREEN_HEIGHT));
-    smallwidget->hide();
-    connect(smallwidget, SIGNAL(showMenu()), this, SLOT( showAntSnesMenu()) );
-    
-    smallwidget2 =  new smalloptionswidget( this );
-    smallwidget2->setGeometry(QRect(512, SCREEN_TOP, 128, SCREEN_HEIGHT));
-    smallwidget2->hide();
-    connect(smallwidget2, SIGNAL(showMenu()), this, SLOT( showAntSnesMenu()) );
-    
     widget = new QGLBlitterWidget(this);
     widget->setObjectName(QString::fromUtf8("QGLBlitterWidget"));
     widget->setGeometry(QRect(GL_LEFT_POS, SCREEN_TOP, GL_WIDTH, SCREEN_HEIGHT));
+    //widget->setGeometry(QRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
     widget->show();
-    
+    setFocusProxy( widget );
     antaudio = new CAntAudio();
 
     control = new QSnesController( widget, antaudio, this );
@@ -85,16 +72,15 @@ AntSnesQt::AntSnesQt(QWidget *parent)
     connect(this, SIGNAL(Stop()), control, SLOT(Stop()) );
     connect(this, SIGNAL(Start()), this, SLOT(listencontrols()) );
     connect(this, SIGNAL(doLoadROM( QString,TAntSettings)), control, SLOT(LoadRom(QString,TAntSettings)) );
+    //qApp->installEventFilter(this);
 }
 
 AntSnesQt::~AntSnesQt()
 {
-	delete control;
+    delete control;
     delete widget;
-	delete smallwidget;
-	delete smallwidget2;
-	delete dpad;
-	delete antaudio;
+    delete dpad;
+    delete antaudio;
 }
 
 bool AntSnesQt::event(QEvent *event)
@@ -146,164 +132,145 @@ bool AntSnesQt::event(QEvent *event)
 }
 
 void AntSnesQt::setRemoteControl( QRemoteControlKeys* remote )
-	{
-	remotecontrol = remote;
-	}
+{
+    remotecontrol = remote;
+}
 
 void AntSnesQt::keyPressEvent( QKeyEvent * event)
-    {
-	__DEBUG_IN
-    __DEBUG2("Key Pressed: ", event->text()); 
-    
+{
+    __DEBUG_IN
+    __DEBUG2("Key Pressed: ", event->text());
+
+	if ( event->isAutoRepeat() )
+	{
+	    return;
+	}
     quint32 c = event->nativeScanCode();
     antKeyEvent keyevent;
-    
-	__DEBUG2("key pressed, scancode is ", c );
-	for(TInt i=0;i<16;i++)
-		{
-		if(c==iAntSettings.iScanKeyTable[i])
-			{
-			keyevent.key = KAntKeyTable[i];
-			keyevent.keyDown = true;
-			iPressedKeys.append( keyevent );
-			break;
-			}
-		}
 
-    }
+    __DEBUG2("key pressed, scancode is ", c );
+    for(TInt i=0;i<16;i++)
+        {
+        if(c==iAntSettings.iScanKeyTable[i])
+            {
+            iHardKeys |= KAntKeyTable[i];
+            break;
+            }
+        }
+
+}
 
 void AntSnesQt::keyReleaseEvent(QKeyEvent* event)
-	{
-	__DEBUG_IN
+{
+    __DEBUG_IN
+    if ( event->isAutoRepeat() )
+    {
+        return;
+    }
     quint32 c = event->nativeScanCode();
     antKeyEvent keyevent;
-    
-	__DEBUG2("key released, scancode is ", c );
-	for(TInt i=0;i<16;i++)
-		{
-		if(c==iAntSettings.iScanKeyTable[i])
-			{
-			keyevent.key = KAntKeyTable[i];
-			keyevent.keyDown = false;
-			iPressedKeys.append( keyevent );
-			break;
-			}
-		}
-	__DEBUG_OUT
-	}
+
+    __DEBUG2("key released, scancode is ", c );
+    for(TInt i=0;i<16;i++)
+        {
+        if(c==iAntSettings.iScanKeyTable[i])
+            {
+            iHardKeys &= ~KAntKeyTable[i];
+            break;
+            }
+        }
+    __DEBUG_OUT
+}
 
 void AntSnesQt::LoadROM(QString rom, TAntSettings antSettings )
-    {
-	__DEBUG_IN
-	updateSettings( antSettings );
+{
+    __DEBUG_IN
+    updateSettings( antSettings );
     emit( doLoadROM( rom, antSettings ));
-	
-	emit(Start());
-	__DEBUG_OUT
-    }
+
+    emit(Start());
+    __DEBUG_OUT
+}
 
 void AntSnesQt::showAntSnesMenu()
-	{
-	__DEBUG_IN
-	emit( Stop() );
-	emit( showmenu() );
-	__DEBUG_OUT
-	}
+{
+    __DEBUG_IN
+    emit( Stop() );
+    emit( showmenu() );
+    __DEBUG_OUT
+}
 
 void AntSnesQt::LoadState( int state )
-	{
-	__DEBUG_IN
-	control->LoadStateL( state );
-	emit(Start());
-	__DEBUG_OUT
-	}
+{
+    __DEBUG_IN
+    control->LoadStateL( state );
+    emit(Start());
+    __DEBUG_OUT
+}
 
 void AntSnesQt::SaveState( int state )
-	{
-	__DEBUG_IN
-	widget->saveStateImage( iAntSettings.iLastROM, state );
-	control->SaveStateL( state );
-	emit(Start());
-	__DEBUG_OUT
-	}
+{
+    __DEBUG_IN
+    widget->saveStateImage( iAntSettings.iLastROM, state );
+    control->SaveStateL( state );
+    emit(Start());
+    __DEBUG_OUT
+}
 
 void AntSnesQt::reset()
-	{
-	control->ResetGame();
-	emit( Start() );
-	}
+{
+    control->ResetGame();
+    emit( Start() );
+}
 
 void AntSnesQt::continueGame()
-	{
-	emit( Start() );
-	}
+{
+    setFocus();
+    emit( Start() );
+}
 
 void AntSnesQt::updateSettings( TAntSettings antSettings )
-	{
-	__DEBUG_IN
-	control->updateSettings( antSettings );
-	iAntSettings = antSettings;
-	
-	//change the are in blitter widget
-	widget->setScreenMode( antSettings.iScreenSettings );
-	
-	__DEBUG2("antSettings.iScreenSettings is ", antSettings.iScreenSettings );
-	//change the widgets too
-	switch(antSettings.iScreenSettings  )
-		{
-		case 0:
-			smallwidget->hide();
-			smallwidget2->hide();
-			buttons->hide();
-			dpad->hide();
-			lpad->show();
-			break;
-		case 1:
-			lpad->hide();
-			smallwidget->hide();
-			smallwidget2->hide();
-			buttons->show();
-			dpad->show();
-			break;
-		case 2:
-			lpad->hide();
-			buttons->hide();
-			dpad->hide();
-			smallwidget->show();
-			smallwidget2->show();
-			break;
-		}
-	__DEBUG_OUT
-	}
+{
+    __DEBUG_IN
+    control->updateSettings( antSettings );
+    iAntSettings = antSettings;
+
+    //change the are in blitter widget
+    widget->setScreenMode( antSettings.iScreenSettings );
+
+    __DEBUG2("antSettings.iScreenSettings is ", antSettings.iScreenSettings );
+    //change the widgets too
+    widget->updateSettings( antSettings );
+
+}
 
 void AntSnesQt::virtualKeyEvent( quint32 aKey, bool isDown )
-	{
-	__DEBUG_IN
-    antKeyEvent keyevent;
-    keyevent.key = aKey;
-    keyevent.keyDown = isDown;
-    iPressedKeys.append( keyevent );
+{
+    __DEBUG_IN
+    if( isDown )
+        iHardKeys |= aKey;
+    else
+        iHardKeys &= ~aKey;
     __DEBUG_OUT
-	}
+}
 
-int AntSnesQt::getKeyEvent( antKeyEvent& keyEvent )
-	{
-	if( iPressedKeys.isEmpty() )
-		{
-		return 0;
-		}
-	keyEvent = iPressedKeys.takeFirst();
-	 __DEBUG3("returning keyevent, pressed, scancode", keyEvent.keyDown, keyEvent.key );
-	 return 1;
-	}
 
 quint32 AntSnesQt::getSnesKeys()
-    {
-    return iSnesKeys;
-    }
+{
+    return iSnesKeys | iHardKeys;
+}
 
 void AntSnesQt::listencontrols()
-	{
-	remotecontrol->subscribeKeyEvent(this);
-	}
+{
+    remotecontrol->subscribeKeyEvent(this);
+}
 
+bool AntSnesQt::eventFilter(QObject *obj, QEvent *event)
+{
+    if(event->type() == QEvent::TouchBegin || event->type() == QEvent::TouchUpdate ) {
+        qDebug(obj->objectName().toAscii());
+        return true;
+    } else {
+            return QObject::eventFilter(obj, event);
+    }
+}

@@ -22,9 +22,9 @@
 aboutdialog::aboutdialog(QWidget *parent)
     : QWidget(parent)
 {
-	ui.setupUi(this);
-	connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(closeButtonClicked()) );	
-	
+    ui.setupUi(this);
+    connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(closeButtonClicked()) );
+
 }
 
 aboutdialog::~aboutdialog()
@@ -32,6 +32,6 @@ aboutdialog::~aboutdialog()
 
 }
 void aboutdialog::closeButtonClicked()	
-	{	
-	emit( closeDialog() );	
-	}
+{
+    emit( closeDialog() );
+}

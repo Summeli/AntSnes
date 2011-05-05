@@ -30,7 +30,6 @@ class MEmulatorAdaptation
 public:
 	virtual ~MEmulatorAdaptation() {};
 public:
-	virtual int getKeyEvent( antKeyEvent& keyEvent ) = 0;
     virtual quint32 getSnesKeys() = 0;
 	};
 

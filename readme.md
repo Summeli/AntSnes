@@ -2,6 +2,7 @@ AntSnes: [Snes9x][snes9x] for Symbian
 ===========================
 
 AtnSnes is Snes9x emulator for Symbian. It is actually based on  [DrPocketSNES][drpsnes] version 6.4.4, which in turn is based on snes9x 1.39
+
 --------
 
 Building
@@ -21,8 +22,9 @@ Credits
 * The [snes9x][snes9x] team for the huge effort of writing a fast, cross-platform, and accurate SNES emulator.
 * Reesy's [DrPocketSNES][drpsnes] for paving the way in getting snes9x working on linux-based mobile devices.
 * Summeli [summeli] Symbian port
+* Clancyp for helping with Symbian^3 port
 * Saiyaku Graphics for the Symbian port
 
 [snes9x]: http://www.snes9x.com/ "Snes9x Homepage"
 [drpsnes]: http://reesy.gp32x.de/DrPocketSnes.html "DrPocketSNES"
-[summeli]: http://www.summeli.fi "www.summeli.fi"
+[summeli]: www.summeli.fi

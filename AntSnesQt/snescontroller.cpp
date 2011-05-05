@@ -36,6 +36,7 @@
 
 QTime fpsTime;
 qint64 FRAMETIME;
+float g_fps;
 QSnesController* g_controller;
 
 int saveLoadGame(int load, int slot, int sram = 0);
@@ -260,13 +261,13 @@ extern "C" void S9xSyncSpeed(void)
         qint64 time = QDateTime::currentMSecsSinceEpoch() * 1000;
 
 #ifdef _DEBUG
-        RDebug::Printf( "S9xSyncSpeed - AUTO_FRAMERATE - Time: %d - FRAMETIME: %d", (quint32)(time), (quint32)FRAMETIME );
+       // RDebug::Printf( "S9xSyncSpeed - AUTO_FRAMERATE - Time: %d - FRAMETIME: %d", (quint32)(time), (quint32)FRAMETIME );
 #endif
         if ((FRAMETIME - time) > Settings.FrameTime)
         {
             // Frame is supposed to be rendered more than one frame time ahead of now, wait one frame
 #ifdef _DEBUG
-            RDebug::Printf( "S9xSyncSpeed - Rendering too quickly, waiting for %d", Settings.FrameTime );
+         //   RDebug::Printf( "S9xSyncSpeed - Rendering too quickly, waiting for %d", Settings.FrameTime );
 #endif
             usSleep(Settings.FrameTime);
         }
@@ -274,7 +275,7 @@ extern "C" void S9xSyncSpeed(void)
         {
             // Frame is supposed to be rendered more than one frame time ago, skip this frame
 #ifdef _DEBUG
-            RDebug::Printf( "S9xSyncSpeed - Rendering too slowly, skipping frame - Skipped: %d", IPPU.SkippedFrames );
+         //   RDebug::Printf( "S9xSyncSpeed - Rendering too slowly, skipping frame - Skipped: %d", IPPU.SkippedFrames );
 #endif
             skippedframes = IPPU.SkippedFrames + 1;
             IPPU.RenderThisFrame = FALSE;
@@ -283,7 +284,7 @@ extern "C" void S9xSyncSpeed(void)
         {
             // Frame is supposed to be rendered within one frame time from now or max skip counter reached, render it
 #ifdef _DEBUG
-            RDebug::Printf("S9xSyncSpeed - Within frame window or max skip count reached, rendering the frame");
+         //   RDebug::Printf("S9xSyncSpeed - Within frame window or max skip count reached, rendering the frame");
 #endif
         }
 
@@ -317,9 +318,8 @@ extern "C" bool8 S9xDeinitUpdate(int Width, int Height, bool8 a)
     if ( fpsTime.elapsed() > 2000 ) 
     {
         float elapsed = fpsTime.restart() / 1000;
-        float fps = fpsCount / elapsed;
+        g_fps = fpsCount / elapsed;
         fpsCount = 0;
-        RDebug::Printf("********** FPS: %2.1f **********", fps);
     }
     __DEBUG_OUT
     return true;

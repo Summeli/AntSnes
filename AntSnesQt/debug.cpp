@@ -31,15 +31,15 @@ void debugOutput(QtMsgType type, const char *msg)
     QTextStream out(&file);
     switch (type) 
     {
-        case QtDebugMsg:
-            //out << timeDebug.elapsed();
-            //out << " ";
-            //out << msg;
-            //out << "\n";
-            RDebug::Printf("AntSNES - %d - %s", timeDebug.elapsed(), msg);
-            break;
-        default:
-            break;
+    case QtDebugMsg:
+        //out << timeDebug.elapsed();
+        //out << " ";
+        //out << msg;
+        //out << "\n";
+        RDebug::Printf("AntSNES - %d - %s", timeDebug.elapsed(), msg);
+        break;
+    default:
+        break;
     }
 }
 #endif

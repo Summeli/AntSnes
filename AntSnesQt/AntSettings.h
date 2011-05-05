@@ -26,21 +26,21 @@
 
 struct TAntSettings
 {
-	int iVersion;
-	//matches to the snes-keys
-	quint32 iScanKeyTable[12];
-	QString iLastROM;
-	int iLastSlot;
-	bool iShowFPS;
-	int iFrameSkip;
-	
-	//Audio Settings
-	bool iAudioOn;
-	bool iEnableSpeedHack;
-	int iSampleRate;
-	bool iStereo;
-	int iVolume;
-	int iScreenSettings;
+    int iVersion;
+    //matches to the snes-keys
+    quint32 iScanKeyTable[12];
+    QString iLastROM;
+    int iLastSlot;
+    bool iShowFPS;
+    int iFrameSkip;
+
+    //Audio Settings
+    bool iAudioOn;
+    bool iEnableSpeedHack;
+    int iSampleRate;
+    bool iStereo;
+    int iVolume;
+    int iScreenSettings;
 	
 };
 

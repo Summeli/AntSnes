@@ -29,6 +29,9 @@ Summeli
 * S60 port and ui
 * minor code changes and tweaks for ARM11
 
+Clancyp
+* Helping a lot with Symbian^3 port
+
 Saiyaku 
 * AntSnesQt logo and UI style
 * large D-pad grapchis
