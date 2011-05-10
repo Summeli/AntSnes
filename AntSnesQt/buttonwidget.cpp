@@ -25,13 +25,15 @@
 
 #include "snes9x.h"
 
-#define KCenter_x 64
-#define KCenter_y 180
+#define KCenter_x 85
+#define KCenter_y 275
 
-buttonwidget::buttonwidget(QWidget *parent)
-    : QWidget(parent)
+const int BUTTONS_TOP = 200;
+
+buttonwidget::buttonwidget(QObject *parent)
+    : QObject(parent)
 {
-	ui.setupUi(this);
+        //ui.setupUi(this);
 }
 
 buttonwidget::~buttonwidget()
@@ -42,71 +44,57 @@ quint32 buttonwidget::getSnesKey( int x, int y )
 	{
 	quint32 key = 0;
 	__DEBUG3("buttonwidget, x pos, y pos", x, y);
-	if ((y < 270) && (y > 80) )
-		{ 
-		//Calculate distance from the center
-		qreal rx = x - KCenter_x;
-		qreal ry = y - KCenter_y;
-	
-		qreal r = qAtan2(ry,rx);
-		r = (r * 180 )/ KPi; //convert radians to degrees
-	
-		//lets use full circle instead of negative angles
-		if (r < 0)
-			{
-			r = 360 + r;
-			}
-	
-		qint32 angle = qRound(r);
-		__DEBUG2("buttonwidget, angle is ", angle );
-	
-		//360 degrees is divided into 8 sectors.
-		if (angle > 337 || angle < 68)
-			{
-			//right key was pressed
-			__DEBUG1("buttonwidget, A WAS PRESSED");
-			key = SNES_A_MASK;
-			}
-		else if (angle >= 68 && angle < 158)
-			{
-			//Down key was pressed
-			__DEBUG1("buttonwidget, B WAS PRESSED");
-			key = SNES_B_MASK;
-			}
-		else if (angle >= 158 && angle < 248)
-			{
-			//Left key was pressed
-			__DEBUG1("buttonwidget, Y WAS PRESSED");
-			key =  SNES_Y_MASK;
-			}
-		else if (angle >= 248 && angle < 337)
-			{
-			//up key was pressed
-			__DEBUG1("buttonwidget, X WAS PRESSED");
-			key =  SNES_X_MASK;
-			}
-		}
-	else if( y >= 310 )
-		{
-		//right button pressed
-		__DEBUG1("buttonwidget, TR WAS PRESSED");
-		key = SNES_TR_MASK;
-		}
-	else if( y <= 60 )
-		{
-		if( x > KCenter_x )
-			{
-			//start
-			__DEBUG1("buttonwidget, START WAS PRESSED");
-			key = SNES_START_MASK;
-			}
-		 else
-			{
-			//select
-		    __DEBUG1("buttonwidget, SELECT WAS PRESSED");
-			key = SNES_SELECT_MASK;
-			}
-		}
+        if( y < 45 )
+            {
+            //right button pressed
+            __DEBUG1("buttonwidget, TR WAS PRESSED");
+            key = SNES_TR_MASK;
+            }
+        else if ( y > BUTTONS_TOP )
+            {
+            //Calculate distance from the center
+            qreal rx = x - KCenter_x;
+            qreal ry = y - KCenter_y;
+
+            qreal r = qAtan2(ry,rx);
+            r = (r * 180 )/ KPi; //convert radians to degrees
+
+            //lets use full circle instead of negative angles
+            if (r < 0)
+                    {
+                    r = 360 + r;
+                    }
+
+            qint32 angle = qRound(r);
+            __DEBUG2("buttonwidget, angle is ", angle );
+
+            //360 degrees is divided into 8 sectors.
+            if (angle > 337 || angle < 68)
+                    {
+                    //right key was pressed
+                    __DEBUG1("buttonwidget, A WAS PRESSED");
+                    key = SNES_A_MASK;
+                    }
+            else if (angle >= 68 && angle < 158)
+                    {
+                    //Down key was pressed
+                    __DEBUG1("buttonwidget, B WAS PRESSED");
+                    key = SNES_B_MASK;
+                    }
+            else if (angle >= 158 && angle < 248)
+                    {
+                    //Left key was pressed
+                    __DEBUG1("buttonwidget, Y WAS PRESSED");
+                    key =  SNES_Y_MASK;
+                    }
+            else if (angle >= 248 && angle < 337)
+                    {
+                    //up key was pressed
+                    __DEBUG1("buttonwidget, X WAS PRESSED");
+                    key =  SNES_X_MASK;
+                    }
+            }
+
 	
 	return key;
 	}

@@ -17,21 +17,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef MEMULATORADAPTATION_H_
-#define MEMULATORADAPTATION_H_
+#ifndef MIDDLEBUTTONS_H
+#define MIDDLEBUTTONS_H
 
-struct antKeyEvent{
-	uint key;
-	bool keyDown;
+#include <QtGui/QWidget>
+#include "ui_dpadwidget.h"
+
+class MiddleButtons : public QObject
+{
+    Q_OBJECT
+
+public:
+    MiddleButtons(QObject *parent = 0);
+    ~MiddleButtons();
+    quint32 getSnesKey(int x, int y);
+
+signals:
+        void showMenu();
+
+private:
 };
 
-class MEmulatorAdaptation
-{
-public:
-	virtual ~MEmulatorAdaptation() {};
-public:
-    virtual quint32 getSnesKeys() = 0;
-
- };
-
-#endif /* MEMULATORADAPTATION_H_ */
+#endif // MIDDLEBUTTONS_H

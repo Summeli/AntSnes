@@ -24,14 +24,20 @@
 #include <qmath.h>
 #include "snes9x.h"
 
-#define KCenter_x 64
-#define KCenter_y 180
+const int KCenter_x  = 85;
+const int KCenter_y  = 275;
 
-DPadWidget::DPadWidget(QWidget *parent) :
-    QWidget(parent)
+const int DPAD_CENTER_RIGHT = KCenter_x + 10;
+const int DPAD_CENTER_LEFT = KCenter_x - 10;
+const int DPAD_CENTER_TOP  = KCenter_y - 10;
+const int DPAD_CENTER_BOTTOM = KCenter_y + 10;
+
+const int DPAD_TOP = 200;
+
+DPadWidget::DPadWidget(QObject *parent) :
+    QObject(parent)
 {
     __DEBUG_IN
-    ui.setupUi(this);
     __DEBUG_OUT
 }
 
@@ -45,20 +51,15 @@ quint32 DPadWidget::getSnesKey(int x, int y)
     quint32 key = 0;
     if (y < 45)
     {
-        emit(showMenu());
-        return 0;
-    }
-    else if (y >= 310)
-    {
-        //left key pressed
         key = SNES_TL_MASK;
     }
-    else if ((y > 160) && (y < 180) && (x > 50)
-            && (x < 80))
+
+    else if ((y > DPAD_CENTER_TOP ) && (y < DPAD_CENTER_BOTTOM ) && (x > DPAD_CENTER_LEFT )
+            && (x < DPAD_CENTER_RIGHT ))
     {
         // Inside center circle of dpad
     }
-    else if (y > 90 && y < 250)
+    else if ( y > DPAD_TOP )
     {
         qreal rx = x - KCenter_x;
         qreal ry = y - KCenter_y;

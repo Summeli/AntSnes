@@ -24,16 +24,16 @@
 
 #include "antsettings.h"
 
-#include "QGLBlitterWidget.h"
 #include "MEmulatorAdaptation.h"
 #include "AntAudio.h"
+#include "AntSnesQt.h"
 
 class QSnesController : public QThread
     {
     Q_OBJECT
 public:
     
-    QSnesController( QGLBlitterWidget* widget, CAntAudio* antaudio, MEmulatorAdaptation* adaptation ); 
+    QSnesController( AntSnesQt* widget, CAntAudio* antaudio, MEmulatorAdaptation* adaptation );
     
     virtual ~QSnesController();
     virtual void run();
@@ -100,7 +100,7 @@ private: // Data
     TAntSettings iSettings;
     
     QString iSelectedROM;
-    QGLBlitterWidget* blitter; //not owned
+    AntSnesQt* blitter; //not owned
 };
 
 #endif /* SNESCONTROLLER_H_ */

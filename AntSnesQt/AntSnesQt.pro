@@ -15,10 +15,10 @@ HEADERS += buttonwidget.h \
     viewcontroller.h \
     emusettings.h \
     symb_adaptation.h \
-    QGLBlitterWidget.h \
     AntSettings.h \
     snescontroller.h \
-    AntSnesQt.h
+    AntSnesQt.h \
+    middlebuttons.h
     
 SOURCES += buttonwidget.cpp \
 	dpadwidget.cpp \
@@ -33,15 +33,13 @@ SOURCES += buttonwidget.cpp \
     emusettings.cpp \
     debug.cpp \
     symb_adaptation.cpp \
-    QGLBlitterWidget.cpp \
     snescontroller.cpp \
     main.cpp \
     AntSnesQt.cpp \
-    AntBlit.cpp
+    AntBlit.cpp \
+    middlebuttons.cpp
     
-FORMS += buttonwidget.ui \
-	dpadwidget.ui \
-	aboutdialog.ui \
+FORMS += aboutdialog.ui \
     controlsettings.ui \
     videosettings.ui \
     keyconfigdialog.ui \
@@ -62,7 +60,7 @@ symbian:LIBS += -lantsnes.lib \
     -lremconcoreapi \
     -lremconinterfacebase \
     -lecom \
-    -lmmfcontrollerframework #TODO: remove when audio can be removed..
+    -lmmfcontrollerframework
     
  symbian:TARGET.UID3 \
     = \
@@ -72,7 +70,6 @@ symbian:TARGET.EPOCHEAPSIZE = 0x200000 \
 
 symbian: TARGET.CAPABILITY = UserEnvironment
 symbian:ICON = gfx/AntSnes_44.svg
-# symbian:TARGET.EPOCSTACKSIZE 80000
 symbian:INCLUDEPATH += ../snes9x_asm_optimized
 
 OTHER_FILES += summelistyle.qss

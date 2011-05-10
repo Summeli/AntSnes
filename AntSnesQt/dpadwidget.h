@@ -17,19 +17,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-
 #ifndef DPADWIDGET_H
 #define DPADWIDGET_H
 
 #include <QtGui/QWidget>
 #include "ui_dpadwidget.h"
 
-class DPadWidget : public QWidget
+class DPadWidget : public QObject
 {
     Q_OBJECT
 
 public:
-    DPadWidget(QWidget *parent = 0);
+    DPadWidget(QObject *parent = 0);
     ~DPadWidget();
     quint32 getSnesKey(int x, int y);
 
@@ -37,7 +36,7 @@ signals:
 	void showMenu();
 	
 private:
-    Ui::DPadWidgetClass ui;
+   // Ui::DPadWidgetClass ui;
 };
 
 #endif // DPADWIDGET_H

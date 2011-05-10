@@ -4,17 +4,17 @@
 #include <QtGui/QWidget>
 #include "ui_buttonwidget.h"
 
-class buttonwidget : public QWidget
+class buttonwidget : public QObject
 {
     Q_OBJECT
 
     public:
-        buttonwidget(QWidget *parent = 0);
+        buttonwidget(QObject *parent = 0);
         ~buttonwidget();
         quint32 getSnesKey(int x, int y);
 
     private:
-        Ui::buttonwidgetClass ui;
+       // Ui::buttonwidgetClass ui;
 };
 
 #endif // BUTTONWIDGET_H

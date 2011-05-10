@@ -24,9 +24,9 @@
 #include "gfx.h"
 #include "soundux.h"
 #include "snapshot.h"
-#include "QGLBlitterWidget.h"
 #include "symb_adaptation.h"
 #include "debug.h"
+#include "AntSnesQt.h"
 #include <QDateTime>
 #include <QWaitCondition>
 #include <QMutex>
@@ -41,7 +41,7 @@ QSnesController* g_controller;
 
 int saveLoadGame(int load, int slot, int sram = 0);
 
-QSnesController::QSnesController(QGLBlitterWidget* widget, CAntAudio* antaudio, MEmulatorAdaptation* adaptation) :
+QSnesController::QSnesController( AntSnesQt* widget, CAntAudio* antaudio, MEmulatorAdaptation* adaptation) :
         iRomLoaded(false),
         iPaused(true),
         iInitialized(false),
@@ -51,7 +51,6 @@ QSnesController::QSnesController(QGLBlitterWidget* widget, CAntAudio* antaudio, 
     audio = antaudio;
     g_controller = this;
 
-    connect(this, SIGNAL(setPal(bool)), blitter, SLOT(setPAL(bool)));
 }
 
 void QSnesController::run()
@@ -74,8 +73,6 @@ QSnesController::~QSnesController()
 {
     if (iRomLoaded)
         saveLoadGame(0, 7); //save state
-
-    disconnect(this, SIGNAL(setPal(bool)), blitter, SLOT(setPAL(bool)));
 
     MainExit();
 }
@@ -197,7 +194,6 @@ void QSnesController::LoadRom(QString aFileName, TAntSettings antSettings)
 
     Settings.FrameTime = Settings.PAL ? Settings.FrameTimePAL : Settings.FrameTimeNTSC;
     Memory.ROMFramesPerSecond = Settings.PAL ? 50 : 60;
-    emit(setPal(Settings.PAL));
    
     iRomLoaded = true;
     __DEBUG_OUT
@@ -320,6 +316,7 @@ extern "C" bool8 S9xDeinitUpdate(int Width, int Height, bool8 a)
         float elapsed = fpsTime.restart() / 1000;
         g_fps = fpsCount / elapsed;
         fpsCount = 0;
+        keepbacklightON();
     }
     __DEBUG_OUT
     return true;

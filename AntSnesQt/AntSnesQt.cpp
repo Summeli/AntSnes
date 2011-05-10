@@ -17,71 +17,188 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <QtGui/QImage>
+#include <QtGui/QPainter>
+#include <QtOpenGL/QGLWidget>
+#include <QThread>
+#include <QEvent>
+#include <QTouchEvent>
+#include <QImageReader>
+#include "gfx.h"
+#include "debug.h"
+
 #include "AntSnesQt.h"
 #include "snescontroller.h"
 #include "debug.h"
 #include "snes9x.h"
 
+
 const int SCREEN_TOP = 0;
 const int SCREEN_HEIGHT = 360;
 const int SCREEN_WIDTH = 640;
 const int DPAD_LEFT_POS = 0;
-const int DPAD_WIDTH = 128;
-const int LDPAD_WIDTH = 256;
-const int BUTTON_LEFT_POS = 512;
-const int BUTTON_WIDTH = 128;
+const int DPAD_WIDTH = 169;
+const int BUTTON_WIDTH = 169;
+const int MENU_WIDTH = 200;
+const int MENU_HEIGHT = 30;
+const int BUTTON_LEFT_POS = SCREEN_WIDTH -BUTTON_WIDTH ;
 const int GL_LEFT_POS = 128;
 const int GL_WIDTH = 384;
+const int TR_WIDTH = 80;
+const int TL_WIDTH = 80;
 
+
+const QPoint tl_point(0,0);
+const QPoint tr_point(SCREEN_WIDTH - TR_WIDTH,0);
+const QPoint dpad_point(0,SCREEN_HEIGHT - DPAD_WIDTH);
+const QPoint buttons_point( BUTTON_LEFT_POS,SCREEN_HEIGHT - BUTTON_WIDTH);
+const QPoint menu_point(SCREEN_WIDTH / 2  - MENU_WIDTH / 2 , 0 );
+const QPoint showFPS_point(128,20);
+
+
+extern float g_fps;
 
 uint KAntKeyTable[12]={SNES_UP_MASK,SNES_DOWN_MASK,SNES_LEFT_MASK,SNES_RIGHT_MASK,SNES_A_MASK,
 		SNES_X_MASK,SNES_Y_MASK,SNES_B_MASK,SNES_START_MASK,SNES_SELECT_MASK,SNES_TL_MASK,SNES_TR_MASK};
 
 AntSnesQt::AntSnesQt(QWidget *parent)
-    : QMainWindow(parent)
+    : QGLWidget(parent), buf(NULL)
 {
-    QMainWindow::setAttribute(Qt::WA_AcceptTouchEvents);
+  //  QMainWindow::setAttribute(Qt::WA_AcceptTouchEvents);
+
+    //setBackgroundRole ( QPalette::Window );
+    //setAutoFillBackground ( true );
+
+    bitmapdata = new TUint8[256 * 240 * 2];
+    QWidget::setAttribute(Qt::WA_AcceptTouchEvents);
 
     QThread::currentThread()->setPriority( QThread::NormalPriority );
-    ui.setupUi(this);
+    //ui.setupUi(this);
     showFullScreen();
     setFocusPolicy(Qt::StrongFocus);
 
-    QMainWindow::setStyleSheet("QMainWindow { background: #111111; }");
+   // QGLWidget:setStyleSheet(" background: #111111;");
 
     dpad = new DPadWidget( this );
-    dpad->setGeometry(QRect(DPAD_LEFT_POS, SCREEN_TOP, DPAD_WIDTH, SCREEN_HEIGHT));
-    dpad->show();
-    connect(dpad, SIGNAL(showMenu()), this, SLOT( showAntSnesMenu()) );
-        
     buttons = new buttonwidget( this );
-    buttons->setGeometry(QRect(BUTTON_LEFT_POS, SCREEN_TOP, BUTTON_WIDTH, SCREEN_HEIGHT));
-    buttons->show();
-    
-    widget = new QGLBlitterWidget(this);
-    widget->setObjectName(QString::fromUtf8("QGLBlitterWidget"));
-    widget->setGeometry(QRect(GL_LEFT_POS, SCREEN_TOP, GL_WIDTH, SCREEN_HEIGHT));
-    //widget->setGeometry(QRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
-    widget->show();
-    setFocusProxy( widget );
+    middlebutton = new MiddleButtons( this );
+    connect(middlebutton, SIGNAL(showMenu()), this, SLOT( showAntSnesMenu()) );
+
     antaudio = new CAntAudio();
 
-    control = new QSnesController( widget, antaudio, this );
+    control = new QSnesController( this, antaudio, this );
 
     connect(this, SIGNAL(Start()), control, SLOT(Start()) );
     connect(this, SIGNAL(Stop()), control, SLOT(Stop()) );
     connect(this, SIGNAL(Start()), this, SLOT(listencontrols()) );
     connect(this, SIGNAL(doLoadROM( QString,TAntSettings)), control, SLOT(LoadRom(QString,TAntSettings)) );
-    //qApp->installEventFilter(this);
+
+    //create graphics for the button overlay
+    dpad_graphics = new QPixmap();
+    dpad_graphics->load(":/gfx/dpad.png");
+    buttons_graphics = new QPixmap();
+    buttons_graphics->load(":/gfx/buttons.png");
+    tl_graphics = new QPixmap();
+    tl_graphics->load(":/gfx/tl_button_top.png");
+    tr_graphics = new QPixmap();
+    tr_graphics->load(":/gfx/tr_button_top.png");
+    menu_graphics = new QPixmap();
+    menu_graphics->load(":/gfx/menu_start_select.png");
 }
 
 AntSnesQt::~AntSnesQt()
 {
     delete control;
-    delete widget;
     delete dpad;
     delete antaudio;
 }
+
+void AntSnesQt::render(int width, int height)
+{
+    __DEBUG_IN
+    __DEBUG2("Rendering.. QThread::currentThreadId():", QThread::currentThreadId());
+
+    __DEBUG4("rendering: ", width, "x", height)
+    if (buf != NULL)
+    {
+        delete buf;
+        buf = NULL;
+    }
+
+    __DEBUG1("creating buffer")
+    buf = new QImage(GFX.Screen, width, height, GFX.RealPitch,
+            QImage::Format_RGB16);
+
+    __DEBUG1("calling repaint")
+    repaint();
+    __DEBUG_OUT
+}
+
+void AntSnesQt::paintEvent(QPaintEvent *)
+{
+    __DEBUG_IN
+    __DEBUG2("QThread::currentThreadId():", QThread::currentThreadId());
+
+    QPainter painter;
+    painter.begin(this);
+
+    if (buf != NULL)
+    {
+        __DEBUG1("Creating QRectF's");
+        QRect target(96, 0, 448, 360);
+        QRect source(0, 0, buf->width(), buf->height());
+        __DEBUG1("Drawing image");
+        painter.drawImage(target, *buf, source);
+        __DEBUG1("Ending QPainter");
+    }
+    else
+    {   QRect fullrect(0,0,SCREEN_WIDTH, SCREEN_HEIGHT );
+        painter.fillRect(fullrect, QColor(0x11, 0x11, 0x11 ));
+    }
+
+    if( iAntSettings.iScreenSettings== 0 )
+    {
+        //show pad
+        painter.drawPixmap(tl_point, *tl_graphics);
+        painter.drawPixmap( dpad_point, *dpad_graphics);
+        painter.drawPixmap(tr_point, *tr_graphics);
+        painter.drawPixmap( buttons_point, *buttons_graphics);
+        painter.drawPixmap( menu_point, *menu_graphics);
+    }
+    else
+    {
+        //fill empty space with black
+        QRect leftEmptyRect(0,0,96, SCREEN_HEIGHT );
+        QRect rightEMmptyRect(SCREEN_WIDTH - 96,0,SCREEN_WIDTH, SCREEN_HEIGHT );
+        painter.fillRect(leftEmptyRect, QColor(0x11, 0x11, 0x11 ));
+        painter.fillRect(rightEMmptyRect, QColor(0x11, 0x11, 0x11 ));
+    }
+
+    if( iAntSettings.iShowFPS )
+        {
+        painter.setPen ( Qt::green );
+        painter.drawText ( showFPS_point, QString::number(g_fps) );
+        }
+
+    painter.end();
+    __DEBUG_OUT
+}
+
+
+void AntSnesQt::saveStateImage(QString rom, int state)
+{
+    /*
+    __DEBUG_IN
+    QString filename = rom.left(rom.size() - 4);
+    filename.append(QString::number(state));
+    filename.append(".jpg");
+    __DEBUG2("filename is ", filename);
+    QImage image(bitmapdata, 256, 224, QImage::Format_RGB16);
+    bool saved = image.save(filename, "jpg", 100);
+    __DEBUG2("file saved ", saved);
+    __DEBUG_OUT*/
+}
+
 
 bool AntSnesQt::event(QEvent *event)
 {
@@ -110,6 +227,10 @@ bool AntSnesQt::event(QEvent *event)
                     else if ( tp.screenPos().x() > BUTTON_LEFT_POS )
                     {
                         iSnesKeys |= buttons->getSnesKey(tp.screenPos().x() - BUTTON_LEFT_POS, tp.screenPos().y());
+                    }
+                    else
+                    {
+                        iSnesKeys |= middlebutton->getSnesKey(tp.screenPos().x(), tp.screenPos().y());
                     }
                 }
             }
@@ -211,7 +332,7 @@ void AntSnesQt::LoadState( int state )
 void AntSnesQt::SaveState( int state )
 {
     __DEBUG_IN
-    widget->saveStateImage( iAntSettings.iLastROM, state );
+    saveStateImage( iAntSettings.iLastROM, state );
     control->SaveStateL( state );
     emit(Start());
     __DEBUG_OUT
@@ -232,16 +353,11 @@ void AntSnesQt::continueGame()
 void AntSnesQt::updateSettings( TAntSettings antSettings )
 {
     __DEBUG_IN
+
     control->updateSettings( antSettings );
     iAntSettings = antSettings;
 
-    //change the are in blitter widget
-    widget->setScreenMode( antSettings.iScreenSettings );
-
     __DEBUG2("antSettings.iScreenSettings is ", antSettings.iScreenSettings );
-    //change the widgets too
-    widget->updateSettings( antSettings );
-
 }
 
 void AntSnesQt::virtualKeyEvent( quint32 aKey, bool isDown )
@@ -265,12 +381,3 @@ void AntSnesQt::listencontrols()
     remotecontrol->subscribeKeyEvent(this);
 }
 
-bool AntSnesQt::eventFilter(QObject *obj, QEvent *event)
-{
-    if(event->type() == QEvent::TouchBegin || event->type() == QEvent::TouchUpdate ) {
-        qDebug(obj->objectName().toAscii());
-        return true;
-    } else {
-            return QObject::eventFilter(obj, event);
-    }
-}

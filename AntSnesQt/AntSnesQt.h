@@ -23,11 +23,10 @@
 #include <QtGui/QMainWindow>
 #include <QKeyEvent>
 #include <QList>
+#include <QtOpenGL/QGLWidget>
 
 #include "ui_AntSnesQt.h"
 
-#include "QBlitterWidget.h"
-#include "snescontroller.h"
 #include "AntAudio.h"
 #include "dpadwidget.h" 
 #include "AntSettings.h"
@@ -36,13 +35,16 @@
 
 #include "dpadwidget.h"
 #include "buttonwidget.h"
+#include "middlebuttons.h"
 
-class AntSnesQt : public QMainWindow, MEmulatorAdaptation
+class QSnesController;
+
+class AntSnesQt : public QGLWidget, MEmulatorAdaptation
 {
     Q_OBJECT
 
 public:
-	AntSnesQt(QWidget *parent = 0);
+    AntSnesQt( QWidget *parent = 0 );
     ~AntSnesQt();
 
 public:
@@ -51,11 +53,17 @@ public:
     void keyReleaseEvent(QKeyEvent* event);
     bool event(QEvent *event);
 
-    //event filtter for debugging where my events are going to
-    bool eventFilter(QObject *obj, QEvent *event);
+//rendering stuff
+public slots:
+    void saveStateImage( QString rom, int state );
+    void render(int width, int height);
+
+protected:
+    void paintEvent(QPaintEvent *);
+
 public: //From MEmulatorAdaptation
     quint32 getSnesKeys();
-    
+
 public:
     void LoadROM(QString rom, TAntSettings antSettings);
     void LoadState( int state );
@@ -76,10 +84,10 @@ public slots:
 
 private slots:
     void listencontrols();
-    
+
 private:
-    Ui::AntSnesQtClass ui;
-    QGLBlitterWidget* widget;
+    //Ui::AntSnesQtClass ui;
+    //QGLBlitterWidget* widget;
     CAntAudio* antaudio;
     QSnesController* control;
     
@@ -88,9 +96,20 @@ private:
     QRemoteControlKeys* remotecontrol;
     DPadWidget* dpad;
     buttonwidget* buttons;
-    
+    MiddleButtons* middlebutton;
+
     quint32 iSnesKeys;
     quint32 iHardKeys;
+
+    //drawing
+    QImage* buf;
+    TUint8* bitmapdata;
+    QPixmap* dpad_graphics;
+    QPixmap* buttons_graphics;
+    QPixmap* tl_graphics;
+    QPixmap* tr_graphics;
+    QPixmap* menu_graphics;
+
 };
 
 #endif // ANTSNESQT_H

@@ -102,47 +102,47 @@ void ViewController::loadROM( QString rom, TAntSettings antSettings )
     }
 
 void ViewController::showSettings()
-	{
-	emuView->hide();
-	settingsView->show();
-	}
+{
+    emuView->hide();
+    settingsView->show();
+}
 
 void ViewController::LoadState( int state )
-	{
-	__DEBUG_IN
-	settingsView->hide();
-	emuView->show();
-	
-	emuView->LoadState( state );
-	__DEBUG_OUT
-	}
+{
+    __DEBUG_IN
+    settingsView->hide();
+    emuView->show();
+
+    emuView->LoadState( state );
+    __DEBUG_OUT
+}
 
 void ViewController::SaveState( int state )
-	{
-	__DEBUG_IN
-	settingsView->hide();
-	emuView->show();
-	
-	emuView->SaveState( state );
-	__DEBUG_OUT
-	}
+{
+    __DEBUG_IN
+    settingsView->hide();
+    emuView->show();
+
+    emuView->SaveState( state );
+    __DEBUG_OUT
+}
 
 void ViewController::reset()
-	{
-	__DEBUG_IN
-	settingsView->hide();
-	emuView->show();
-	
-	emuView->reset();
-	__DEBUG_OUT
-	}
+{
+    __DEBUG_IN
+    settingsView->hide();
+    emuView->show();
+
+    emuView->reset();
+    __DEBUG_OUT
+}
 
 void ViewController::continueGame()
-	{
-	__DEBUG_IN
-	settingsView->hide();
-	emuView->show();
-	
-	emuView->continueGame();
-	__DEBUG_OUT
-	}
+{
+    __DEBUG_IN
+    settingsView->hide();
+    emuView->show();
+
+    emuView->continueGame();
+    __DEBUG_OUT
+}
