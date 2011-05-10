@@ -22,7 +22,7 @@ Credits
 * The [snes9x][snes9x] team for the huge effort of writing a fast, cross-platform, and accurate SNES emulator.
 * Reesy's [DrPocketSNES][drpsnes] for paving the way in getting snes9x working on linux-based mobile devices.
 * Summeli [summeli] Symbian port
-* Clancyp for helping with Symbian^3 port
+* clpalmer for helping with Symbian^3 port
 * Saiyaku Graphics for the Symbian port
 
 [snes9x]: http://www.snes9x.com/ "Snes9x Homepage"

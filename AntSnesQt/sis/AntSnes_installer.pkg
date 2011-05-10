@@ -1,0 +1,27 @@
+; Installer for AtnSnes
+
+; Language
+&EN
+
+
+; SIS header: name, uid, version
+#{"AntSnes installer"},(0xA000D7CE),0,7,0
+
+; Default localized vendor name
+%{"Summeli"}
+
+
+; Default unique vendor name
+:"Summeli"
+
+
+
+; Manual PKG pre-rules from PRO files
+; Default dependency to Qt libraries
+; Default HW/platform dependencies
+[0x20022E6D],0,0,0,{"S60ProductID"}
+[0x20032DE7],0,0,0,{"S60ProductID"}
+
+
+"E:/QtSDK/Symbian/projects/snes9x/AntSnesQt/sis/AntSnes_urel.sis" - "!:\private\2002CCCE\import\AntSnes.sis"
+@"E:/QtSDK/Symbian/SDKs/Symbian3Qt473//smartinstaller.sis",(0x2002CCCD)
