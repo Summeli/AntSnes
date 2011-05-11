@@ -34,52 +34,31 @@
 #include "debug.h"
 //#include <e32std.h>
 #include <QDateTime>
+#include <QWaitCondition>
+#include <QMutex>
 
-#define KSecondInMicroseconds   1000000
 #define KPALFrameTime 20000
 #define KNTSCFrameTime 16667
 
-// mainloop and it's stuff
-char fps_buff[24]; // fps count c string
-struct timeval tval; // timing
-static int thissec = 0, frames_done = 0, frames_shown = 0, frames_toskip = 0;
-static int target_fps, target_frametime, too_fast;
-//extern int emu_was_reset;
-static int emu_cflags = 0; // emu control flags: reset_timing, saveload_pending, load
-static int sndLen = 0;
-static uint32 JoyPad;
-static bool audioEnabled;
-//to be removed
-static char noticeMsg[64]; // notice msg to draw
-static timeval noticeMsgTime = { 0, 0 }; // when started showing
-
-void MainExit();
-void MainInit();
-void DumpMemInfo();
-int saveLoadGame(int load, int slot, int sram=0 );
-
-static int g_samplecount;
-
+QTime fpsTime;
+qint64 FRAMETIME;
 QSnesController* g_controller;
 
-//c helper functions
-unsigned long gp2x_timer_read(void);
+int saveLoadGame(int load, int slot, int sram = 0);
+static uint32 JoyPad;
 
-QSnesController::QSnesController( QBlitterWidget* widget, CAntAudio* antaudio, MEmulatorAdaptation* adaptation )
+QSnesController::QSnesController( QBlitterWidget* widget, CAntAudio* antaudio, MEmulatorAdaptation* adaptation ):
+     iRomLoaded(false),
+        iPaused(true),
+        iInitialized(false),
+        iAdaptation(adaptation)
     {
     blitter = widget;
     audio = antaudio;
 	g_controller = this;
 	
 	connect(this, SIGNAL(setPal(bool)), blitter, SLOT(setPAL(bool)) );
-	
-    //in qt we have to set all object to default values..
-    iRomLoaded = false;
-    iInitialized = false;
-    audioEnabled = false;
-    iPaused = true;
-    JoyPad = 0;
-    iAdaptation = adaptation;
+
     }
 
 void QSnesController::run()
@@ -94,17 +73,9 @@ void QSnesController::run()
 	
 	connect(this, SIGNAL(audioFrameReady()), audio, SLOT(FrameMixed()), 
 			Qt::BlockingQueuedConnection );
-	
-    __DEBUG1("thread running");
-    if( iSettings.iFrameSkip == 0 )
-    	gameLoopAuto();
-    else
-    	gameLoopSkip(iSettings.iFrameSkip);
-    
-    if( audioEnabled )
-    	{
 
-    	}
+    gameLoop();
+
     disconnect(this, SIGNAL(frameblit()), blitter, SLOT(render()) );
     disconnect(this, SIGNAL(audioFrameReady()), audio, SLOT(FrameMixed()) );
     __DEBUG_OUT
@@ -152,316 +123,8 @@ void QSnesController::readJoyPad()
 	
 	__DEBUG_OUT
 	}
-
-void QSnesController::updateSettings( TAntSettings antSettings )
-	{
-	__DEBUG_IN
-	//here we can update all the required settings
-	bool audioprv = audioEnabled;
-	
-	iSettings = antSettings;
-	audioEnabled = antSettings.iAudioOn;
-	if( audioprv && !antSettings.iAudioOn )
-		{
-		//shut down the audio
-	    S9xSetSoundMute (TRUE);
-		}
-	 
-    if( audioEnabled )
-        {
-        S9xSetSoundMute (FALSE);
-        
-        if( iSettings.iEnableSpeedHack )
-            CPU.APU_APUExecuting = Settings.APUEnabled = 3;
-        else
-            CPU.APU_APUExecuting = Settings.APUEnabled = 1;
-        //if sound is on
-        Settings.SoundPlaybackRate = antSettings.iSampleRate;
-        Settings.SoundSync = FALSE;
-        Settings.SixteenBitSound=true;
-        Settings.Stereo= antSettings.iStereo;
-        iSampleCount=Settings.SoundPlaybackRate/(Settings.PAL?50:60); //if pal, then 50
-        iTargetFPS = Settings.PAL?50:60;
-        if (Settings.Stereo)
-            iSampleCount = iSampleCount * 2;
-        so.stereo = Settings.Stereo;
-        so.playback_rate = Settings.SoundPlaybackRate;
-        unsigned int frame_limit = (Settings.PAL?50:60);
-        g_samplecount = iSampleCount;
-        //Create audio
-        __DEBUG4("AudioSettings, samplerate, stereo, volume", antSettings.iSampleRate, antSettings.iStereo, antSettings.iVolume );
-        audio->setAudioSettings( antSettings.iSampleRate, antSettings.iStereo, iSampleCount, antSettings.iVolume );
-        S9xSetPlaybackRate(so.playback_rate);
-        }
-	__DEBUG_OUT
-	}
-
-void QSnesController::LoadRom( QString aFileName, TAntSettings antSettings )
+void QSnesController::defaultSettings()
 {
-__DEBUG_IN
-	__DEBUG4("LOADROM, antsettings...", antSettings.iAudioOn, antSettings.iEnableSpeedHack, antSettings.iSampleRate )
-	iSettings = antSettings;
-	audioEnabled = antSettings.iAudioOn; 
-    if( iRomLoaded )
-        saveLoadGame(0, 7); //save state
-
-    if( !iInitialized )
-        {
-        setHighPriority();
-        __DEBUG1("Initializing...");
-        packHeap();
-        MainInit();
-        packHeap();
-        __DEBUG1("init done.");
-        iInitialized = true;
-        if (!S9xGraphicsInit()) 
-            {
-            __DEBUG1("graphics init fail.");
-             MainExit();
-            }
-        }
-
-    
-    S9xReset();
-    
-    User::Heap().Compress();
-    
-    //Load rom
-    __DEBUG2( "Load ROM", aFileName)
-    Memory.LoadROM(aFileName.toStdString().c_str());
-    __DEBUG1( "File loaded");
-    
-    Settings.FrameTime = Settings.PAL?Settings.FrameTimePAL:Settings.FrameTimeNTSC;
-    Memory.ROMFramesPerSecond = Settings.PAL?50:60;
-    
-    iFrameTime = Settings.PAL ? KPALFrameTime:KNTSCFrameTime;
-    
-    emit( setPal(  Settings.PAL ) );
-    
-    //apu executing
-   if( audioEnabled )
-        {
-        
-        S9xSetSoundMute (FALSE);
-        
-        if( iSettings.iEnableSpeedHack )
-            CPU.APU_APUExecuting = Settings.APUEnabled = 3;
-        else
-            CPU.APU_APUExecuting = Settings.APUEnabled = 1;
-        //if sound is on
-        Settings.SoundPlaybackRate = antSettings.iSampleRate;
-        Settings.SoundSync = FALSE;
-        Settings.SixteenBitSound=true;
-        Settings.Stereo= iSettings.iStereo;
-        iSampleCount=Settings.SoundPlaybackRate/(Settings.PAL?50:60); //if pal, then 50
-        iTargetFPS = Settings.PAL?50:60;
-        if (Settings.Stereo)
-            iSampleCount = iSampleCount * 2;
-        so.stereo = Settings.Stereo;
-        so.playback_rate = Settings.SoundPlaybackRate;
-        unsigned int frame_limit = (Settings.PAL?50:60);
-        g_samplecount = iSampleCount;
-        __DEBUG4("AudioSettings, samplerate, stereo, volume", antSettings.iSampleRate, antSettings.iStereo, antSettings.iVolume );
-
-        S9xSetPlaybackRate( so.playback_rate );
-        audio->setAudioSettings( antSettings.iSampleRate, antSettings.iStereo, iSampleCount, antSettings.iVolume );
-        audio->Reset();
-        }
-   else
-        CPU.APU_APUExecuting = Settings.APUEnabled = 0;
-    
-    saveLoadGame(1, 7); //load state
-    
-     S9xReset();
-     iRomLoaded = true;
-__DEBUG_OUT
-}
-void QSnesController::SaveStateL( int aState )
-    {
-	__DEBUG_IN
-    if( !iRomLoaded )
-        return;
-    int err = saveLoadGame(0, aState);
-    __DEBUG_OUT
-    }
-
-void QSnesController::LoadStateL( int aState )
-    {
-	__DEBUG_IN
-    if( !iRomLoaded )
-        return;
-    int err = saveLoadGame(1, aState);
-    __DEBUG_OUT
-    }
-
-void QSnesController::ResetGame()
-    {
-    if( !iRomLoaded )
-        return;
-    
-    S9xReset();
-    
-    }   
-
-/*
- * This basically the mainloop
- * from Zodtdd's iphone port
- * */
-void QSnesController::gameLoopAuto()
-	{
-	__DEBUG_IN
-    unsigned long frameskip_counter = 0;
-    unsigned long current_frameskip_value = 0;
-  	unsigned long fps = 60;
-  	unsigned long long last_screen_timestamp = 0;
-  	unsigned long long last_frame_interval_timestamp = 0;
-  	unsigned long long last_frame_value_timestamp = 0;
-  	unsigned long interval_skipped_frames = 0;
-  	unsigned long framecount = 0;
-  	unsigned long frames_counted;
-  	unsigned long skipped_frames = 0;
-  	int aim=0, done=0, skip=0, Frames=0, tick=0, efps=0, SaveFrames=0;
-  	unsigned long Timer=0;
-  	unsigned long tickframe = 0;
-  	unsigned long frame_ticks_total = 0;
-  	const long frame_speed = Settings.FrameTime;
-	int skipper = 0;
-	int skipcount = 0;
-	short int* aframe;
-	
-	//audio stuff!
-	S9xSetSoundMute (FALSE);
-	
-    while(!iPaused)
-        {
-		unsigned long frame_ticks;
-    
-	   Timer= gp2x_timer_read();
-	   frame_ticks = Timer - tickframe;
-	   frame_ticks_total += frame_ticks;
-	   tickframe = Timer;
-	   Frames++;
-	   if(((frame_speed*Frames) > frame_ticks_total))
-		   {
-		   //usleep(((frame_speed*Frames) - frame_ticks_total) * 1000);
-	       //frame_ticks_total = (frame_speed*Frames);
-	       skipper = 0;
-	       IPPU.RenderThisFrame = TRUE;
-		   }
-	   else
-		  {
-		  skipper++;
-		  if(skipper < 10)
-			  {
-			  skipcount++;
-			  IPPU.RenderThisFrame=FALSE;
-			  }
-	     else
-	    	 {
-			 skipper = 0;
-			 IPPU.RenderThisFrame=TRUE;
-	    	 }
-	     }
-
-	   
-	  if(Timer-tick>=(KSecondInMicroseconds))
-		  {
-		  fps=Frames;
-		  Frames=0;
-		  tick=Timer;
-		  //sprintf(fps_display,"%d %d",fps, skipcount);
-		  skipcount = 0;
-		  frame_ticks_total = 0;
-		  }
-	  
-        S9xMainLoop();
-        
-        if( audioEnabled )
-            {
-        	aframe = (short int*) audio->NextFrameL();
-        	if( aframe )
-        		{
-        		S9xMixSamplesO( aframe , iSampleCount, 0 );
-        		emit audioFrameReady();
-        		}
-        	else
-        		{
-        		__DEBUG1("audiobuffers owerflow");
-        		}
-            }
-   
-        }
-    __DEBUG_OUT
-	}
-
-void QSnesController::gameLoopSkip( int frameskip )
-	{
-	__DEBUG_IN
-	bool renderframe;
-	int counter = 0;
-	int skip = 0;
-	while( !iPaused )
-		{
-		if( !counter )
-			{
-		    counter = 30;
-			skip = frameskip;
-			}
-	    if( skip )
-	    	{
-			IPPU.RenderThisFrame=FALSE;
-	   		iFrames++;
-	    	skip--;
-	    	}
-	    else
-	    	{
-			IPPU.RenderThisFrame=TRUE;
-	    	iFrames++;
-	    	iFPS++;	
-	    	skip = frameskip;
-	    	}
-					
-		S9xMainLoop();
-		if( audioEnabled )
-			{
-			S9xMixSamplesO((short int* ) audio->NextFrameL(), iSampleCount, 0 );
-			emit audioFrameReady();
-			 } 
-		 counter--;
-		}
-	__DEBUG_OUT
-	}
-
-void QSnesController::Start()
-    {
-    __DEBUG_IN
-    
-    if( !iPaused || !iRomLoaded ) 
-        return;
-    
-    iPaused = false;
-    //we don't want to start this thread again
-    if( !isRunning() )	
-    	start( QThread::LowPriority );
-    __DEBUG_OUT
-    }
-
-void QSnesController::Stop()
-    {
-    __DEBUG_IN
-    if( iPaused || !iRomLoaded )
-        return;
-    
-    saveLoadGame(0, 7); //let's save
-    JoyPad = 0;
-    iPaused = true;
-    __DEBUG_OUT
-    }
-
-void MainInit()
-{
-    DumpMemInfo();
-
     // try to start emu
     ZeroMemory (&Settings, sizeof (Settings));
 
@@ -469,9 +132,10 @@ void MainInit()
     Settings.JoystickEnabled = FALSE;
     Settings.CyclesPercentage = 100;
     Settings.DisableSoundEcho = FALSE;
-    Settings.APUEnabled = FALSE;
+    Settings.APUEnabled = (iSettings.iEnableSpeedHack ? 3 : 1);
     Settings.H_Max = SNES_CYCLES_PER_SCANLINE;
     Settings.SkipFrames = AUTO_FRAMERATE;
+    Settings.AutoMaxSkipFrames = 10;
     Settings.Shutdown = Settings.ShutdownMaster = TRUE;
     Settings.FrameTimePAL = KPALFrameTime;//20;
     Settings.FrameTimeNTSC = KNTSCFrameTime;//17;
@@ -500,58 +164,193 @@ void MainInit()
     Settings.SoundSync = FALSE;
     Settings.SixteenBitSound = TRUE;
     Settings.SoundPlaybackRate = 22050;
-    
-    Settings.os9x_hack = FALSE; //AUDIO_ENABLED
-    GFX.Pitch = 256 * 2;
-    GFX.RealPitch = 256 * 2;
-    GFX.Screen = (uint8 *)malloc(256*240*2);
-    
-    GFX.SubScreen = (uint8 *)malloc(GFX.RealPitch * 240 * 2); 
-    GFX.ZBuffer =  (uint8 *)malloc(GFX.RealPitch * 240 * 2); 
-    GFX.SubZBuffer = (uint8 *)malloc(GFX.RealPitch * 240 * 2);
-    
-    GFX.Delta = (GFX.SubScreen - GFX.Screen) >> 1;
-    GFX.PPL = GFX.Pitch >> 1;
-    GFX.PPLx2 = GFX.Pitch;
-    GFX.ZPitch = GFX.Pitch >> 1;
-    
-    if(!GFX.Screen || !GFX.SubScreen || !GFX.ZBuffer) { //  || !GFX.SubZBuffer
-         MainExit();
-    }
-
-    DumpMemInfo();
-    if (!Memory.Init()) {
-         MainExit();
-    }
-    
-    
-    if (!S9xInitAPU()) {
-         MainExit();
-    }
-    
-    S9xInitSound();
+    Settings.os9x_hack = FALSE;
+    Settings.SoundPlaybackRate = iSettings.iSampleRate;
+    Settings.SoundSync = FALSE;
+    Settings.SixteenBitSound = true;
+    Settings.Stereo = iSettings.iStereo;
+    iSampleCount = Settings.SoundPlaybackRate / (Settings.PAL ? 50 : 60);
+    if (Settings.Stereo)
+        iSampleCount = iSampleCount * 2;
+    so.stereo = Settings.Stereo;
+    so.playback_rate = Settings.SoundPlaybackRate;
+    __DEBUG4("AudioSettings, samplerate, stereo, volume", iSettings.iSampleRate, iSettings.iStereo, iSettings.iVolume );
 }
 
-// does not return
-void MainExit()
+void QSnesController::updateAudioSettings()
 {
-__DEBUG_IN
-    S9xSetSoundMute(TRUE);
-    Memory.Deinit();
-    S9xDeinitAPU();
-    S9xGraphicsDeinit();
-
-    // gfx buffers
-    if(GFX.Screen)     free(GFX.Screen);
-    if(GFX.SubScreen)  free(GFX.SubScreen);
-    if(GFX.ZBuffer)    free(GFX.ZBuffer);
-    if(GFX.SubZBuffer )free(GFX.SubZBuffer );
-__DEBUG_OUT
-}
+    audio->setAudioSettings(iSettings.iSampleRate, iSettings.iStereo, iSampleCount, iSettings.iVolume);
+    S9xSetPlaybackRate(so.playback_rate);
+    audio->Reset();
     
-extern "C" bool8 S9xInitUpdate ()
-{   
-    return true;        
+    if (iSettings.iAudioOn)
+    {
+        S9xSetSoundMute(FALSE);
+    }
+    else
+    {
+        S9xSetSoundMute(TRUE);
+    }
+}
+
+void QSnesController::LoadRom(QString aFileName, TAntSettings antSettings)
+{
+    __DEBUG_IN
+    __DEBUG4("LOADROM, antsettings...", antSettings.iAudioOn, antSettings.iEnableSpeedHack, antSettings.iSampleRate )
+
+    if (iRomLoaded)
+        saveLoadGame(0, 7); //save state
+
+    defaultSettings();
+    
+    if (!iInitialized)
+    {
+        setHighPriority();
+        __DEBUG1("Initializing...");
+        packHeap();
+        GFX.Pitch = 256 * 2;
+        GFX.RealPitch = 256 * 2;
+        GFX.PPL = GFX.Pitch >> 1;
+        GFX.PPLx2 = GFX.Pitch;
+        GFX.ZPitch = GFX.Pitch >> 1;
+        GFX.Screen = (uint8 *) malloc(GFX.RealPitch * 239);
+        GFX.SubScreen = (uint8 *) malloc(GFX.RealPitch * 239);
+        GFX.ZBuffer = (uint8 *) malloc(GFX.PPL * 239);
+        GFX.SubZBuffer = (uint8 *) malloc(GFX.PPL * 239);
+        GFX.Delta = (GFX.SubScreen - GFX.Screen) >> 1;
+
+        if (!GFX.Screen || !GFX.SubScreen || !GFX.ZBuffer || !Memory.Init() || !S9xInitAPU() || !GFX.SubZBuffer )
+        {
+            MainExit();
+        }
+        S9xInitSound();
+        __DEBUG1("init done.");
+        iInitialized = true;
+        if (!S9xGraphicsInit())
+        {
+            __DEBUG1("graphics init fail.");
+            MainExit();
+        }
+    }
+
+    packHeap();
+    updateSettings(antSettings);
+
+    __DEBUG2( "Load ROM", aFileName)
+    Memory.LoadROM(aFileName.toStdString().c_str());
+    saveLoadGame(1, 7);
+    __DEBUG1( "File loaded");
+
+    Settings.FrameTime = Settings.PAL ? Settings.FrameTimePAL : Settings.FrameTimeNTSC;
+    Memory.ROMFramesPerSecond = Settings.PAL ? 50 : 60;
+    emit(setPal(Settings.PAL));
+   
+    iRomLoaded = true;
+    __DEBUG_OUT
+}
+
+void QSnesController::SaveStateL(int aState)
+{
+    __DEBUG_IN
+    if (!iRomLoaded)
+        return;
+    saveLoadGame(0, aState);
+    __DEBUG_OUT
+}
+
+void QSnesController::gameLoop()
+{
+    __DEBUG_IN
+
+    short int* aframe;
+    S9xSetSoundMute(FALSE);
+
+    FRAMETIME = QDateTime::currentMSecsSinceEpoch() * 1000;
+    fpsTime.start();
+    
+    while (!iPaused)
+    {
+        S9xMainLoop();
+
+        if (iSettings.iAudioOn)
+        {
+            aframe = (short int*) audio->NextFrameL();
+            if (aframe)
+            {
+                S9xMixSamples(aframe, iSampleCount);
+                emit audioFrameReady();
+            }
+            else
+            {
+                __DEBUG1("audiobuffers owerflow");
+            }
+        }
+    }
+    __DEBUG_OUT
+}
+
+void usSleep(quint32 us)
+{
+    QMutex mutex;
+    mutex.lock();
+    QWaitCondition waitCondition;
+    waitCondition.wait(&mutex, us / 1000);
+    mutex.unlock();
+}
+
+extern "C" void S9xSyncSpeed(void)
+{
+    if (Settings.SkipFrames == AUTO_FRAMERATE) // Auto skip rate
+    {
+        IPPU.RenderThisFrame = TRUE;
+        int skippedframes = 0;
+        qint64 time = QDateTime::currentMSecsSinceEpoch() * 1000;
+
+#ifdef _DEBUG
+        RDebug::Printf( "S9xSyncSpeed - AUTO_FRAMERATE - Time: %d - FRAMETIME: %d", (quint32)(time), (quint32)FRAMETIME );
+#endif
+        if ((FRAMETIME - time) > Settings.FrameTime)
+        {
+            // Frame is supposed to be rendered more than one frame time ahead of now, wait one frame
+#ifdef _DEBUG
+            RDebug::Printf( "S9xSyncSpeed - Rendering too quickly, waiting for %d", Settings.FrameTime );
+#endif
+            usSleep(Settings.FrameTime);
+        }
+        else if (((time - FRAMETIME) > Settings.FrameTime) && (IPPU.SkippedFrames < Settings.AutoMaxSkipFrames))
+        {
+            // Frame is supposed to be rendered more than one frame time ago, skip this frame
+#ifdef _DEBUG
+            RDebug::Printf( "S9xSyncSpeed - Rendering too slowly, skipping frame - Skipped: %d", IPPU.SkippedFrames );
+#endif
+            skippedframes = IPPU.SkippedFrames + 1;
+            IPPU.RenderThisFrame = FALSE;
+        }
+        else
+        {
+            // Frame is supposed to be rendered within one frame time from now or max skip counter reached, render it
+#ifdef _DEBUG
+            RDebug::Printf("S9xSyncSpeed - Within frame window or max skip count reached, rendering the frame");
+#endif
+        }
+
+        IPPU.SkippedFrames = skippedframes;
+        FRAMETIME += Settings.FrameTime;
+    }
+    else // Fixed skip rate
+    {
+        if (++IPPU.FrameSkip >= Settings.SkipFrames)
+        {
+            IPPU.FrameSkip = 0;
+            IPPU.RenderThisFrame = TRUE;
+            IPPU.SkippedFrames = 0;
+        }
+        else
+        {
+            IPPU.SkippedFrames++;
+            IPPU.RenderThisFrame = FALSE;
+        }
+    }
 }
 
 extern "C" bool8 S9xDeinitUpdate (int Width, int Height, bool8 a)
@@ -559,7 +358,17 @@ extern "C" bool8 S9xDeinitUpdate (int Width, int Height, bool8 a)
 __DEBUG_IN
     //render frame here
 	g_controller->renderSnesFrame();
-__DEBUG_OUT
+    static int fpsCount = 0;
+    fpsCount++;
+    if ( fpsTime.elapsed() > 2000 ) 
+    {
+        float elapsed = fpsTime.restart() / 1000;
+        float fps = fpsCount / elapsed;
+        fpsCount = 0;
+        RDebug::Printf("********** FPS: %2.1f **********", fps);
+        keepbacklightON();
+    }
+    __DEBUG_OUT
     return true;
 }
 
@@ -583,95 +392,167 @@ extern "C" void S9xParseArg (char **argv, int &index, int argc)
 {   
 }
 
-extern "C" void S9xMessage (int /* type */, int /* number */, const char *message)
+void QSnesController::updateSettings(TAntSettings antSettings)
 {
+    __DEBUG_IN
+    iSettings = antSettings;
+    defaultSettings();
+    updateAudioSettings();
+    __DEBUG_OUT
 }
 
-extern "C" void S9xLoadSDD1Data (void)
+void QSnesController::LoadStateL(int aState)
 {
-    Settings.SDD1Pack=TRUE;
+    __DEBUG_IN
+    if (!iRomLoaded)
+        return;
+    saveLoadGame(1, aState);
+    __DEBUG_OUT
+}
+
+void QSnesController::ResetGame()
+{
+    if (!iRomLoaded)
+        return;
+
+    S9xReset();
+}
+
+void QSnesController::Start()
+{
+    __DEBUG_IN
+
+    if (!iPaused || !iRomLoaded)
+        return;
+
+    iPaused = false;
+
+    //we don't want to start this thread again
+    if (!isRunning())
+        start(QThread::NormalPriority);
+    __DEBUG_OUT
+}
+
+void QSnesController::Stop()
+{
+    __DEBUG_IN
+    if (iPaused || !iRomLoaded)
+        return;
+
+    saveLoadGame(0, 7); //let's save
+    iPaused = true;
+    __DEBUG_OUT
+}
+
+
+// does not return
+void QSnesController::MainExit()
+{
+    __DEBUG_IN
+    iPaused = true;
+    wait();
+    S9xSetSoundMute(TRUE);
+    Memory.Deinit();
+    S9xDeinitAPU();
+    S9xGraphicsDeinit();
+
+    // gfx buffers
+    if (GFX.Screen)
+        free(GFX.Screen);
+    if (GFX.SubScreen)
+        free(GFX.SubScreen);
+    if (GFX.ZBuffer)
+        free(GFX.ZBuffer);
+    if (GFX.SubZBuffer)
+        free(GFX.SubZBuffer);
+    __DEBUG_OUT
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// remaining s9x stuff
+extern "C" void S9xMessage(int /* type */, int /* number */, const char *message) {}
+extern "C" void S9xGenerateSound(void) {}
+extern "C" void S9xSetPalette(void) {}
+void S9xExit() {} 
+
+extern "C" bool8 S9xInitUpdate()
+{
+    return true;
+}
+
+extern "C" void S9xLoadSDD1Data(void)
+{
+    Settings.SDD1Pack = TRUE;
     Memory.FreeSDD1Data();
-    
+
     //TODO: now what?
     Settings.SDD1Pack = FALSE;
 }
 
-extern "C" void S9xGenerateSound (void)
+extern "C" const char *S9xGetFilename(const char *ex) // ex is like ".srm"
 {
-    S9xMessage (0,0,"generate sound");
-    return;
-}
-
-extern "C" void S9xSetPalette (void)
-{
-    //S9xMessage (0,0,"set palette");
-}
-
-extern "C" const char *S9xGetFilename (const char *ex) // ex is like ".srm"
-{
-    static char filename [PATH_MAX];
+    static char filename[PATH_MAX];
     char *p;
 
-    strcpy (filename, Memory.ROMFilename);
-    for(p = filename+strlen(filename)-1; p > filename+3; p--)
-        if(*p == '.' || *p == '\\') break;
+    strcpy(filename, Memory.ROMFilename);
+    for (p = filename + strlen(filename) - 1; p > filename + 3; p--)
+        if (*p == '.' || *p == '\\')
+            break;
     strcpy(p, ex);
 
     return filename;
 }
 
-extern "C" bool8 S9xReadMousePosition (int /* which1 */, int &/* x */, int & /* y */, uint32 & /* buttons */)
+extern "C" bool8 S9xReadMousePosition(int /* which1 */, int &/* x */,
+        int & /* y */, uint32 & /* buttons */)
 {
-    S9xMessage (0,0,"read mouse");
     return (FALSE);
 }
 
-extern "C" bool8 S9xReadSuperScopePosition (int & /* x */, int & /* y */, uint32 & /* buttons */)
+extern "C" bool8 S9xReadSuperScopePosition(int & /* x */, int & /* y */,
+        uint32 & /* buttons */)
 {
-    S9xMessage (0,0,"read scope");
     return (FALSE);
 }
 
-extern "C" const char *S9xGetFilenameInc (const char *e)
+extern "C" const char *S9xGetFilenameInc(const char *e)
 {
-    S9xMessage (0,0,"get filename inc");
     return e;
 }
 
-extern "C" const char *S9xBasename (const char *f)
+extern "C" const char *S9xBasename(const char *f)
 {
     const char *p;
-
-    S9xMessage (0,0,"s9x base name");
-
-    if ((p = strrchr (f, '/')) != NULL || (p = strrchr (f, '\\')) != NULL)
+    if ((p = strrchr(f, '/')) != NULL || (p = strrchr(f, '\\')) != NULL)
         return (p + 1);
-
     return (f);
 }
 
-extern "C" void S9xSyncSpeed(void)
-{
-    //S9xMessage (0,0,"sync speed");
-}
-
-
 int yo_rand(void)
 {
-    static int yo_rand_val=0;
+    static int yo_rand_val = 0;
     return ++yo_rand_val;
 }
 
-void S9xExit ()
+void S9xAutoSaveSRAM(void)
 {
+    Memory.SaveSRAM(S9xGetFilename(".srm"));
 }
 
-void S9xAutoSaveSRAM (void)
-{
-    Memory.SaveSRAM(S9xGetFilename (".srm"));
-}
-
-bool8 S9xOpenSoundDevice (int mode, bool8 stereo, int buffer_size)
+bool8 S9xOpenSoundDevice(int mode, bool8 stereo, int buffer_size)
 {
     return TRUE;
 }
@@ -691,20 +572,23 @@ static FILE  *state_file = 0;
 
 int state_gzip_open(const char *fname, const char *mode)
 {/*
-    state_gzfile = gzopen(fname, mode);
-    if(state_gzfile && strchr(mode, 'w'))
-        gzsetparams(state_gzfile, 9, Z_DEFAULT_STRATEGY);
-    return (int) state_gzfile;*/
+ state_gzfile = gzopen(fname, mode);
+ if(state_gzfile && strchr(mode, 'w'))
+ gzsetparams(state_gzfile, 9, Z_DEFAULT_STRATEGY);
+ return (int) state_gzfile;*/
+    return 0;
 }
 
 int state_gzip_read(void *p, int l)
 {
     //return gzread(state_gzfile, p, l);
+    return 0;
 }
 
 int state_gzip_write(void *p, int l)
 {
-  //  return gzwrite(state_gzfile, p, l);
+    //  return gzwrite(state_gzfile, p, l);
+    return 0;
 }
 
 void state_gzip_close()
@@ -764,14 +648,15 @@ int stateLoad( int slot )
 /*
     if(currentConfig.iOpt & 4) { // gzip saves
         statef_open  = state_gzip_open;
-        statef_read  = state_gzip_read;
-        statef_write = state_gzip_write;
-        statef_close = state_gzip_close;
-        res = S9xUnfreezeGame(S9xGetFilename(".sst.gz"));
-    }*/
+     statef_read  = state_gzip_read;
+     statef_write = state_gzip_write;
+     statef_close = state_gzip_close;
+     res = S9xUnfreezeGame(S9xGetFilename(".sst.gz"));
+     }*/
 
-    if(!res) { // gzip failed or was disabled
-        statef_open  = state_unc_open;
+    if (!res)
+    { // gzip failed or was disabled
+        statef_open = state_unc_open;
         statef_read  = state_unc_read;
         statef_write = state_unc_write;
         statef_close = state_unc_close;
@@ -823,49 +708,31 @@ int stateSave( int slot )
     //}
 }
 
-
-int saveLoadGame(int load, int slot, int sram )
+int saveLoadGame(int load, int slot, int sram)
 {
     int res = 0;
 
-    if(sram) {
-        if(load)
-             Memory.LoadSRAM(S9xGetFilename(".srm")); 
-        else Memory.SaveSRAM(S9xGetFilename(".srm"));
-    } else {
-        if(load)
-             res = stateLoad(slot);
-        else res = stateSave(slot);
+    if (sram)
+    {
+        if (load)
+            Memory.LoadSRAM(S9xGetFilename(".srm"));
+        else
+            Memory.SaveSRAM(S9xGetFilename(".srm"));
+    }
+    else
+    {
+        if (load)
+            res = stateLoad(slot);
+        else
+            res = stateSave(slot);
 
-        if(res) strcpy(noticeMsg, load ? "LOAD@FAILED" : "SAVE@FAILED");
-        else    strcpy(noticeMsg, load ? "GAME@LOADED" : "GAME@SAVED");
-        gettimeofday(&noticeMsgTime, 0);
     }
 
-    if(!sram) gettimeofday(&noticeMsgTime, 0);
     return res;
 }
 
-void DumpMemInfo()
-{
-}
-
-unsigned long gp2x_timer_read(void)
-{
-  // Once again another peice of direct hardware access bites the dust
-  // the code below is broken in firmware 2.1.1 so I've replaced it with a
-  // to a linux function which seems to work
-  //return gp2x_memregl[0x0A00>>2]/gp2x_ticks_per_second;
-  struct timeval tval; // timing
-  
-  gettimeofday(&tval, 0);
-  //tval.tv_usec
-  //tval.tv_sec
-  return (tval.tv_sec*1000000)+tval.tv_usec;
-}
-
-void _splitpath (const char *path, char *drive, char *dir, char *fname,
-	char *ext)
+void _splitpath(const char *path, char *drive, char *dir, char *fname,
+        char *ext)
 {
 	*drive = 0;
 
@@ -903,22 +770,43 @@ void _splitpath (const char *path, char *drive, char *dir, char *fname,
 		else
 			strcpy (ext, "");
 	}
-} 
+}
 
-void _makepath (char *path, const char *, const char *dir,
-	const char *fname, const char *ext)
+void _makepath(char *path, const char *, const char *dir, const char *fname,
+        const char *ext)
 {
-	if (dir && *dir)
-	{
-		strcpy (path, dir);
-		strcat (path, "/");
-	}
-	else
-	*path = 0;
-	strcat (path, fname);
-	if (ext && *ext)
-	{
-		strcat (path, ".");
-		strcat (path, ext);
-	}
+    if (dir && *dir)
+    {
+        strcpy(path, dir);
+        strcat(path, "/");
+    }
+    else
+        *path = 0;
+    strcat(path, fname);
+    if (ext && *ext)
+    {
+        strcat(path, ".");
+        strcat(path, ext);
+    }
+}
+
+extern "C" bool8 S9xOpenSnapshotFile( const char *fname, bool8 read_only, STREAM *file )
+{
+    if ( read_only )
+    {
+        if ( (*file = fopen( fname, "rb" )) != NULL )
+            return TRUE;
+    }
+    else
+    {
+        if ( (*file = fopen( fname, "wb" )) != NULL )
+            return TRUE;
+    }
+
+    return FALSE;
+}
+
+extern "C" void S9xCloseSnapshotFile( STREAM file )
+{
+    fclose( file );
 }

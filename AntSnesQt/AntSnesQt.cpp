@@ -189,6 +189,7 @@ void AntSnesQt::reset()
 
 void AntSnesQt::continueGame()
 	{
+    setFocus();
 	emit( Start() );
 	}
 

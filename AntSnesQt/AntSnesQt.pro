@@ -1,9 +1,6 @@
 TEMPLATE = app
 TARGET = AntSnesQt
 
-#CONFIG += mobility
-#MOBILITY += sensors \
-#			multimedia
 QT += core \
     gui 
 HEADERS += buttonwidget.h \
@@ -14,7 +11,6 @@ HEADERS += buttonwidget.h \
     videosettings.h \
     AntAudio.h \
     audiosettings.h \
-    AntSnesQt.loc \
     keyconfigdialog.h \
     viewcontroller.h \
     emusettings.h \

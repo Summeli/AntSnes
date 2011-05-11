@@ -152,7 +152,7 @@ void S9xMainLoop (void)
 		DO_HBLANK_CHECK();
 	} // for(;;)
     Registers.PC = CPU.PC - CPU.PCBase;
-    S9xPackStatus (); // not needed
+    //S9xPackStatus (); // not needed
     S9xAPUPackStatus ();
     if (CPU.Flags & SCAN_KEYS_FLAG)
     {

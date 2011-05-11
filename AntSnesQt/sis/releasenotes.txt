@@ -36,6 +36,9 @@ Saiyaku
 Jasper Terveer
 * small dpad and button graphcis
 
+clpalmer
+* audiofix
+
 Additional thanks
 -----------------
 

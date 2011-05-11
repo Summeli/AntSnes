@@ -699,15 +699,34 @@ void S9xSetPPU (uint8 Byte, uint16 Address)
     case 0x2132:
 	if (Byte != Memory.FillRAM [0x2132])
 				{
-					FLUSH_REDRAW();
+					int new_fixedcol;
+					//FLUSH_REDRAW ();
+					// Colour data for fixed colour addition/subtraction
+					if (Byte & 0x80) {
+						//PPU.FixedColourBlue = Byte & 0x1f;
+						new_fixedcol=(Byte & 0x1f);
+						if (new_fixedcol!=PPU.FixedColourBlue) {if (!(Settings.os9x_hack&PPU_IGNORE_FIXEDCOLCHANGES)) FLUSH_REDRAW();PPU.FixedColourBlue=new_fixedcol;}
+					}
+					if (Byte & 0x40) {
+						//PPU.FixedColourGreen = Byte & 0x1f;
+						new_fixedcol=(Byte & 0x1f);
+						if (new_fixedcol!=PPU.FixedColourGreen) {if (!(Settings.os9x_hack&PPU_IGNORE_FIXEDCOLCHANGES)) FLUSH_REDRAW();PPU.FixedColourGreen=new_fixedcol;}
+					}
+					if (Byte & 0x20) {
+						//PPU.FixedColourRed = Byte & 0x1f;
+						new_fixedcol=(Byte & 0x1f);
+						if (new_fixedcol!=PPU.FixedColourRed) {if (!(Settings.os9x_hack&PPU_IGNORE_FIXEDCOLCHANGES)) FLUSH_REDRAW();PPU.FixedColourRed=new_fixedcol;}
+					}
 
+					/*FLUSH_REDRAW ();
 					// Colour data for fixed colour addition/subtraction
 					if (Byte & 0x80)
 						PPU.FixedColourBlue = Byte & 0x1f;
 					if (Byte & 0x40)
 						PPU.FixedColourGreen = Byte & 0x1f;
 					if (Byte & 0x20)
-						PPU.FixedColourRed = Byte & 0x1f;
+					PPU.FixedColourRed = Byte & 0x1f;*/
+
 				}
 	break;
     case 0x2133:
@@ -1276,7 +1295,7 @@ uint8 S9xGetPPU (uint16 Address)
 	    {
 #ifdef CPU_SHUTDOWN
 //		CPU.WaitAddress = CPU.PCAtOpcodeStart;
-	#endif
+#endif
 					if(SNESGameFixes.APU_OutPorts_ReturnValueFix
 						&& Address >= 0x2140
 						&& Address <= 0x2143
@@ -1302,20 +1321,20 @@ uint8 S9xGetPPU (uint16 Address)
 			break;
 		}
 
-		if (Address & 3 < 2)
+				if ((Address & 3) < 2)
 		{
-			int r = yo_rand ();
+			int r = rand ();
 			if (r & 2)
 			{
 				if (r & 4)
-				return (Address & 3 == 1 ? 0xaa : 0xbb);
+				return (((Address & 3) == 1) ? 0xaa : 0xbb);
 				else
 				return ((r >> 3) & 0xff);
 			}
 		}
 		else
 		{
-			int r = yo_rand ();
+			int r = rand ();
 			if (r & 2)
 				return ((r >> 3) & 0xff);
 	    }

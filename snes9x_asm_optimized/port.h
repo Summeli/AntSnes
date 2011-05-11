@@ -47,9 +47,6 @@ int yo_rand(void);
 
 #ifdef __SYMBIAN32__
 
-//CPU_ASM enables the asm CPU
-#define CPU_ASM
-
 // debug
 #ifdef __DEBUG_PRINT
 #undef printf
@@ -90,8 +87,6 @@ typedef short			int16_32;
 #define _MAX_DRIVE 1
 #define _MAX_FNAME PATH_MAX
 #define _MAX_EXT PATH_MAX
-#define PATH_MAX 1024
-#define _MAX_PATH (1024)
 
 //Additional Items for _SNESPPC port
 void _makepath (char *path, const char *drive, const char *dir,

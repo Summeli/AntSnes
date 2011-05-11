@@ -17,9 +17,5 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-PRJ_PLATFORMS
-WINSCW GCCE GCCXML
-
 PRJ_MMPFILES
 AntSnesEngine.mmp
-AntSnes\group\AntSnes.mmp

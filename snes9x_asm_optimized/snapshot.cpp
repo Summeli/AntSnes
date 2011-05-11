@@ -492,20 +492,20 @@ static void Freeze ()
     sprintf (buffer, "NAM:%06d:%s%c", strlen (Memory.ROMFilename) + 1,
 	     Memory.ROMFilename, 0);
     statef_write(buffer, strlen (buffer) + 1);
-    FreezeStruct ("CPU", &CPU, SnapCPU, COUNT (SnapCPU));
-    FreezeStruct ("REG", &Registers, SnapRegisters, COUNT (SnapRegisters));
-    FreezeStruct ("PPU", &PPU, SnapPPU, COUNT (SnapPPU));
-    FreezeStruct ("DMA", DMA, SnapDMA, COUNT (SnapDMA));
+    FreezeStruct ((char*)"CPU", &CPU, SnapCPU, COUNT (SnapCPU));
+    FreezeStruct ((char*)"REG", &Registers, SnapRegisters, COUNT (SnapRegisters));
+    FreezeStruct ((char*)"PPU", &PPU, SnapPPU, COUNT (SnapPPU));
+    FreezeStruct ((char*)"DMA", DMA, SnapDMA, COUNT (SnapDMA));
 
 // RAM and VRAM
-    FreezeBlock ("VRA", Memory.VRAM, 0x10000);
-    FreezeBlock ("RAM", Memory.RAM, 0x20000);
-    FreezeBlock ("SRA", ::SRAM, 0x20000);
-    FreezeBlock ("FIL", Memory.FillRAM, 0x8000);
+    FreezeBlock ((char*)"VRA", Memory.VRAM, 0x10000);
+    FreezeBlock ((char*)"RAM", Memory.RAM, 0x20000);
+    FreezeBlock ((char*)"SRA", ::SRAM, 0x20000);
+    FreezeBlock ((char*)"FIL", Memory.FillRAM, 0x8000);
     if (Settings.APUEnabled)
     {
 // APU
-	FreezeStruct ("APU", &APU, SnapAPU, COUNT (SnapAPU));
+	FreezeStruct ((char*)"APU", &APU, SnapAPU, COUNT (SnapAPU));
 	// copy all SPC700 regs to savestate compatible struct
 	SAPURegisters spcregs;
 	spcregs.P  = IAPU.P;
@@ -513,11 +513,11 @@ static void Freeze ()
 	spcregs.X  = IAPU.X;
 	spcregs.S  = IAPU.S;
 	spcregs.PC = IAPU.PC - IAPU.RAM;
-	FreezeStruct ("ARE", &spcregs, SnapAPURegisters,
+	FreezeStruct ((char*)"ARE", &spcregs, SnapAPURegisters,
 		      COUNT (SnapAPURegisters));
 
-	FreezeBlock  ("ARA", IAPU.RAM, 0x10000);
-	FreezeStruct ("SOU", &SoundData, SnapSoundData,
+	FreezeBlock  ((char*)"ARA", IAPU.RAM, 0x10000);
+	FreezeStruct ((char*)"SOU", &SoundData, SnapSoundData,
 		      COUNT (SnapSoundData));
     }
 #ifdef USE_SA1
@@ -525,8 +525,8 @@ static void Freeze ()
     {
 	SA1Registers.PC = SA1.PC - SA1.PCBase;
 	S9xSA1PackStatus ();
-	FreezeStruct ("SA1", &SA1, SnapSA1, COUNT (SnapSA1));
-	FreezeStruct ("SAR", &SA1Registers, SnapSA1Registers, 
+	FreezeStruct ((char*)"SA1", &SA1, SnapSA1, COUNT (SnapSA1));
+	FreezeStruct ((char*)"SAR", &SA1Registers, SnapSA1Registers, 
 		      COUNT (SnapSA1Registers));
     }
 #endif
@@ -557,7 +557,7 @@ static int Unfreeze()
     if ((version = atoi (&buffer [strlen (SNAPSHOT_MAGIC) + 1])) > SNAPSHOT_VERSION)
 	return (WRONG_VERSION);
 
-    if ((result = UnfreezeBlock("NAM", (uint8 *) rom_filename, 512)) != SUCCESS)
+    if ((result = UnfreezeBlock((char*)"NAM", (uint8 *) rom_filename, 512)) != SUCCESS)
 	return (result);
 
     if (strcasecmp (rom_filename, Memory.ROMFilename) != 0 &&
@@ -576,7 +576,7 @@ static int Unfreeze()
 	S9xReset ();
     S9xSetSoundMute (TRUE);
 
-    if ((result = UnfreezeStruct("CPU", &CPU, SnapCPU, 
+    if ((result = UnfreezeStruct((char*)"CPU", &CPU, SnapCPU, 
 				  COUNT (SnapCPU))) != SUCCESS)
 	return (result);
 	
@@ -584,9 +584,9 @@ static int Unfreeze()
     Memory.FixROMSpeed ();
     CPU.Flags |= old_flags & (DEBUG_MODE_FLAG | TRACE_FLAG |
 			      SINGLE_STEP_FLAG | FRAME_ADVANCE_FLAG);
-    if ((result = UnfreezeStruct("REG", &Registers, SnapRegisters, COUNT (SnapRegisters))) != SUCCESS)
+    if ((result = UnfreezeStruct((char*)"REG", &Registers, SnapRegisters, COUNT (SnapRegisters))) != SUCCESS)
 	return (result);
-    if ((result = UnfreezeStruct("PPU", &PPU, SnapPPU, COUNT (SnapPPU))) != SUCCESS)
+    if ((result = UnfreezeStruct((char*)"PPU", &PPU, SnapPPU, COUNT (SnapPPU))) != SUCCESS)
 	return (result);
 	
 
@@ -596,27 +596,27 @@ static int Unfreeze()
     S9xFixColourBrightness ();
     IPPU.RenderThisFrame = FALSE;
 
-    if ((result = UnfreezeStruct ("DMA", DMA, SnapDMA, 
+    if ((result = UnfreezeStruct ((char*)"DMA", DMA, SnapDMA, 
 				  COUNT (SnapDMA))) != SUCCESS)
 	return (result);
 	
-    if ((result = UnfreezeBlock ("VRA", Memory.VRAM, 0x10000)) != SUCCESS)
+    if ((result = UnfreezeBlock ((char*)"VRA", Memory.VRAM, 0x10000)) != SUCCESS)
 	return (result);		
 	
-    if ((result = UnfreezeBlock ("RAM", Memory.RAM, 0x20000)) != SUCCESS)
+    if ((result = UnfreezeBlock ((char*)"RAM", Memory.RAM, 0x20000)) != SUCCESS)
 	return (result);
 
-    if ((result = UnfreezeBlock ("SRA", ::SRAM, 0x20000)) != SUCCESS)
+    if ((result = UnfreezeBlock ((char*)"SRA", ::SRAM, 0x20000)) != SUCCESS)
 	return (result);
 
-    if ((result = UnfreezeBlock ("FIL", Memory.FillRAM, 0x8000)) != SUCCESS)
+    if ((result = UnfreezeBlock ((char*)"FIL", Memory.FillRAM, 0x8000)) != SUCCESS)
 	return (result);
 
 	
-    if (UnfreezeStruct ("APU", &APU, SnapAPU, COUNT (SnapAPU)) == SUCCESS)
+    if (UnfreezeStruct ((char*)"APU", &APU, SnapAPU, COUNT (SnapAPU)) == SUCCESS)
     {
 		SAPURegisters spcregs;
-		if ((result = UnfreezeStruct ("ARE", &spcregs, SnapAPURegisters,
+		if ((result = UnfreezeStruct ((char*)"ARE", &spcregs, SnapAPURegisters,
 				      COUNT (SnapAPURegisters))) != SUCCESS)
 		    return (result);
 		// reload all SPC700 regs from savestate compatible struct
@@ -626,10 +626,10 @@ static int Unfreeze()
 		IAPU.S = spcregs.S;
 		IAPU.PC = IAPU.RAM + spcregs.PC;
 
-		if ((result = UnfreezeBlock ("ARA", IAPU.RAM, 0x10000)) != SUCCESS)
+		if ((result = UnfreezeBlock ((char*)"ARA", IAPU.RAM, 0x10000)) != SUCCESS)
 		    return (result);
 		    
-		if ((result = UnfreezeStruct ("SOU", &SoundData, SnapSoundData,
+		if ((result = UnfreezeStruct ((char*)"SOU", &SoundData, SnapSoundData,
 				      COUNT (SnapSoundData))) != SUCCESS)
 		    return (result);
 	    
@@ -656,10 +656,10 @@ static int Unfreeze()
 	S9xSetSoundMute (TRUE);
     }
 #ifdef USE_SA1
-    if ((result = UnfreezeStruct ("SA1", &SA1, SnapSA1, 
+    if ((result = UnfreezeStruct ((char*)"SA1", &SA1, SnapSA1, 
 				  COUNT(SnapSA1))) == SUCCESS)
     {
-	if ((result = UnfreezeStruct ("SAR", &SA1Registers, 
+	if ((result = UnfreezeStruct ((char*)"SAR", &SA1Registers, 
 				      SnapSA1Registers, COUNT (SnapSA1Registers))) != SUCCESS)
 	    return (result);
 

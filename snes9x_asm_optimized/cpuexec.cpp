@@ -87,6 +87,7 @@ void S9xMainLoop (void)
     S9xAPUPackStatus ();
     if (CPU.Flags & SCAN_KEYS_FLAG)
     {
+        S9xSyncSpeed ();
 		CPU.Flags &= ~SCAN_KEYS_FLAG;
     }
     

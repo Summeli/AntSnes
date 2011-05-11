@@ -105,17 +105,17 @@ typedef union
     struct { uint8 h,l; } PACKING B;
 #endif
     uint16 W;
-} ALIGN_BY_ONE pair;
+} ALIGN_BY_ONE mypair;
 
 struct SRegisters{
     uint8  PB;
     uint8  DB;
-    pair   P;
-    pair   A;
-    pair   D;
-    pair   X;
-    pair   S;
-    pair   Y;
+    mypair   P;
+    mypair   A;
+    mypair   D;
+    mypair   X;
+    mypair   S;
+    mypair   Y;
     uint16 PC;
 } PACKING;
 

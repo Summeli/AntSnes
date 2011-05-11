@@ -51,6 +51,9 @@ Summeli
 * AntSnes, the S60 port
 * minor code changes. 
 
+clpalmer
+* audiofix
+
 Additional thanks
 -----------------
 

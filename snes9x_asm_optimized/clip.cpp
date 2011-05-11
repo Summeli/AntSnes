@@ -56,7 +56,7 @@ struct Band
 #define MAX(A,B) ((A) > (B) ? (A) : (B))
 #define BAND_EMPTY(B) (B.Left >= B.Right)
 #define BANDS_INTERSECT(A,B) ((A.Left >= B.Left && A.Left < B.Right) || \
-			      (A.Right > B.Left && A.Right <= B.Right))
+							  (B.Left >= A.Left && B.Left < A.Right))
 #define OR_BANDS(R,A,B) {\
     R.Left = MIN(A.Left, B.Left); \
     R.Right = MAX(A.Right, B.Right);}
@@ -671,9 +671,7 @@ void ComputeClipWindows ()
 			}
 		    }
 
-		    if (w != 5)
-		    {
-			if (pClip->Count [5])
+					if (w != 5 && pClip->Count [5])
 			{
 			    // Colour window enabled. Set the
 			    // clip windows for all remaining backgrounds to be
@@ -716,4 +714,4 @@ Clip_ok:
 		    }
 		} // if (w == 5 | ...
 	    } // if (!Settings.DisableGraphicWindows)
-}
+

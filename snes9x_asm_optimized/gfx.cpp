@@ -260,8 +260,8 @@ bool8 S9xGraphicsInit ()
 		l |= PixelOdd;
 #endif
 
-	    odd_high[bitshift][i] = h;
-	    odd_low[bitshift][i] = l;
+	    odd_high[bitshift][(uint8)i] = h;
+	    odd_low[bitshift][(uint8)i] = l;
 	    h = l = 0;
 
 #if defined(LSB_FIRST)
@@ -300,8 +300,8 @@ bool8 S9xGraphicsInit ()
 		l |= PixelEven;
 #endif
 
-	    even_high[bitshift][i] = h;
-	    even_low[bitshift][i] = l;
+	    even_high[bitshift][(uint8)i] = h;
+	    even_low[bitshift][(uint8)i] = l;
 	}
 	PixelEven <<= 2;
 	PixelOdd <<= 2;
@@ -2313,7 +2313,7 @@ void DrawBGMode7Background16Add (uint8 *Screen, int bg)
 
 void DrawBGMode7Background16Add1_2 (uint8 *Screen, int bg)
 {
-    RENDER_BACKGROUND_MODE7 (uint16, *(d + GFX.DepthDelta) ?
+    RENDER_BACKGROUND_MODE7(uint16, *(d + GFX.DepthDelta) ?
 					(*(d + GFX.DepthDelta) != 1 ?
 					    COLOR_ADD1_2 (GFX.ScreenColors [b & GFX.Mode7Mask],
 						       p [GFX.Delta]) :
@@ -3830,8 +3830,8 @@ else \
 
 // Define an inline function to handle which BGs are being displayed
 #define DISPLAY(n) \
-(!(PPU.BG_Forced & n) && \
-(GFX.r212c & n) || \
+((!(PPU.BG_Forced & n) && \
+(GFX.r212c & n)) || \
 ((GFX.r212d & n) && subadd))
 
 		    uint8 subadd = GFX.r2131 & 0x3f;

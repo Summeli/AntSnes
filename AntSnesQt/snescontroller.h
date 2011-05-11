@@ -80,10 +80,11 @@ signals:
 	void resetAudio();
 	
 private:
-    void gameLoopAuto();
-    void gameLoopSkip( int frameskip );
+    void gameLoop();
     void doLoadRom( QString aFileName, TAntSettings antSettings );
-    
+    void defaultSettings();
+    void updateAudioSettings();
+    void MainExit();
       
 private: // Data
     bool iRomLoaded;
@@ -91,10 +92,8 @@ private: // Data
     bool iInitialized;
     
     int iFrames;
-    int iFrameTime;
     int iFPS;
     
-    int iTargetFPS;
     int iSampleCount;
     MEmulatorAdaptation* iAdaptation;
     CAntAudio* audio;
