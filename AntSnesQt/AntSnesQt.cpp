@@ -149,6 +149,16 @@ void AntSnesQt::paintEvent(QPaintEvent *)
     QPainter painter;
     painter.begin(this);
 
+    //draw pad, it will be overwritten soon anyway
+    if( iAntSettings.iScreenSettings == 1 )
+    {
+        painter.drawPixmap(tl_point, *tl_graphics);
+        painter.drawPixmap( dpad_point, *dpad_graphics);
+        painter.drawPixmap(tr_point, *tr_graphics);
+        painter.drawPixmap( buttons_point, *buttons_graphics);
+        painter.drawPixmap( menu_point, *menu_graphics);
+    }
+
     if (buf != NULL)
     {
         __DEBUG1("Creating QRectF's");
@@ -163,6 +173,7 @@ void AntSnesQt::paintEvent(QPaintEvent *)
         painter.fillRect(fullrect, QColor(0x11, 0x11, 0x11 ));
     }
 
+
     if( iAntSettings.iScreenSettings== 0 )
     {
         //show pad
@@ -172,7 +183,7 @@ void AntSnesQt::paintEvent(QPaintEvent *)
         painter.drawPixmap( buttons_point, *buttons_graphics);
         painter.drawPixmap( menu_point, *menu_graphics);
     }
-    else
+    else if(  iAntSettings.iScreenSettings == 2 ) // hide all
     {
         //fill empty space with black
         QRect leftEmptyRect(0,0,96, SCREEN_HEIGHT );

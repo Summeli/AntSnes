@@ -21,7 +21,6 @@
 #define DPADWIDGET_H
 
 #include <QtGui/QWidget>
-#include "ui_dpadwidget.h"
 
 class DPadWidget : public QObject
 {

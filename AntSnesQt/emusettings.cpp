@@ -25,7 +25,7 @@
 #include "emusettings.h"
 #include "debug.h"
 
-#define KAntSettingsVersion 6
+#define KAntSettingsVersion 7
 
 EmuSettings::EmuSettings(QWidget *parent)
     : QMainWindow(parent)

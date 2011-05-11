@@ -2,7 +2,6 @@
 #define BUTTONWIDGET_H
 
 #include <QtGui/QWidget>
-#include "ui_buttonwidget.h"
 
 class buttonwidget : public QObject
 {

@@ -21,7 +21,6 @@
 #define MIDDLEBUTTONS_H
 
 #include <QtGui/QWidget>
-#include "ui_dpadwidget.h"
 
 class MiddleButtons : public QObject
 {

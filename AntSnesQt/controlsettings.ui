@@ -53,12 +53,17 @@
    </property>
    <item>
     <property name="text">
-     <string>use D-pad and XYAB-pad</string>
+     <string>show D-pad, XYAB-pad and Menu-keys</string>
     </property>
    </item>
    <item>
     <property name="text">
-     <string>hide both PADs</string>
+     <string>hide overlapping keys</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>hide all keys</string>
     </property>
    </item>
   </widget>
