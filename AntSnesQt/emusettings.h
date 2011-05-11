@@ -55,6 +55,7 @@ public slots:
     void frameskip( int skip );
     void showFPS( bool showFPS );
     void screensettings( int settings );
+    void dpadSettings( int settings );
     void keyconfigDone();
     void exit();
     void resetButtonClicked();

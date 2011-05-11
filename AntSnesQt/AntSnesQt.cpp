@@ -62,7 +62,7 @@ uint KAntKeyTable[12]={SNES_UP_MASK,SNES_DOWN_MASK,SNES_LEFT_MASK,SNES_RIGHT_MAS
 		SNES_X_MASK,SNES_Y_MASK,SNES_B_MASK,SNES_START_MASK,SNES_SELECT_MASK,SNES_TL_MASK,SNES_TR_MASK};
 
 AntSnesQt::AntSnesQt(QWidget *parent)
-    : QGLWidget(parent), buf(NULL)
+    : QGLWidget(parent), buf(NULL), iSnesKeys(0), iHardKeys(0)
 {
   //  QMainWindow::setAttribute(Qt::WA_AcceptTouchEvents);
 
@@ -111,6 +111,13 @@ AntSnesQt::~AntSnesQt()
     delete control;
     delete dpad;
     delete antaudio;
+    delete middlebutton;
+
+    delete dpad_graphics;
+    delete buttons_graphics;
+    delete tl_graphics;
+    delete tr_graphics;
+    delete menu_graphics;
 }
 
 void AntSnesQt::render(int width, int height)
@@ -357,6 +364,7 @@ void AntSnesQt::updateSettings( TAntSettings antSettings )
     control->updateSettings( antSettings );
     iAntSettings = antSettings;
 
+    dpad->setDpadMode( antSettings.iDPadSettings );
     __DEBUG2("antSettings.iScreenSettings is ", antSettings.iScreenSettings );
 }
 

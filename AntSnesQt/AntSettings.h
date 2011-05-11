@@ -41,6 +41,7 @@ struct TAntSettings
     bool iStereo;
     int iVolume;
     int iScreenSettings;
+    int iDPadSettings;
 	
 };
 

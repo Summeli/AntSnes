@@ -31,11 +31,15 @@ public:
     DPadWidget(QObject *parent = 0);
     ~DPadWidget();
     quint32 getSnesKey(int x, int y);
+    void setDpadMode( int mode );
 
+private:
+    quint32 getFourDirectinalPad(  int x, int y );
 signals:
-	void showMenu();
+    void showMenu();
 	
 private:
+    int dpadMode;
    // Ui::DPadWidgetClass ui;
 };
 

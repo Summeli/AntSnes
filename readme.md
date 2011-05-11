@@ -24,7 +24,9 @@ Credits
 * Summeli [summeli] Symbian port
 * clpalmer for helping with Symbian^3 port
 * Saiyaku Graphics for the Symbian port
+* SnesOid [SnesOid] button graphics
 
 [snes9x]: http://www.snes9x.com/ "Snes9x Homepage"
 [drpsnes]: http://reesy.gp32x.de/DrPocketSnes.html "DrPocketSNES"
 [summeli]: www.summeli.fi
+[SnesOid]: https://github.com/Pretz/SNesoid

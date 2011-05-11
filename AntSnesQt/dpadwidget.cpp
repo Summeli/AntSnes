@@ -35,7 +35,7 @@ const int DPAD_CENTER_BOTTOM = KCenter_y + 10;
 const int DPAD_TOP = 200;
 
 DPadWidget::DPadWidget(QObject *parent) :
-    QObject(parent)
+    QObject(parent), dpadMode(1)
 {
     __DEBUG_IN
     __DEBUG_OUT
@@ -53,7 +53,6 @@ quint32 DPadWidget::getSnesKey(int x, int y)
     {
         key = SNES_TL_MASK;
     }
-
     else if ((y > DPAD_CENTER_TOP ) && (y < DPAD_CENTER_BOTTOM ) && (x > DPAD_CENTER_LEFT )
             && (x < DPAD_CENTER_RIGHT ))
     {
@@ -61,6 +60,10 @@ quint32 DPadWidget::getSnesKey(int x, int y)
     }
     else if ( y > DPAD_TOP )
     {
+        //return only 4-directions
+        if( dpadMode == 0 )
+            return getFourDirectinalPad( x, y );
+
         qreal rx = x - KCenter_x;
         qreal ry = y - KCenter_y;
 
@@ -123,5 +126,55 @@ quint32 DPadWidget::getSnesKey(int x, int y)
         }
     }
     return key;
+}
+
+quint32 DPadWidget::getFourDirectinalPad(  int x, int y )
+{
+    quint32 key = 0;
+
+    qreal rx = x - KCenter_x;
+    qreal ry = y - KCenter_y;
+
+    qreal r = qAtan2(ry, rx);
+
+    r = (r * 180) / KPi; //convert radians to degrees
+
+    //lets use full circle instead of negative angles
+    if (r < 0)
+    {
+        r = 360 + r;
+    }
+
+    qint32 angle = qRound(r);
+
+
+    //360 degrees is divided into 8 sectors.
+    if (angle > 337 || angle < 68)
+    {
+        //right key was pressed
+        key += SNES_RIGHT_MASK;
+    }
+
+    else if (angle >= 68 && angle < 158)
+    {
+        //Down key was pressed
+        key += SNES_DOWN_MASK;
+    }
+    else if (angle >= 158 && angle < 248)
+    {
+        //Left key was pressed
+        key += SNES_LEFT_MASK;
+    }
+    else if (angle >= 248 && angle < 337)
+    {
+        //up key was pressed
+        key += SNES_UP_MASK;
+    }
+    return key;
+}
+
+void DPadWidget::setDpadMode( int mode )
+{
+    dpadMode = mode;
 }
 

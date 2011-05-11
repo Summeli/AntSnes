@@ -25,7 +25,7 @@
 #include "emusettings.h"
 #include "debug.h"
 
-#define KAntSettingsVersion 5
+#define KAntSettingsVersion 6
 
 EmuSettings::EmuSettings(QWidget *parent)
     : QMainWindow(parent)
@@ -47,7 +47,7 @@ EmuSettings::EmuSettings(QWidget *parent)
     antvideosettings->setGeometry(QRect(0, 0, 640, 150));
     antvideosettings->hide();
 
-    keysettings =new controlsettings( antsettings.iScreenSettings, this );
+    keysettings =new controlsettings( antsettings.iScreenSettings, antsettings.iDPadSettings, this );
     keysettings->setGeometry(QRect(0, 0, 640, 150));
     keysettings->hide();
 
@@ -83,6 +83,7 @@ EmuSettings::EmuSettings(QWidget *parent)
     //connect control settings
     connect( keysettings, SIGNAL(runkeyconfig()), this, SLOT( keyConfig() ));
     connect( keysettings, SIGNAL(screensettings(int)), this, SLOT( screensettings(int) ));
+    connect( keysettings, SIGNAL(dpadSettings(int)), this, SLOT( dpadSettings(int) ));
 
     romloaded = false;
     settingsChanged = false;
@@ -151,6 +152,13 @@ void EmuSettings::screensettings( int settings )
     antsettings.iScreenSettings = settings;
     __DEBUG_OUT
 }
+
+void EmuSettings::dpadSettings( int settings )
+{
+    settingsChanged = true;
+    antsettings.iDPadSettings = settings;
+}
+
 
 void EmuSettings::showAudioSettings()
 {
@@ -416,6 +424,7 @@ void EmuSettings::setDefaultSettings()
     antsettings.iStereo = false;
     antsettings.iVolume = 4;
     antsettings.iScreenSettings = 0;
+    antsettings.iDPadSettings = 1;
 }
 
 void EmuSettings::savecurrentSettings()
@@ -441,6 +450,7 @@ void EmuSettings::savecurrentSettings()
     settings.setValue("snes_stereo",antsettings.iStereo);
     settings.setValue("snes_volume",antsettings.iVolume);
     settings.setValue("snes_screensettings", antsettings.iScreenSettings);
+    settings.setValue("snes_dpadsettings", antsettings.iDPadSettings);
     settings.sync();
     __DEBUG_OUT
 }
@@ -475,5 +485,6 @@ void EmuSettings::loadSettings()
     antsettings.iStereo = settings.value("snes_stereo").toBool();
     antsettings.iVolume = settings.value("snes_volume").toInt();
     antsettings.iScreenSettings = settings.value("snes_screensettings").toInt();
+    antsettings.iDPadSettings = settings.value("snes_dpadsettings").toInt();
     __DEBUG_OUT
 }
