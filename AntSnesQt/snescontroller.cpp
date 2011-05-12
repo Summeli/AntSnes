@@ -219,9 +219,13 @@ void QSnesController::LoadRom(QString aFileName, TAntSettings antSettings)
         GFX.SubZBuffer = (uint8 *) malloc(GFX.PPL * 239);
         GFX.Delta = (GFX.SubScreen - GFX.Screen) >> 1;
 
-        if (!GFX.Screen || !GFX.SubScreen || !GFX.ZBuffer || !Memory.Init() || !S9xInitAPU() || !GFX.SubZBuffer )
+        if (!GFX.Screen || !GFX.SubScreen || !GFX.ZBuffer || !S9xInitAPU() || !GFX.SubZBuffer )
         {
             MainExit();
+        }
+        if( !Memory.Init() )
+        {
+             MainExit();
         }
         S9xInitSound();
         __DEBUG1("init done.");

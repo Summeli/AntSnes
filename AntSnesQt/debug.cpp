@@ -23,21 +23,24 @@
 #include <QApplication>
 
 QTime timeDebug;
-QFile file("F:\\Data\\antdebug.txt");
+QFile file("E:\\Data\\antdebug.txt");
 
 void debugOutput(QtMsgType type, const char *msg)
 {
-     switch (type) 
-     {
-         case QtDebugMsg:
-            
-     QTextStream out(&file);
-     out << timeDebug.elapsed();
-     out << " ";
-     out << msg;
-     out << "\n";
-     break;
-     }
+    return;
+    QTextStream out(&file);
+    switch (type) 
+    {
+        case QtDebugMsg:
+            //out << timeDebug.elapsed();
+            //out << " ";
+            //out << msg;
+            //out << "\n";
+            RDebug::Printf("AntSNES - %d - %s", timeDebug.elapsed(), msg);
+            break;
+        default:
+            break;
+    }
 }
 #endif
 

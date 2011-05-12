@@ -191,6 +191,7 @@ void QBlitterWidget::setPAL( bool pal )
 
 void QBlitterWidget::saveStateImage( QString rom, int sate )
 	{
+    /*
 	__DEBUG_IN
 	QString filename = rom.left( rom.size() - 4 );
 	filename.append( QString::number(sate) );
@@ -199,7 +200,7 @@ void QBlitterWidget::saveStateImage( QString rom, int sate )
 	QImage image( bitmapdata, 256, 224, QImage::Format_RGB16 );
 	bool saved = image.save ( filename, "jpg", 100 );
 	__DEBUG2("file saved ", saved);
-	__DEBUG_OUT
+        __DEBUG_OUT*/
 	}
 	
 void QBlitterWidget::createScreenBuffer()

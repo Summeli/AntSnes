@@ -74,12 +74,11 @@ symbian:LIBS += -lantsnes.lib \
     = \
     0xE4270701
 symbian:TARGET.EPOCHEAPSIZE = 0x200000 \
-    0x800000
+    0x1000000
 
 symbian: TARGET.CAPABILITY = UserEnvironment
 #symbian:TARGET.CAPABILITY += SwEvent
 symbian:ICON = gfx/AntSnes_44.svg
-# symbian:TARGET.EPOCSTACKSIZE 80000
 symbian:INCLUDEPATH += ../snes9x_asm_optimized
 
 OTHER_FILES += summelistyle.qss

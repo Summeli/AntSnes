@@ -19,12 +19,9 @@ CXXSRCS = \
  data.cpp \
  dma.cpp \
  gfx.cpp \
- soundux.cpp \
- spc700.cpp \
  srtc.cpp \
  globals.cpp \
  memmap.cpp \
- ppu.cpp \
  tile.cpp \
  dsp1.cpp \
  sdd1.cpp \
@@ -48,6 +45,9 @@ ASRCS = \
  spc_decode.S \
  m3d_func.S  \
  misc.S \
+ ppu_asm.S \
+ soundux_asm.S \
+ spc700_asm.S \
  $(NULL)
 RSS_TARGETS = $(DIST_PATH)/$(PROJECT_NAME).rsc $(DIST_PATH)/$(PROJECT_NAME)_reg.rsc
 LANG_MACRO = SC
