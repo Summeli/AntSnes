@@ -1,0 +1,4 @@
+This can be build with QtSDK 1.1 and sbsv2. See my blog post about setting the environment http://www.summeli.fi/?p=2277
+
+1. Build the snes9x part "snes9x_asm_optimized" with sbsv2
+2. Build the Qt-based UI "AntSnesQt" with qmake and sbsv2
