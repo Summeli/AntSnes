@@ -25,7 +25,7 @@
 #include "emusettings.h"
 #include "debug.h"
 
-#define KAntSettingsVersion 7
+#define KAntSettingsVersion 9
 
 EmuSettings::EmuSettings(QWidget *parent)
     : QMainWindow(parent)
@@ -43,11 +43,11 @@ EmuSettings::EmuSettings(QWidget *parent)
     audiosettings->setGeometry(QRect(0, 0, 640, 150));
     audiosettings->hide();
 
-    antvideosettings =new videosettings( antsettings.iFrameSkip, antsettings.iShowFPS, this );
+    antvideosettings = new videosettings( antsettings.iFrameSkip, antsettings.iShowFPS, antsettings.iButtonOpacity, antsettings.iStretch, this );
     antvideosettings->setGeometry(QRect(0, 0, 640, 150));
     antvideosettings->hide();
 
-    keysettings =new controlsettings( antsettings.iScreenSettings, antsettings.iDPadSettings, this );
+    keysettings =new controlsettings( antsettings.iDPadSettings, this );
     keysettings->setGeometry(QRect(0, 0, 640, 150));
     keysettings->hide();
 
@@ -79,10 +79,11 @@ EmuSettings::EmuSettings(QWidget *parent)
     //connect video settings
     connect( antvideosettings, SIGNAL(frameskip(int)), this, SLOT( frameskip(int) ));
     connect( antvideosettings, SIGNAL(showFPS(bool)), this, SLOT( showFPS(bool) ));
-
+    connect( antvideosettings, SIGNAL(stretch(int)), this, SLOT( stretch(int) ));
+    connect( antvideosettings, SIGNAL(buttonOpacity(int)), this, SLOT( buttonOpacity(int) ));
+    
     //connect control settings
     connect( keysettings, SIGNAL(runkeyconfig()), this, SLOT( keyConfig() ));
-    connect( keysettings, SIGNAL(screensettings(int)), this, SLOT( screensettings(int) ));
     connect( keysettings, SIGNAL(dpadSettings(int)), this, SLOT( dpadSettings(int) ));
 
     romloaded = false;
@@ -144,13 +145,16 @@ void EmuSettings::showFPS( bool showFPS )
     antsettings.iShowFPS = showFPS;
 }
 
-void EmuSettings::screensettings( int settings )
+void EmuSettings::stretch( int stretch )
 {
-    __DEBUG_IN
-    __DEBUG2("current screensetetings are", settings );
     settingsChanged = true;
-    antsettings.iScreenSettings = settings;
-    __DEBUG_OUT
+    antsettings.iStretch = stretch;
+}
+
+void EmuSettings::buttonOpacity( int opacity )
+{
+    settingsChanged = true;
+    antsettings.iButtonOpacity = opacity;
 }
 
 void EmuSettings::dpadSettings( int settings )
@@ -417,14 +421,15 @@ void EmuSettings::setDefaultSettings()
     antsettings.iLastROM = "";
     antsettings.iLastSlot = 0;
     antsettings.iShowFPS = false;
+    antsettings.iStretch = 1;
     antsettings.iFrameSkip = 0;
     antsettings.iAudioOn = false;
     antsettings.iEnableSpeedHack = true;
     antsettings.iSampleRate = 22050;
     antsettings.iStereo = false;
     antsettings.iVolume = 4;
-    antsettings.iScreenSettings = 0;
     antsettings.iDPadSettings = 1;
+    antsettings.iButtonOpacity = 4;
 }
 
 void EmuSettings::savecurrentSettings()
@@ -443,13 +448,14 @@ void EmuSettings::savecurrentSettings()
     settings.setValue("snes_lastrom",antsettings.iLastROM);
     settings.setValue("snes_lastslot",antsettings.iLastSlot);
     settings.setValue("snes_showfps",antsettings.iShowFPS);
+    settings.setValue("snes_stretch",antsettings.iStretch);
     settings.setValue("snes_frameskip",antsettings.iFrameSkip);
+    settings.setValue("snes_buttonopacity",antsettings.iButtonOpacity);
     settings.setValue("snes_audioOn",antsettings.iAudioOn);
     settings.setValue("snes_enableSpeedHack",antsettings.iEnableSpeedHack);
     settings.setValue("snes_samplerate",antsettings.iSampleRate);
     settings.setValue("snes_stereo",antsettings.iStereo);
     settings.setValue("snes_volume",antsettings.iVolume);
-    settings.setValue("snes_screensettings", antsettings.iScreenSettings);
     settings.setValue("snes_dpadsettings", antsettings.iDPadSettings);
     settings.sync();
     __DEBUG_OUT
@@ -478,13 +484,14 @@ void EmuSettings::loadSettings()
     antsettings.iLastROM = settings.value("snes_lastrom").toString();
     antsettings.iLastSlot = settings.value("snes_lastslot").toInt();
     antsettings.iShowFPS = settings.value("snes_showfps").toBool();
+    antsettings.iStretch = settings.value("snes_stretch").toInt();
     antsettings.iFrameSkip = settings.value("snes_frameskip").toInt();
+    antsettings.iButtonOpacity = settings.value("snes_buttonopacity").toInt();
     antsettings.iAudioOn = settings.value("snes_audioOn").toBool();
     antsettings.iEnableSpeedHack = settings.value("snes_enableSpeedHack").toBool();
     antsettings.iSampleRate = settings.value("snes_samplerate").toInt();
     antsettings.iStereo = settings.value("snes_stereo").toBool();
     antsettings.iVolume = settings.value("snes_volume").toInt();
-    antsettings.iScreenSettings = settings.value("snes_screensettings").toInt();
     antsettings.iDPadSettings = settings.value("snes_dpadsettings").toInt();
     __DEBUG_OUT
 }

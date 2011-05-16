@@ -26,13 +26,21 @@
 
 struct TAntSettings
 {
+    enum Antstrech{
+        AntKeepAspectRatio = 0,
+        AntStrechLittle,
+        AntFullscreen
+    };
+
     int iVersion;
     //matches to the snes-keys
     quint32 iScanKeyTable[12];
     QString iLastROM;
     int iLastSlot;
     bool iShowFPS;
+    int iStretch;
     int iFrameSkip;
+    int iButtonOpacity;
 
     //Audio Settings
     bool iAudioOn;

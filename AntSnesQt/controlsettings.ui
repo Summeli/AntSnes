@@ -33,7 +33,7 @@
    <property name="geometry">
     <rect>
      <x>360</x>
-     <y>10</y>
+     <y>40</y>
      <width>251</width>
      <height>61</height>
     </rect>
@@ -42,36 +42,11 @@
     <string>Run Key Config</string>
    </property>
   </widget>
-  <widget class="QComboBox" name="screensettings">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>331</width>
-     <height>61</height>
-    </rect>
-   </property>
-   <item>
-    <property name="text">
-     <string>show D-pad, XYAB-pad and Menu-keys</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>hide overlapping keys</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>hide all keys</string>
-    </property>
-   </item>
-  </widget>
   <widget class="QComboBox" name="dpadSettings">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>80</y>
+     <y>40</y>
      <width>331</width>
      <height>61</height>
     </rect>

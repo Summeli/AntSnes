@@ -19,15 +19,13 @@
 
 #include "controlsettings.h"
 
-controlsettings::controlsettings(int screensettings, int dpadSettings, QWidget *parent)
+controlsettings::controlsettings( int dpadSettings, QWidget *parent)
     : QWidget(parent)
 {
     ui.setupUi(this);
-    ui.screensettings->setCurrentIndex( screensettings);
     ui.dpadSettings->setCurrentIndex( dpadSettings );
 
     connect(ui.keyconfigButton, SIGNAL(clicked()), this, SLOT(keyConfig()));
-    connect(ui.screensettings, SIGNAL(currentIndexChanged(int)), this, SLOT(setScreenSettings(int)));
     connect(ui.dpadSettings, SIGNAL(currentIndexChanged(int)), this, SLOT(setDPadSettings(int)));
 }
 
@@ -39,11 +37,6 @@ controlsettings::~controlsettings()
 void controlsettings::keyConfig()
 {
     emit( runkeyconfig() );
-}
-
-void controlsettings::setScreenSettings( int settings )
-{
-    emit( screensettings(settings) );
 }
 
 void controlsettings::setDPadSettings( int settings )

@@ -94,16 +94,8 @@ AntSnesQt::AntSnesQt(QWidget *parent)
     connect(this, SIGNAL(doLoadROM( QString,TAntSettings)), control, SLOT(LoadRom(QString,TAntSettings)) );
 
     //create graphics for the button overlay
-    dpad_graphics = new QPixmap();
-    dpad_graphics->load(":/gfx/dpad.png");
-    buttons_graphics = new QPixmap();
-    buttons_graphics->load(":/gfx/buttons.png");
-    tl_graphics = new QPixmap();
-    tl_graphics->load(":/gfx/tl_button_top.png");
-    tr_graphics = new QPixmap();
-    tr_graphics->load(":/gfx/tr_button_top.png");
-    menu_graphics = new QPixmap();
-    menu_graphics->load(":/gfx/menu_start_select.png");
+    buttonOpacity = iAntSettings.iButtonOpacity;
+    LoadButtons();
 }
 
 AntSnesQt::~AntSnesQt()
@@ -113,11 +105,6 @@ AntSnesQt::~AntSnesQt()
     delete antaudio;
     delete middlebutton;
 
-    delete dpad_graphics;
-    delete buttons_graphics;
-    delete tl_graphics;
-    delete tr_graphics;
-    delete menu_graphics;
 }
 
 void AntSnesQt::render(int width, int height)
@@ -133,9 +120,13 @@ void AntSnesQt::render(int width, int height)
     }
 
     __DEBUG1("creating buffer")
-    buf = new QImage(GFX.Screen, width, height, GFX.RealPitch,
-            QImage::Format_RGB16);
+    buf = new QImage(GFX.Screen, width, height, GFX.RealPitch, QImage::Format_RGB16);
 
+    if ( buttonOpacity != iAntSettings.iButtonOpacity )
+    {
+        buttonOpacity = iAntSettings.iButtonOpacity;
+        LoadButtons();
+    }
     __DEBUG1("calling repaint")
     repaint();
     __DEBUG_OUT
@@ -149,48 +140,41 @@ void AntSnesQt::paintEvent(QPaintEvent *)
     QPainter painter;
     painter.begin(this);
 
-    //draw pad, it will be overwritten soon anyway
-    if( iAntSettings.iScreenSettings == 1 )
-    {
-        painter.drawPixmap(tl_point, *tl_graphics);
-        painter.drawPixmap( dpad_point, *dpad_graphics);
-        painter.drawPixmap(tr_point, *tr_graphics);
-        painter.drawPixmap( buttons_point, *buttons_graphics);
-        painter.drawPixmap( menu_point, *menu_graphics);
-    }
 
-    if (buf != NULL)
-    {
-        __DEBUG1("Creating QRectF's");
-        QRect target(96, 0, 448, 360);
-        QRect source(0, 0, buf->width(), buf->height());
-        __DEBUG1("Drawing image");
-        painter.drawImage(target, *buf, source);
-        __DEBUG1("Ending QPainter");
-    }
-    else
+    if ( (buf == NULL) || (stretch != iAntSettings.iStretch) ) 
+        stretch = iAntSettings.iStretch;
     {   QRect fullrect(0,0,SCREEN_WIDTH, SCREEN_HEIGHT );
         painter.fillRect(fullrect, QColor(0x11, 0x11, 0x11 ));
     }
+    
+    if (buf != NULL)
+    {
+        __DEBUG1("Creating QRectF");
+        int newWidth = SCREEN_WIDTH;
+        int left = 0; 
+        if ( stretch == TAntSettings::AntKeepAspectRatio ) {
+            newWidth = (buf->width() / buf->height()) * SCREEN_HEIGHT;
+            left = (SCREEN_WIDTH - newWidth) >> 1;
+        }
+        else if(stretch == TAntSettings::AntStrechLittle ){
+             left = 96;
+             newWidth = 448;
+        }
+        QRect target(left, SCREEN_TOP, newWidth, SCREEN_HEIGHT);
+        __DEBUG1("Drawing image");
+        painter.drawImage(target, *buf);
+        __DEBUG1("Ending QPainter");
+    }
 
 
-    if( iAntSettings.iScreenSettings== 0 )
-    {
-        //show pad
-        painter.drawPixmap(tl_point, *tl_graphics);
-        painter.drawPixmap( dpad_point, *dpad_graphics);
-        painter.drawPixmap(tr_point, *tr_graphics);
-        painter.drawPixmap( buttons_point, *buttons_graphics);
-        painter.drawPixmap( menu_point, *menu_graphics);
-    }
-    else if(  iAntSettings.iScreenSettings == 2 ) // hide all
-    {
-        //fill empty space with black
-        QRect leftEmptyRect(0,0,96, SCREEN_HEIGHT );
-        QRect rightEMmptyRect(SCREEN_WIDTH - 96,0,SCREEN_WIDTH, SCREEN_HEIGHT );
-        painter.fillRect(leftEmptyRect, QColor(0x11, 0x11, 0x11 ));
-        painter.fillRect(rightEMmptyRect, QColor(0x11, 0x11, 0x11 ));
-    }
+
+    //Draw pad
+    painter.drawPixmap(tl_point, tl_graphics);
+    painter.drawPixmap( dpad_point, dpad_graphics);
+    painter.drawPixmap(tr_point, tr_graphics);
+    painter.drawPixmap( buttons_point, buttons_graphics);
+    painter.drawPixmap( menu_point, menu_graphics);
+
 
     if( iAntSettings.iShowFPS )
         {
@@ -202,6 +186,28 @@ void AntSnesQt::paintEvent(QPaintEvent *)
     __DEBUG_OUT
 }
 
+void AntSnesQt::LoadButtons()
+{
+    ApplyTransparency(dpad_graphics, ":/gfx/dpad.png");
+    ApplyTransparency(buttons_graphics, ":/gfx/buttons.png");
+    ApplyTransparency(tl_graphics, ":/gfx/tl_button_top.png");
+    ApplyTransparency(tr_graphics, ":/gfx/tr_button_top.png");
+    ApplyTransparency(menu_graphics, ":/gfx/menu_start_select.png");
+}
+
+void AntSnesQt::ApplyTransparency(QPixmap &pm, QString png)
+{
+    pm.load(png);
+    QPixmap transparent(pm.size());
+    transparent.fill(Qt::transparent);
+    QPainter p(&transparent);
+    p.setCompositionMode(QPainter::CompositionMode_Source);
+    p.drawPixmap(0, 0, pm);
+    p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+    p.fillRect(transparent.rect(), QColor(0, 0, 0, (iAntSettings.iButtonOpacity * 255) / 4));
+    p.end();
+    pm = transparent;
+}
 
 void AntSnesQt::saveStateImage(QString rom, int state)
 {
@@ -293,7 +299,6 @@ void AntSnesQt::keyPressEvent( QKeyEvent * event)
         if(c==iAntSettings.iScanKeyTable[i])
             {
             iHardKeys |= KAntKeyTable[i];
-            break;
             }
         }
 
@@ -315,7 +320,6 @@ void AntSnesQt::keyReleaseEvent(QKeyEvent* event)
         if(c==iAntSettings.iScanKeyTable[i])
             {
             iHardKeys &= ~KAntKeyTable[i];
-            break;
             }
         }
     __DEBUG_OUT

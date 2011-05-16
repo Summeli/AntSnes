@@ -86,6 +86,10 @@ private slots:
     void listencontrols();
 
 private:
+    void LoadButtons();
+    void ApplyTransparency(QPixmap &pm, QString png);
+
+private:
     //Ui::AntSnesQtClass ui;
     //QGLBlitterWidget* widget;
     CAntAudio* antaudio;
@@ -104,11 +108,13 @@ private:
     //drawing
     QImage* buf;
     TUint8* bitmapdata;
-    QPixmap* dpad_graphics;
-    QPixmap* buttons_graphics;
-    QPixmap* tl_graphics;
-    QPixmap* tr_graphics;
-    QPixmap* menu_graphics;
+    QPixmap dpad_graphics;
+    QPixmap buttons_graphics;
+    QPixmap tl_graphics;
+    QPixmap tr_graphics;
+    QPixmap menu_graphics;
+    int buttonOpacity;
+    int stretch;
 
 };
 

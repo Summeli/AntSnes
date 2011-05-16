@@ -28,16 +28,14 @@ class controlsettings : public QWidget
     Q_OBJECT
 
 public:
-    controlsettings(int screensettings, int dpadSettings, QWidget *parent = 0);
+    controlsettings( int dpadSettings, QWidget *parent = 0);
     ~controlsettings();
 
 public slots: 
      void keyConfig();
-     void setScreenSettings( int settings );
      void setDPadSettings( int settings );
 signals:
      void runkeyconfig();
-     void screensettings(int settings);
      void dpadSettings(int settings);
 
 private:

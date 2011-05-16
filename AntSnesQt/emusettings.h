@@ -52,9 +52,6 @@ public:
 public slots:
     void loadROM();
     void keyConfig();
-    void frameskip( int skip );
-    void showFPS( bool showFPS );
-    void screensettings( int settings );
     void dpadSettings( int settings );
     void keyconfigDone();
     void exit();
@@ -77,6 +74,10 @@ public slots:
     
     //Video Settings
     void showVideoSettings();
+    void frameskip( int skip );
+    void showFPS( bool showFPS );
+    void stretch( int stretch );
+    void buttonOpacity( int opacity );
     
     void showControlSettings();
     void closeAboutDialog();
