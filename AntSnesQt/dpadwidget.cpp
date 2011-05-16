@@ -32,7 +32,7 @@ const int DPAD_CENTER_LEFT = KCenter_x - 10;
 const int DPAD_CENTER_TOP  = KCenter_y - 10;
 const int DPAD_CENTER_BOTTOM = KCenter_y + 10;
 
-const int DPAD_TOP = 200;
+const int DPAD_TOP = 200 - 30;
 
 DPadWidget::DPadWidget(QObject *parent) :
     QObject(parent), dpadMode(1)

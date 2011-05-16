@@ -28,7 +28,12 @@
 #define KCenter_x 85
 #define KCenter_y 275
 
-const int BUTTONS_TOP = 200;
+const int BUTTONS_CENTER_RIGHT = KCenter_x + 10;
+const int BUTTONS_CENTER_LEFT = KCenter_x - 10;
+const int BUTTONS_CENTER_TOP  = KCenter_y - 10;
+const int BUTTONS_CENTER_BOTTOM = KCenter_y + 10;
+
+const int BUTTONS_TOP = 200 - 30;
 
 buttonwidget::buttonwidget(QObject *parent)
     : QObject(parent)
@@ -50,6 +55,11 @@ quint32 buttonwidget::getSnesKey( int x, int y )
             __DEBUG1("buttonwidget, TR WAS PRESSED");
             key = SNES_TR_MASK;
             }
+        else if ((y > BUTTONS_CENTER_TOP ) && (y < BUTTONS_CENTER_BOTTOM ) && (x > BUTTONS_CENTER_LEFT )
+                && (x < BUTTONS_CENTER_RIGHT ))
+        {
+            // Inside center circle of dpad
+        }
         else if ( y > BUTTONS_TOP )
             {
             //Calculate distance from the center
