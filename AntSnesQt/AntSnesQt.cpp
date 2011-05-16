@@ -270,6 +270,10 @@ bool AntSnesQt::event(QEvent *event)
             iSnesKeys = 0;
             break;
         }
+        case QEvent::FocusOut:
+        {
+            showAntSnesMenu();
+        }
         default:
             break;
     }
