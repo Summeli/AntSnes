@@ -12,7 +12,7 @@ videosettings::videosettings(int frameskip, bool showFps, int buttonOpacity, int
     connect(ui.frameSkipBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setFrameskip(int)));
     connect(ui.showFPSbox, SIGNAL(stateChanged(int)), this, SLOT(showFPSChecked(int)));
     connect(ui.strechSettings, SIGNAL(currentIndexChanged(int)), this, SLOT(stretchIndexChecked(int)));
-    connect(ui.buttonOpacity, SIGNAL(sliderMoved(int)), this, SLOT(setOpacity(int)));
+    connect(ui.buttonOpacity, SIGNAL(valueChanged(int)), this, SLOT(setOpacity(int)));
 
     setOpacity(buttonOpacity);
 }
