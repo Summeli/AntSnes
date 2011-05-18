@@ -2,7 +2,7 @@
 &EN
 
 ; SIS header: name, uid, version
-#{"AntSnesQt"},(0xE4270701),0,7,0
+#{"AntSnesQt"},(0xE4270701),0,7,1
 
 ; Localised Vendor name
 %{"Summeli"}

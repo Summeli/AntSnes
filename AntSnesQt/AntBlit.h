@@ -48,6 +48,7 @@ void BlitPAL5THED( TUint8* aScreen, TUint8* aBitmap );
 //16MA for QT version
 void BlitNTSCQTDSA( TUint8* aScreen, TUint8* aBitmap );
 void BlitPALQTDSA( TUint8* aScreen, TUint8* aBitmap );
+void BlitSamsungNTSCQTDSA( TUint8* aScreen, TUint8* aBitmap );
 
 //240x320 resolution
 void BlitNTSC320x240NGAGE_16MU( TUint8* aScreen, TUint8* aBitmap);

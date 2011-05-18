@@ -45,6 +45,7 @@ public slots:
 protected:
     void paintEvent(QPaintEvent *);
     void createScreenBuffer();
+	void createScreenBufferSamsung();
     
 public:
     // from MDirectScreenAccess class  
@@ -63,6 +64,7 @@ protected: //data
     int screenmode;
     CDirectScreenAccess *iDSA;
     CDirectScreenBitmap *iDSBitmap;
+	bool samsung;
 
 };
 

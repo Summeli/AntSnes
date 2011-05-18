@@ -31,8 +31,16 @@
 #include <coecntrl.h>
 #include <w32std.h>
 #include "AntBlit.h"
+#include <HAL.h>
+#include <hal_data.h>
 
 void (*bitmapBlit)(TUint8* aScreen, TUint8* aBitmap) = 0;
+
+
+#define Samsungi8910i 0x2000c520
+#define SESatio 0x2001F0A1
+#define SEVivaz 0x20024EEC
+#define SEVivazPro 0x20024EED
 
 QBlitterWidget::QBlitterWidget()
 :CActive( CActive::EPriorityStandard )
@@ -44,7 +52,18 @@ QBlitterWidget::QBlitterWidget()
     iDSBitmap = NULL;
     
     CActiveScheduler::Add( this );
-    
+
+	TInt uid = 0;
+    HAL::Get(HAL::EMachineUid, uid);
+    if( uid == Samsungi8910i || uid == SESatio ||
+    		uid == SEVivaz || uid == SEVivazPro )
+    	{
+    	samsung = true; //use hacks
+    	}
+    else 
+    	{
+    	samsung = false;
+    	}
     __DEBUG_OUT
     }
 
@@ -184,7 +203,8 @@ void QBlitterWidget::setPAL( bool pal )
 		}
 	else
 		{
-		bitmapBlit = BlitNTSCQTDSA;
+		if (samsung) bitmapBlit = BlitSamsungNTSCQTDSA;
+		else bitmapBlit = BlitNTSCQTDSA;
 		}
 	__DEBUG_OUT
 	}
@@ -205,6 +225,12 @@ void QBlitterWidget::saveStateImage( QString rom, int sate )
 	
 void QBlitterWidget::createScreenBuffer()
 	{
+	if (samsung) 
+		{
+		createScreenBufferSamsung();
+		return;
+		}
+		
 	switch( screenmode )
 		{
 		case 0:
@@ -215,6 +241,24 @@ void QBlitterWidget::createScreenBuffer()
 			break;
 		case 2:
 			User::LeaveIfError(iDSBitmap->Create(TRect(128,0, 512,360), CDirectScreenBitmap::EDoubleBuffer));
+			break;
+		default:
+			break;
+		}
+	}
+
+	void QBlitterWidget::createScreenBufferSamsung()
+	{
+	switch( screenmode )
+		{
+		case 0:
+			 User::LeaveIfError(iDSBitmap->Create(TRect(0,256, 360,640), CDirectScreenBitmap::EDoubleBuffer));
+			break;
+		case 1: 
+			 User::LeaveIfError(iDSBitmap->Create(TRect(0, 128, 360, 512), CDirectScreenBitmap::EDoubleBuffer));
+			break;
+		case 2:
+			User::LeaveIfError(iDSBitmap->Create(TRect(0, 128, 360, 512), CDirectScreenBitmap::EDoubleBuffer));
 			break;
 		default:
 			break;
