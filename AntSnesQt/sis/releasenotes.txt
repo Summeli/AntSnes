@@ -1,4 +1,4 @@
-AntSnesQt v. 0.7.0
+AntSnesQt v. 0.7.1
 
 Follow my blog for updates:
 http://www.summeli.fi
@@ -38,6 +38,11 @@ Jasper Terveer
 
 clpalmer
 * audiofix
+
+faenil
+* blitting fix for i8910 and SE devices
+Homepage: http://i8910tuning.com
+E-Mail: faenil@i8910tuning.com
 
 Additional thanks
 -----------------

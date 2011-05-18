@@ -68,6 +68,7 @@ symbian:LIBS += -lantsnes.lib \
     -lremconcoreapi \
     -lremconinterfacebase \
     -lecom \
+	-lhal \
     -lmmfcontrollerframework #TODO: remove when audio can be removed..
     
  symbian:TARGET.UID3 \
