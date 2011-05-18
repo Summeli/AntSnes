@@ -769,6 +769,98 @@ void BlitNTSCQTDSA( TUint8* aScreen, TUint8* aBitmap )
 	bitmap += 384;
 	}
 
+void BlitSamsungNTSCQTDSA( TUint8* aScreen, TUint8* aBitmap )
+	{
+	TUint32* bitmap = (TUint32*) aBitmap;
+	TUint16* screen = (TUint16*) aScreen;
+    TUint32* screen_temp;
+	TUint32* bitmap_temp = bitmap;	
+    screen += 256*224;
+	TUint32 red = 0;
+	TUint32 green = 0;
+	TUint32 blue = 0;
+	
+	for(TInt j=0; j<224;j++)
+	 {
+	 screen -= 256;
+
+	 for( TInt i=0; i<256; i++)
+	   {
+	   copyPixel16MU( bitmap, screen, red, green, blue );
+
+	   if( interptable_w[i] != (interptable_w[i+1] -1) )
+	     {
+	     //interpolate, or reproduce the pixel
+	     bitmap+=360;
+	     copyPixel16MU( bitmap, screen, red, green, blue );
+	     }
+		screen++;
+		bitmap+=360;
+	   }
+	   screen-=256;
+	   bitmap_temp++;
+	   bitmap = bitmap_temp;
+	 if( interptable_h[j] != (interptable_h[j+1] -1))
+	   {
+	   //copy whole previous line
+		for( TInt i=0; i<256; i++)
+		{
+			copyPixel16MU( bitmap, screen, red, green, blue );
+
+			if( interptable_w[i] != (interptable_w[i+1] -1) )
+			{
+				//interpolate, or reproduce the pixel
+				bitmap+=360;
+				copyPixel16MU( bitmap, screen, red, green, blue );
+			}
+			screen++;
+			bitmap+=360;
+			
+	    }
+	   bitmap_temp++;
+	   bitmap = bitmap_temp;
+	   screen-=256;
+	  }
+	 }
+	 
+	 //copy the last but three line in the last but two line
+	 bitmap = (TUint32*) aBitmap;
+	 bitmap_temp = bitmap;
+	 bitmap+=358;
+	 		for( TInt i=0; i<256; i++)
+		{
+			copyPixel16MU( bitmap, screen, red, green, blue );
+
+			if( interptable_w[i] != (interptable_w[i+1] -1) )
+			{
+				//interpolate, or reproduce the pixel
+				bitmap+=360;
+				copyPixel16MU( bitmap, screen, red, green, blue );
+			}
+			screen++;
+			bitmap+=360;
+			
+	    }
+	 //copy the last but three line in the last but one line
+	 screen-=256;
+	 bitmap = bitmap_temp;
+	 bitmap += 359;
+	 	for( TInt i=0; i<256; i++)
+		{
+			copyPixel16MU( bitmap, screen, red, green, blue );
+
+			if( interptable_w[i] != (interptable_w[i+1] -1) )
+			{
+				//interpolate, or reproduce the pixel
+				bitmap+=360;
+				copyPixel16MU( bitmap, screen, red, green, blue );
+			}
+			screen++;
+			bitmap+=360;
+			
+	    }	 
+	}
+	
 void BlitPALQTDSA( TUint8* aScreen, TUint8* aBitmap )
 	{
 	TUint32* bitmap = (TUint32*) aBitmap;
