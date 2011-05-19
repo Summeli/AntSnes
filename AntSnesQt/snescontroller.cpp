@@ -247,6 +247,12 @@ void QSnesController::LoadRom(QString aFileName, TAntSettings antSettings)
 
     Settings.FrameTime = Settings.PAL ? Settings.FrameTimePAL : Settings.FrameTimeNTSC;
     Memory.ROMFramesPerSecond = Settings.PAL ? 50 : 60;
+
+    if( antSettings.iFrameSkip > 0 )
+        Settings.SkipFrames = antSettings.iFrameSkip;
+    else
+      Settings.SkipFrames = AUTO_FRAMERATE;
+
     emit(setPal(Settings.PAL));
    
     iRomLoaded = true;
