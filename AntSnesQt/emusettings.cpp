@@ -25,7 +25,7 @@
 #include "emusettings.h"
 #include "debug.h"
 
-#define KAntSettingsVersion 3
+#define KAntSettingsVersion 4
 
 EmuSettings::EmuSettings(QWidget *parent)
     : QMainWindow(parent)
@@ -282,8 +282,12 @@ void EmuSettings::continueClicked()
 	//if there was no ROM loaded, load previous ROM
 	if( !romloaded )
 		{
+                //the ROM can not be valid if the length is less than 3.
+                if ( antsettings.iLastROM.length() < 3 )
+                    return;
+
 		emit( LoadROM( antsettings.iLastROM, antsettings ));
-	    romloaded = true;
+                romloaded = true;
 		}
 	//just continue the game
 	else
