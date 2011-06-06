@@ -44,7 +44,7 @@ AudioSettings::AudioSettings(int audioOn, int samplerate, int stereoOn, int volu
     connect(ui.AudioOnOffBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setAudioOn(int)));
     connect(ui.sampleRateBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setSampleRate(int)));
     connect(ui.stereoBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setStereoOn(int)));
-    connect(ui.volumeSlider, SIGNAL(sliderMoved(int)), this, SLOT(setVolume(int)));
+    connect(ui.volumeSlider, SIGNAL(valueChanged(int)), this, SLOT(setVolume(int)));
     connect(ui.speedHackBox, SIGNAL(toggled(bool )), this, SLOT(setSpeedHack(bool)));
 
 }
