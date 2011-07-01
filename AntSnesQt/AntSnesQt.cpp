@@ -150,7 +150,7 @@ void AntSnesQt::paintEvent(QPaintEvent *)
     if (buf != NULL)
     {
         __DEBUG1("Creating QRectF");
-        int newWidth = SCREEN_WIDTH;
+        int newWidth = width();
         int left = 0; 
         if ( stretch == TAntSettings::AntKeepAspectRatio ) {
             newWidth = (buf->width() / buf->height()) * SCREEN_HEIGHT;
@@ -160,7 +160,7 @@ void AntSnesQt::paintEvent(QPaintEvent *)
              left = 96;
              newWidth = 448;
         }
-        QRect target(left, SCREEN_TOP, newWidth, SCREEN_HEIGHT);
+        QRect target(left, SCREEN_TOP, newWidth, height());
         __DEBUG1("Drawing image");
         painter.drawImage(target, *buf);
         __DEBUG1("Ending QPainter");

@@ -5,7 +5,7 @@
 
 
 ; SIS header: name, uid, version
-#{"AntSnes installer"},(0xA000D7CE),0,8,5
+#{"AntSnes installer"},(0xA000D7CE),0,8,6
 
 ; Default localized vendor name
 %{"Summeli"}
