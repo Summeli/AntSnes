@@ -28,6 +28,10 @@
 #define KCenter_x 85
 #define KCenter_y 275
 
+#ifndef KPi
+#define KPi 3.14
+#endif
+
 const int BUTTONS_CENTER_RIGHT = KCenter_x + 10;
 const int BUTTONS_CENTER_LEFT = KCenter_x - 10;
 const int BUTTONS_CENTER_TOP  = KCenter_y - 10;

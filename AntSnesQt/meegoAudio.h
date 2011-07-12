@@ -17,26 +17,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef DEBUG_H_
-#define DEBUG_H_
+#ifndef __MEEGO_AUDIO_H_
+#define __MEEGO_AUDIO_H_
 
-#define _DEBUG
+#include <QObject>
 
-#include <QDebug>
-#ifdef _DEBUG
-#define __DEBUG_IN        qDebug() << __PRETTY_FUNCTION__ << "in";
-#define __DEBUG_OUT       qDebug() << __PRETTY_FUNCTION__ << "out";
-#define __DEBUG1(a)       qDebug() << a;
-#define __DEBUG2(a,b)     qDebug() << a << b;
-#define __DEBUG3(a,b,c)   qDebug() << a << b << c;
-#define __DEBUG4(a,b,c,d) qDebug() << a << b << c << d;
-#else
-#define __DEBUG_IN
-#define __DEBUG_OUT
-#define __DEBUG1(a)
-#define __DEBUG2(a,b)
-#define __DEBUG3(a,b,c)
-#define __DEBUG4(a,b,c,d) 
-#endif
 
-#endif /* DEBUG_H_ */
+const int KSoundBuffers = 4;
+const int KBlockTime = 1000000 / 5; // hardcoded: 5 updates/sec
+const int KMaxLag = 260000; // max sound lag, lower values increase chanse of underflow
+const int KMaxUnderflows = 50; // max underflows/API errors we are going allow in a row (to prevent lockups)
+
+
+class CAntAudio : public QObject
+{
+	Q_OBJECT
+	
+public:
+	~CAntAudio();
+	CAntAudio();
+	
+public:
+        void setAudioSettings(int aRate, bool aStereo, int aPcmFrames, int aVolume );
+        int* NextFrameL();
+        int FreeBufferCount();
+	void Stop();
+
+public slots:
+	void FrameMixed();
+	void Reset();
+	
+
+protected:
+
+};
+#endif //__MEEGO_AUDIO_H_

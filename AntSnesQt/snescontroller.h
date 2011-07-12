@@ -25,8 +25,13 @@
 #include "antsettings.h"
 
 #include "MEmulatorAdaptation.h"
-#include "AntAudio.h"
 #include "AntSnesQt.h"
+
+#ifdef __SYMBIAN32__
+#include "AntAudio.h"
+#else
+#include "meegoAudio.h"
+#endif
 
 class QSnesController : public QThread
     {

@@ -27,16 +27,20 @@
 
 #include "ui_AntSnesQt.h"
 
-#include "AntAudio.h"
 #include "dpadwidget.h" 
 #include "AntSettings.h"
 #include "MEmulatorAdaptation.h"
-#include "QRemoteControlKeys.h"
 
 #include "dpadwidget.h"
 #include "buttonwidget.h"
 #include "middlebuttons.h"
 
+#ifdef __SYMBIAN32__
+#include "AntAudio.h"
+#include "QRemoteControlKeys.h"
+#else
+#include "meegoAudio.h"
+#endif
 class QSnesController;
 
 class AntSnesQt : public QGLWidget, MEmulatorAdaptation
@@ -48,7 +52,6 @@ public:
     ~AntSnesQt();
 
 public:
-    void setRemoteControl( QRemoteControlKeys* remote );
     void keyPressEvent( QKeyEvent * event);
     void keyReleaseEvent(QKeyEvent* event);
     bool event(QEvent *event);
@@ -82,9 +85,6 @@ public slots:
     void updateSettings( TAntSettings );
     void virtualKeyEvent( quint32 aKey, bool isDown );
 
-private slots:
-    void listencontrols();
-
 private:
     void LoadButtons();
     void ApplyTransparency(QPixmap &pm, QString png);
@@ -97,7 +97,6 @@ private:
     
     TAntSettings iAntSettings;
     QList<antKeyEvent> iPressedKeys;
-    QRemoteControlKeys* remotecontrol;
     DPadWidget* dpad;
     buttonwidget* buttons;
     MiddleButtons* middlebutton;
@@ -107,7 +106,7 @@ private:
 
     //drawing
     QImage* buf;
-    TUint8* bitmapdata;
+    uint8_32* bitmapdata;
     QPixmap dpad_graphics;
     QPixmap buttons_graphics;
     QPixmap tl_graphics;
@@ -115,6 +114,16 @@ private:
     QPixmap menu_graphics;
     int buttonOpacity;
     int stretch;
+
+#ifdef __SYMBIAN32__
+public:
+    void setRemoteControl( QRemoteControlKeys* remote );
+private: //data
+      QRemoteControlKeys* remotecontrol;
+private slots:
+    void listencontrols();
+
+#endif
 
 };
 

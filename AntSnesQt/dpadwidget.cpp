@@ -27,6 +27,10 @@
 const int KCenter_x  = 85;
 const int KCenter_y  = 275;
 
+#ifndef KPi
+#define KPi 3.14
+#endif
+
 const int DPAD_CENTER_RIGHT = KCenter_x + 10;
 const int DPAD_CENTER_LEFT = KCenter_x - 10;
 const int DPAD_CENTER_TOP  = KCenter_y - 10;

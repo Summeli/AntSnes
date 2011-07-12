@@ -69,7 +69,7 @@ AntSnesQt::AntSnesQt(QWidget *parent)
     //setBackgroundRole ( QPalette::Window );
     //setAutoFillBackground ( true );
 
-    bitmapdata = new TUint8[256 * 240 * 2];
+    bitmapdata = new uint8_32[256 * 240 * 2];
     QWidget::setAttribute(Qt::WA_AcceptTouchEvents);
 
     QThread::currentThread()->setPriority( QThread::NormalPriority );
@@ -233,14 +233,14 @@ bool AntSnesQt::event(QEvent *event)
         {
             QList<QTouchEvent::TouchPoint> touchPoints = (static_cast<QTouchEvent*>(event))->touchPoints();
 #ifdef _DEBUG
-            RDebug::Printf("Event %s - Number of points: %d", (event->type() == QEvent::TouchBegin) ? "TouchBegin" : "TouchUpdate", touchPoints.length());
+            //RDebug::Printf("Event %s - Number of points: %d", (event->type() == QEvent::TouchBegin) ? "TouchBegin" : "TouchUpdate", touchPoints.length());
 #endif
             iSnesKeys = 0;
             for ( int i = 0; i < touchPoints.length(); i++ )
             {
                 QTouchEvent::TouchPoint tp = touchPoints[i];
 #ifdef _DEBUG
-                RDebug::Printf("TouchPoint %d - State: %d - Pos: %fx%f", i, tp.state(), tp.screenPos().x(), tp.screenPos().y());
+              //  RDebug::Printf("TouchPoint %d - State: %d - Pos: %fx%f", i, tp.state(), tp.screenPos().x(), tp.screenPos().y());
 #endif
                 if ( tp.state() == Qt::TouchPointPressed || tp.state() == Qt::TouchPointMoved || tp.state() == Qt::TouchPointStationary)
                 {
@@ -265,7 +265,7 @@ bool AntSnesQt::event(QEvent *event)
         case QEvent::TouchEnd:
         {
 #ifdef _DEBUG
-            RDebug::Printf("Event TouchEnd");
+            //RDebug::Printf("Event TouchEnd");
 #endif
             iSnesKeys = 0;
             break;
@@ -278,11 +278,6 @@ bool AntSnesQt::event(QEvent *event)
             break;
     }
     return QWidget::event(event);
-}
-
-void AntSnesQt::setRemoteControl( QRemoteControlKeys* remote )
-{
-    remotecontrol = remote;
 }
 
 void AntSnesQt::keyPressEvent( QKeyEvent * event)
@@ -298,7 +293,7 @@ void AntSnesQt::keyPressEvent( QKeyEvent * event)
     antKeyEvent keyevent;
 
     __DEBUG2("key pressed, scancode is ", c );
-    for(TInt i=0;i<16;i++)
+    for(int i=0;i<16;i++)
         {
         if(c==iAntSettings.iScanKeyTable[i])
             {
@@ -319,7 +314,7 @@ void AntSnesQt::keyReleaseEvent(QKeyEvent* event)
     antKeyEvent keyevent;
 
     __DEBUG2("key released, scancode is ", c );
-    for(TInt i=0;i<16;i++)
+    for(int i=0;i<16;i++)
         {
         if(c==iAntSettings.iScanKeyTable[i])
             {
@@ -403,8 +398,15 @@ quint32 AntSnesQt::getSnesKeys()
     return iSnesKeys | iHardKeys;
 }
 
+#ifdef __SYMBIAN32__
+void AntSnesQt::setRemoteControl( QRemoteControlKeys* remote )
+{
+    remotecontrol = remote;
+}
+
 void AntSnesQt::listencontrols()
 {
     remotecontrol->subscribeKeyEvent(this);
 }
+#endif
 

@@ -25,11 +25,13 @@
 #include "audiosettings.h"
 #include "AntSettings.h"
 
-#include "qremotecontrolkeys.h"
 #include "videosettings.h"
 #include "controlsettings.h"
 #include "aboutdialog.h"
 
+#ifdef __SYMBIAN32__
+#include "qremotecontrolkeys.h"
+#endif
 class EmuSettings : public QMainWindow
 {
     Q_OBJECT
@@ -45,9 +47,6 @@ class EmuSettings : public QMainWindow
 public:
     EmuSettings(QWidget *parent = 0);
     ~EmuSettings();
-
-public:
-    void setRemoteControl( QRemoteControlKeys* remote );
     
 public slots:
     void loadROM();
@@ -108,7 +107,12 @@ private:
  
     bool settingsChanged;
     TAntSettings antsettings;
-    QRemoteControlKeys* remotecontrol;
+#ifdef __SYMBIAN32__
+public:
+    void setRemoteControl( QRemoteControlKeys* remote );
+private: //data
+     QRemoteControlKeys* remotecontrol;
+#endif
 };
 
 #endif // EMUSETTINGS_H

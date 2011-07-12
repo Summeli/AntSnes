@@ -41,6 +41,12 @@ QSnesController* g_controller;
 
 int saveLoadGame(int load, int slot, int sram = 0);
 
+#ifndef __SYMBIAN32__
+//create empty stubs for meego
+void packHeap(){}
+void setHighPriority(){}
+#endif
+
 QSnesController::QSnesController( AntSnesQt* widget, CAntAudio* antaudio, MEmulatorAdaptation* adaptation) :
         iRomLoaded(false),
         iPaused(true),
@@ -316,7 +322,9 @@ extern "C" bool8 S9xDeinitUpdate(int Width, int Height, bool8 a)
         float elapsed = fpsTime.restart() / 1000;
         g_fps = fpsCount / elapsed;
         fpsCount = 0;
+#ifdef __SYMBIAN32__
         keepbacklightON();
+#endif
     }
     __DEBUG_OUT
     return true;
@@ -688,13 +696,16 @@ int saveLoadGame(int load, int slot, int sram)
 void _splitpath(const char *path, char *drive, char *dir, char *fname,
         char *ext)
 {
+    //TODO!
+
+
     *drive = 0;
 
-    char *slash = strrchr(path, '/');
+    char *slash = (char*) strrchr(path, '/');
     if (!slash)
-        slash = strrchr(path, '\\');
+        slash = (char*) strrchr(path, '\\');
 
-    char *dot = strrchr(path, '.');
+    char *dot = (char*) strrchr(path, '.');
 
     if (dot && slash && dot < slash)
         dot = NULL;

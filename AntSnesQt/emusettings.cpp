@@ -25,7 +25,7 @@
 #include "emusettings.h"
 #include "debug.h"
 
-#define KAntSettingsVersion 9
+#define KAntSettingsVersion 10
 
 EmuSettings::EmuSettings(QWidget *parent)
     : QMainWindow(parent)
@@ -100,10 +100,6 @@ EmuSettings::~EmuSettings()
     delete audiosettings;
 }
 
-void EmuSettings::setRemoteControl( QRemoteControlKeys* remote )
-{
-    remotecontrol = remote;
-}
 void EmuSettings::loadROM()
 {
     __DEBUG_IN
@@ -126,7 +122,9 @@ void EmuSettings::keyConfig()
 {
     keydialog = new keyconfigdialog( this );
     connect(keydialog, SIGNAL(configDone()), this, SLOT(keyconfigDone()));
+#ifdef __SYMBIAN32__
     remotecontrol->subscribeKeyEvent( keydialog );
+#endif
     keydialog->show();
     keydialog->setFocus();
 }
@@ -261,7 +259,9 @@ void EmuSettings::keyconfigDone()
         antsettings.iScanKeyTable[i] = keydialog->getKeyBind(i);
         }
     //take the keyevents away, so it doesn't crash
+#ifdef __SYMBIAN32__
     remotecontrol->subscribeKeyEvent( this );
+#endif
     //Delete the dialog
     keydialog->hide();
     delete keydialog;
@@ -420,8 +420,11 @@ void EmuSettings::setDefaultSettings()
         {
         antsettings.iScanKeyTable[i] = 0;
         }
-
+#ifdef __SYMBIAN32__
     antsettings.iLastROM = "";
+#else
+    antsettings.iLastROM = "//home//user//MyDocs//";
+#endif
     antsettings.iLastSlot = 0;
     antsettings.iShowFPS = false;
     antsettings.iStretch = 1;
@@ -498,3 +501,10 @@ void EmuSettings::loadSettings()
     antsettings.iDPadSettings = settings.value("snes_dpadsettings").toInt();
     __DEBUG_OUT
 }
+
+#ifdef __SYMBIAN32__
+void EmuSettings::setRemoteControl( QRemoteControlKeys* remote )
+{
+    remotecontrol = remote;
+}
+#endif

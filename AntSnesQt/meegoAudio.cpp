@@ -16,39 +16,49 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
+
+#include "meegoAudio.h"
+
 #include "debug.h"
-#ifdef _DEBUG
 
-#include <QtGui>
-#include <QApplication>
 
-QTime timeDebug;
-QFile file("F:\\Data\\antdebug.txt");
+/*******************************************
+ *
+ * CAntAudio
+ *
+ *******************************************/
 
-void debugOutput(QtMsgType type, const char *msg)
+CAntAudio::CAntAudio()
 {
-    return;
-    QTextStream out(&file);
-    switch (type) 
-    {
-    case QtDebugMsg:
-        //out << timeDebug.elapsed();
-        //out << " ";
-        //out << msg;
-        //out << "\n";
-        RDebug::Printf("AntSNES - %d - %s", timeDebug.elapsed(), msg);
-        break;
-    default:
-        break;
-    }
 }
-#endif
 
-void initdebug()
+
+CAntAudio::~CAntAudio()
 {
-#ifdef _DEBUG
-    file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append);
-    timeDebug.start();
-    qInstallMsgHandler(debugOutput);
-#endif
+}
+
+void CAntAudio::setAudioSettings(int aRate, bool aStereo, int aPcmFrames, int aVolume )
+{
+}
+
+void CAntAudio::Reset()
+{
+}
+
+// returns a pointer to buffer for next frame,
+// to be used when iSoundBuffers are used directly
+int *CAntAudio::NextFrameL()
+{
+}
+
+void CAntAudio::FrameMixed()
+{
+}
+
+void CAntAudio::Stop()
+{
+}
+
+int CAntAudio::FreeBufferCount()
+{
 }

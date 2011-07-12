@@ -43,6 +43,7 @@
 #include "ppu.h"
 #include "memmap.h"
 #include "65c816.h"
+#include "port.h"
 
 #define DO_HBLANK_CHECK() \
     if (CPU.Cycles >= CPU.NextEvent) \

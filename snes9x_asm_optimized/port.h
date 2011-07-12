@@ -45,7 +45,7 @@
 // horrible mess here
 int yo_rand(void);
 
-#ifdef __SYMBIAN32__
+//#if defined(__SYMBIAN32__) || defined( Q_WS_MAEMO_6)
 
 // debug
 #ifdef __DEBUG_PRINT
@@ -77,8 +77,8 @@ typedef long long int64; // correct?
 typedef unsigned char	bool8_32;
 typedef unsigned char	uint8_32;
 typedef unsigned short	uint16_32;
-typedef signed char		int8_32;
-typedef short			int16_32;
+typedef signed char	int8_32;
+typedef short		int16_32;
 #endif
 
 //Path Defines
@@ -156,7 +156,7 @@ EXTERN_C void S9xGenerateSound ();
 //#define EXECUTE_SUPERFX_PER_LINE
 //#define SPC700_C
 
-//#ifdef CPU_ASM
+#define CPU_ASM
 #define ASM_SPC700
 /*
 #else
@@ -209,6 +209,6 @@ static inline void memset16(void *d, unsigned short v, unsigned long c)
 }
 
 
-#endif // !defined(__SYMBIAN32__)
+//#endif // !defined(__SYMBIAN32__)
 
 #endif // _PORT_H_
