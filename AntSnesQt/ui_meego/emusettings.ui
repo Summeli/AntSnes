@@ -109,8 +109,8 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>640</width>
-      <height>150</height>
+      <width>854</width>
+      <height>200</height>
      </rect>
     </property>
     <widget class="QLabel" name="atntLabel">
@@ -155,8 +155,10 @@
     </property>
     <property name="font">
      <font>
-      <weight>50</weight>
-      <bold>false</bold>
+      <weight>75</weight>
+      <bold>true</bold>
+      <stylestrategy>PreferDefault</stylestrategy>
+      <kerning>false</kerning>
      </font>
     </property>
     <property name="styleSheet">
@@ -299,7 +301,7 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QLabel{
-background-image: url(:/graphics/gfx/separator.png);
+background-image: url(:/graphics/gfx/separator_meego.png);
 }</string>
     </property>
     <property name="text">

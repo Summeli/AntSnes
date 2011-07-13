@@ -96,6 +96,8 @@ LIBS += ../snes9x_asm_optimized/libantsnesstatic.a
 target.path = /opt/AntSnesQt/bin
 INSTALLS += target
 
+QMAKE_CFLAGS_DEBUG = -mfloat-abi=soft
+
 include(deployment.pri)
 qtcAddDeployment()
 }

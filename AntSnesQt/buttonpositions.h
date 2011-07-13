@@ -18,6 +18,8 @@
  */
 
 //statics for rendering
+
+#ifdef __SYMBIAN32__
 const int SCREEN_TOP = 0;
 const int SCREEN_HEIGHT = 360;
 const int SCREEN_WIDTH = 640;
@@ -41,3 +43,28 @@ const QPoint buttons_point( BUTTON_LEFT_POS,SCREEN_HEIGHT - BUTTON_WIDTH);
 const QPoint menu_point(0,0);
 const QPoint start_select_point( SCREEN_WIDTH - SMALLBUTTON_WIDTH, 0 );
 const QPoint showFPS_point(128,20);
+#else
+const int SCREEN_TOP = 0;
+const int SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH = 854;
+const int DPAD_LEFT_POS = 0;
+const int DPAD_WIDTH = 169;
+const int BUTTON_WIDTH = 169;
+const int MENU_WIDTH = 200;
+const int MENU_HEIGHT = 32;
+const int BUTTON_LEFT_POS = SCREEN_WIDTH -BUTTON_WIDTH ;
+const int GL_LEFT_POS = 128;
+const int GL_WIDTH = 384;
+const int TR_WIDTH = 80;
+const int TL_WIDTH = 80;
+const int SMALLBUTTON_HEIGHT = 32;
+const int SMALLBUTTON_WIDTH = 80;
+
+const QPoint tl_point(0, SMALLBUTTON_HEIGHT + 100 );
+const QPoint tr_point(SCREEN_WIDTH - TR_WIDTH, SMALLBUTTON_HEIGHT + 100 );
+const QPoint dpad_point(0,SCREEN_HEIGHT - DPAD_WIDTH);
+const QPoint buttons_point( BUTTON_LEFT_POS,SCREEN_HEIGHT - BUTTON_WIDTH);
+const QPoint menu_point(0,0);
+const QPoint start_select_point( SCREEN_WIDTH - SMALLBUTTON_WIDTH, 0 );
+const QPoint showFPS_point(128,20);
+#endif

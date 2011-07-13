@@ -25,8 +25,14 @@
 #include "snes9x.h"
 
 #include "buttonpositions.h"
+
+#ifdef __SYMBIAN32__
 const int KCenter_x  = 85;
 const int KCenter_y  = 275;
+#else
+const int KCenter_x  = 85;
+const int KCenter_y  = 395;
+#endif
 
 #ifndef KPi
 #define KPi 3.14
@@ -37,8 +43,15 @@ const int DPAD_CENTER_LEFT = KCenter_x - 10;
 const int DPAD_CENTER_TOP  = KCenter_y - 10;
 const int DPAD_CENTER_BOTTOM = KCenter_y + 10;
 
+#ifdef __SYMBIAN32__
 const int DPAD_TOP = 200 - 30;
 const int L_TOP = MENU_HEIGHT + SMALLBUTTON_HEIGHT;
+const int L_BOTTOM = MENU_HEIGHT;
+#else
+const int DPAD_TOP = 320 - 30;
+const int L_TOP = MENU_HEIGHT + SMALLBUTTON_HEIGHT + 100;
+const int L_BOTTOM = L_TOP - 50;
+#endif
 
 DPadWidget::DPadWidget(QObject *parent) :
     QObject(parent), dpadMode(1)
@@ -60,7 +73,7 @@ quint32 DPadWidget::getSnesKey(int x, int y)
         //Menu was pressed
         emit( showMenu() );
         }
-    else if(  y > MENU_HEIGHT && y <= L_TOP )
+    else if(  y > L_BOTTOM && y <= L_TOP )
         {
         //L was pressed
         key = SNES_TL_MASK;

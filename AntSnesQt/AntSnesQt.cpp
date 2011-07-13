@@ -67,6 +67,7 @@ AntSnesQt::AntSnesQt(QWidget *parent)
 
 #ifndef __SYMBIAN32__ //meego
     meegoAdapt = new meegoAdaptation();
+    meegoAdapt->setActiveWidget(this);
     connect(this, SIGNAL(Start()), meegoAdapt, SLOT(disableSwipe()) );
     connect(this, SIGNAL(Stop()), meegoAdapt, SLOT(enableSwipe()) );
 #endif
@@ -139,7 +140,11 @@ void AntSnesQt::paintEvent(QPaintEvent *)
         }
         else if(stretch == TAntSettings::AntStrechLittle ){
              left = 96;
+#ifdef __SYMBIAN32__
              newWidth = 448;
+#else
+              newWidth = 662;
+#endif
         }
         QRect target(left, SCREEN_TOP, newWidth, height());
         __DEBUG1("Drawing image");

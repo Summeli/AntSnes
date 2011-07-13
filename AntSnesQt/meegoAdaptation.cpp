@@ -22,11 +22,12 @@
 #include <QApplication>
 #include <QWidget>
 
+#include "debug.h"
+
 #include <QX11Info>
 #include <X11/Xatom.h>
 #include <X11/Xlib.h>
 
-//#include "debug.h"
 meegoAdaptation::meegoAdaptation(QObject *parent)
     : QObject(parent), m_SwipeEnabled( true )
 {
@@ -36,32 +37,36 @@ meegoAdaptation::~meegoAdaptation()
 {
 }
 
-
-void meegoAdaptation::allowSwipe()
+void meegoAdaptation::setActiveWidget( QWidget* widget )
 {
-     // __DEBUG1("Enable swipe");
-      setSwipeEnabled( true );
+    m_widget = widget;
+}
+
+void meegoAdaptation::enableSwipe()
+{
+    __DEBUG1("Enable swipe");
+    setSwipeEnabled( true, m_widget );
 }
 
 void meegoAdaptation::disableSwipe()
 {
-    //__DEBUG1("Disable swipe");
-    setSwipeEnabled( false );
+    __DEBUG1("Disable swipe");
+    setSwipeEnabled( false, m_widget );
 }
 
 //taken from mdeclarative screen
 //https://qt.gitorious.org/qt-components/qt-components/blobs/master/src/meego/mdeclarativescreen.cpp
-void meegoAdaptation::setSwipeEnabled(bool enabled)
+void meegoAdaptation::setSwipeEnabled(bool enabled, QWidget* widget)
 {
 
     if (enabled != m_SwipeEnabled) {
  //#ifdef Q_WS_X11
-         QWidget * activeWindow = QApplication::activeWindow();
+        /* QWidget * activeWindow = QApplication::activeWindow();
          if(!activeWindow) {
              return;
-         }
+         }*/
          Display *dpy = QX11Info::display();
-         Window w = activeWindow->effectiveWinId();
+         Window w = widget->effectiveWinId();//activeWindow->effectiveWinId();
 
          unsigned long val = (enabled) ? 1 : 0;
 

@@ -26,7 +26,7 @@ QDialog {
   color: #5f008e;
   padding: 0;
   margin: 0;
-  border: 1px solid #666;
+  border: 2px solid #666;
 }
     
 /* Form fields */
@@ -50,16 +50,17 @@ QCheckBox:focus {
 
 
 QLineEdit, QTextEdit {
-  border: 1px solid gray;
+  border: 2px solid gray;
   background: none;
   padding: 0.2em;
   color: #F8F8F8;
-  border-radius: 3px;
+  border-radius: 6px;
 }
 
 
 QLineEdit:focus, QTextEdit:focus {
-  border: 1px solid black;
+  border: 2px solid black;
+  font: normal normal 12pt;
   color: black;
 }
 
@@ -70,11 +71,11 @@ QPushButton {
   background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
   stop: 0 #48006c, stop: 0.49 #6d00a4,
   stop: 0.50 #48006c, stop: 1.0 #6d00a4);
-  border: 1px solid #666;
+  border: 2px solid #666;
   padding: 0.4em;
   color: #F8F8F8;
   font: normal normal 12pt;
-  border-radius: 3px;
+  border-radius: 6px;
 }
 
 /*TODO: use this same color in other places too*/
@@ -88,26 +89,27 @@ QComboBox, QDateTimeEdit {
   background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
   stop: 0 #48006c, stop: 0.49 #6d00a4,
   stop: 0.50 #48006c, stop: 1.0 #6d00a4);
-  border: 1px solid #666;
+  border: 2px solid #666;
   padding: 0.4em;
   color: #F8F8F8;
   font: normal normal 12pt;
-  border-radius: 3px;
+  border-radius: 6px;
 }
 
 
 QComboBox:focus, QDateTimeEdit:focus {
-  border: 1px solid #666;
+  border: 2px solid #666;
   color: #F8F8F8;
 }
 
    
 QComboBox::drop-down, QDateTimeEdit::drop-down {
- border: 1px solid #666;
- margin: -1px;
- border: 1px solid gray;
+ border: 2px solid #666;
+ margin: -2px;
+ border: 2px solid gray;
  width: 1.3em;
- border-radius: 3px;
+ border-radius: 6px;
+ font: normal normal 12pt;
 }
 
 
@@ -116,31 +118,32 @@ image: url(:/graphics/gfx/downarrow.png);
 }
 
  QSlider::groove:horizontal {
-   border: 1px solid #333;
+   border: 2px solid #333;
    background: #555;
-   margin: 2px 0;
+   margin: 4px 0;
  }
 
 QSlider::handle:horizontal {
  background: #75ffb2;
- border: 1px solid #F8F8F8;
- width: 18px;
+ border: 2px solid #F8F8F8;
+ width: 36px;
  margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
- border-radius: 3px;
+ border-radius: 6px;
  }
 
 QGroupBox {
   background: #b8b4aa; 
   padding: 0;
   margin: 0;
-  border: 2px solid #5f008e;
+  border: 4px solid #5f008e;
   color: #F8F8F8;
+  font: normal normal 12pt;
  }
 
 QGroupBox::title {
  subcontrol-origin: margin;
  subcontrol-position: top left; /* position at the top left */
- padding: 0 3px;
+ padding: 0 6px;
  font: normal normal 12pt;
  background-color: #b8b4aa;
  color: #F8F8F8;
