@@ -33,13 +33,13 @@
 
 #include "dpadwidget.h"
 #include "buttonwidget.h"
-#include "middlebuttons.h"
 
 #ifdef __SYMBIAN32__
 #include "AntAudio.h"
 #include "QRemoteControlKeys.h"
 #else
 #include "meegoAudio.h"
+#include "meegoAdaptation.h"
 #endif
 class QSnesController;
 
@@ -99,7 +99,6 @@ private:
     QList<antKeyEvent> iPressedKeys;
     DPadWidget* dpad;
     buttonwidget* buttons;
-    MiddleButtons* middlebutton;
 
     quint32 iSnesKeys;
     quint32 iHardKeys;
@@ -111,7 +110,8 @@ private:
     QPixmap buttons_graphics;
     QPixmap tl_graphics;
     QPixmap tr_graphics;
-    QPixmap menu_graphics;
+    QPixmap m_menuGraphics;
+    QPixmap m_startSelectGraphics;
     int buttonOpacity;
     int stretch;
 
@@ -122,7 +122,9 @@ private: //data
       QRemoteControlKeys* remotecontrol;
 private slots:
     void listencontrols();
-
+#else
+private: //Data
+    meegoAdaptation* meegoAdapt;
 #endif
 
 };

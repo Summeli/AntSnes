@@ -31,7 +31,6 @@
 #ifdef __SYMBIAN32__
 #include "QRemoteControlKeys.h"
 #endif
-
 class ViewController : public QObject
 {
     Q_OBJECT

@@ -40,16 +40,23 @@ EmuSettings::EmuSettings(QWidget *parent)
     //TODO: read settings
     audiosettings = new AudioSettings(antsettings.iAudioOn, antsettings.iSampleRate,
                                       antsettings.iStereo, antsettings.iVolume, antsettings.iEnableSpeedHack, this );
-    audiosettings->setGeometry(QRect(0, 0, 640, 150));
     audiosettings->hide();
 
     antvideosettings = new videosettings( antsettings.iFrameSkip, antsettings.iShowFPS, antsettings.iButtonOpacity, antsettings.iStretch, this );
-    antvideosettings->setGeometry(QRect(0, 0, 640, 150));
     antvideosettings->hide();
 
     keysettings =new controlsettings( antsettings.iDPadSettings, this );
-    keysettings->setGeometry(QRect(0, 0, 640, 150));
     keysettings->hide();
+
+#ifdef __SYMBIAN32__
+    audiosettings->setGeometry(QRect(0, 0, 640, 150));
+    antvideosettings->setGeometry(QRect(0, 0, 640, 150));
+    keysettings->setGeometry(QRect(0, 0, 640, 150));
+#else
+    audiosettings->setGeometry(QRect(0, 0, 854, 200));
+    antvideosettings->setGeometry(QRect(0, 0, 854, 200));
+    keysettings->setGeometry(QRect(0, 0, 854, 200));
+#endif
 
     currentWidget = EMainWidget;
 

@@ -24,6 +24,7 @@
 #include <qmath.h>
 #include "snes9x.h"
 
+#include "buttonpositions.h"
 const int KCenter_x  = 85;
 const int KCenter_y  = 275;
 
@@ -37,6 +38,7 @@ const int DPAD_CENTER_TOP  = KCenter_y - 10;
 const int DPAD_CENTER_BOTTOM = KCenter_y + 10;
 
 const int DPAD_TOP = 200 - 30;
+const int L_TOP = MENU_HEIGHT + SMALLBUTTON_HEIGHT;
 
 DPadWidget::DPadWidget(QObject *parent) :
     QObject(parent), dpadMode(1)
@@ -53,10 +55,16 @@ DPadWidget::~DPadWidget()
 quint32 DPadWidget::getSnesKey(int x, int y)
 {
     quint32 key = 0;
-    if (y < 45)
-    {
+    if(  y <= MENU_HEIGHT )
+        {
+        //Menu was pressed
+        emit( showMenu() );
+        }
+    else if(  y > MENU_HEIGHT && y <= L_TOP )
+        {
+        //L was pressed
         key = SNES_TL_MASK;
-    }
+        }
     else if ((y > DPAD_CENTER_TOP ) && (y < DPAD_CENTER_BOTTOM ) && (x > DPAD_CENTER_LEFT )
             && (x < DPAD_CENTER_RIGHT ))
     {

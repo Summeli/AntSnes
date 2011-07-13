@@ -24,6 +24,7 @@
 #include "debug.h"
 
 #include "snes9x.h"
+#include "buttonpositions.h"
 
 #define KCenter_x 85
 #define KCenter_y 275
@@ -38,6 +39,8 @@ const int BUTTONS_CENTER_TOP  = KCenter_y - 10;
 const int BUTTONS_CENTER_BOTTOM = KCenter_y + 10;
 
 const int BUTTONS_TOP = 200 - 30;
+const int R_TOP = MENU_HEIGHT + SMALLBUTTON_HEIGHT;
+const int SELECT_LEFT = BUTTON_WIDTH - SMALLBUTTON_WIDTH / 2;
 
 buttonwidget::buttonwidget(QObject *parent)
     : QObject(parent)
@@ -53,12 +56,20 @@ quint32 buttonwidget::getSnesKey( int x, int y )
 	{
 	quint32 key = 0;
 	__DEBUG3("buttonwidget, x pos, y pos", x, y);
-        if( y < 45 )
+        if(  y <= MENU_HEIGHT )
             {
-            //right button pressed
-            __DEBUG1("buttonwidget, TR WAS PRESSED");
+            //select or start was pressed
+            if( x > SELECT_LEFT )
+                key = SNES_SELECT_MASK;
+            else
+                key = SNES_START_MASK;
+            }
+        else if(  y > MENU_HEIGHT && y <= R_TOP )
+            {
+            //R was pressed
             key = SNES_TR_MASK;
             }
+
         else if ((y > BUTTONS_CENTER_TOP ) && (y < BUTTONS_CENTER_BOTTOM ) && (x > BUTTONS_CENTER_LEFT )
                 && (x < BUTTONS_CENTER_RIGHT ))
         {

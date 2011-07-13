@@ -31,29 +31,7 @@
 #include "snescontroller.h"
 #include "debug.h"
 #include "snes9x.h"
-
-
-const int SCREEN_TOP = 0;
-const int SCREEN_HEIGHT = 360;
-const int SCREEN_WIDTH = 640;
-const int DPAD_LEFT_POS = 0;
-const int DPAD_WIDTH = 169;
-const int BUTTON_WIDTH = 169;
-const int MENU_WIDTH = 200;
-const int MENU_HEIGHT = 30;
-const int BUTTON_LEFT_POS = SCREEN_WIDTH -BUTTON_WIDTH ;
-const int GL_LEFT_POS = 128;
-const int GL_WIDTH = 384;
-const int TR_WIDTH = 80;
-const int TL_WIDTH = 80;
-
-
-const QPoint tl_point(0,0);
-const QPoint tr_point(SCREEN_WIDTH - TR_WIDTH,0);
-const QPoint dpad_point(0,SCREEN_HEIGHT - DPAD_WIDTH);
-const QPoint buttons_point( BUTTON_LEFT_POS,SCREEN_HEIGHT - BUTTON_WIDTH);
-const QPoint menu_point(SCREEN_WIDTH / 2  - MENU_WIDTH / 2 , 0 );
-const QPoint showFPS_point(128,20);
+#include "buttonpositions.h"
 
 
 extern float g_fps;
@@ -81,13 +59,17 @@ AntSnesQt::AntSnesQt(QWidget *parent)
 
     dpad = new DPadWidget( this );
     buttons = new buttonwidget( this );
-    middlebutton = new MiddleButtons( this );
-    connect(middlebutton, SIGNAL(showMenu()), this, SLOT( showAntSnesMenu()) );
+    connect(dpad, SIGNAL(showMenu()), this, SLOT( showAntSnesMenu()) );
 
     antaudio = new CAntAudio();
 
     control = new QSnesController( this, antaudio, this );
 
+#ifndef __SYMBIAN32__ //meego
+    meegoAdapt = new meegoAdaptation();
+    connect(this, SIGNAL(Start()), meegoAdapt, SLOT(disableSwipe()) );
+    connect(this, SIGNAL(Stop()), meegoAdapt, SLOT(enableSwipe()) );
+#endif
     connect(this, SIGNAL(Start()), control, SLOT(Start()) );
     connect(this, SIGNAL(Stop()), control, SLOT(Stop()) );
     connect(this, SIGNAL(Start()), this, SLOT(listencontrols()) );
@@ -103,7 +85,6 @@ AntSnesQt::~AntSnesQt()
     delete control;
     delete dpad;
     delete antaudio;
-    delete middlebutton;
 
 }
 
@@ -173,7 +154,8 @@ void AntSnesQt::paintEvent(QPaintEvent *)
     painter.drawPixmap( dpad_point, dpad_graphics);
     painter.drawPixmap(tr_point, tr_graphics);
     painter.drawPixmap( buttons_point, buttons_graphics);
-    painter.drawPixmap( menu_point, menu_graphics);
+    painter.drawPixmap( menu_point, m_menuGraphics);
+    painter.drawPixmap( start_select_point, m_startSelectGraphics);
 
 
     if( iAntSettings.iShowFPS )
@@ -192,7 +174,8 @@ void AntSnesQt::LoadButtons()
     ApplyTransparency(buttons_graphics, ":/gfx/buttons.png");
     ApplyTransparency(tl_graphics, ":/gfx/tl_button_top.png");
     ApplyTransparency(tr_graphics, ":/gfx/tr_button_top.png");
-    ApplyTransparency(menu_graphics, ":/gfx/menu_start_select.png");
+    ApplyTransparency(m_startSelectGraphics, ":/gfx/select_start_buttons.png");
+    ApplyTransparency(m_menuGraphics, ":/gfx/menu.png");
 }
 
 void AntSnesQt::ApplyTransparency(QPixmap &pm, QString png)
@@ -251,10 +234,6 @@ bool AntSnesQt::event(QEvent *event)
                     else if ( tp.screenPos().x() > BUTTON_LEFT_POS )
                     {
                         iSnesKeys |= buttons->getSnesKey(tp.screenPos().x() - BUTTON_LEFT_POS, tp.screenPos().y());
-                    }
-                    else
-                    {
-                        iSnesKeys |= middlebutton->getSnesKey(tp.screenPos().x(), tp.screenPos().y());
                     }
                 }
             }

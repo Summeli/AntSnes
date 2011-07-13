@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = AntSnes
+TARGET = antsnes
 QT += core \
     gui \
     opengl
@@ -14,8 +14,7 @@ HEADERS += buttonwidget.h \
     emusettings.h \
     AntSettings.h \
     snescontroller.h \
-    AntSnesQt.h \
-    middlebuttons.h
+    AntSnesQt.h
     
 SOURCES += buttonwidget.cpp \
 	dpadwidget.cpp \
@@ -28,23 +27,26 @@ SOURCES += buttonwidget.cpp \
     emusettings.cpp \
     snescontroller.cpp \
     main.cpp \
-    AntSnesQt.cpp \
-    middlebuttons.cpp
+    AntSnesQt.cpp
     
-FORMS += aboutdialog.ui \
-    controlsettings.ui \
-    videosettings.ui \
-    keyconfigdialog.ui \
-    audiosettings.ui \
-    emusettings.ui \
-    AntSnesQt.ui
-
-RESOURCES += atnresources.qrc
     
-OTHER_FILES += summelistyle.qss
+OTHER_FILES += summelistyle.qss \
+    qtc_packaging/debian_harmattan/rules \
+    qtc_packaging/debian_harmattan/README \
+    qtc_packaging/debian_harmattan/copyright \
+    qtc_packaging/debian_harmattan/control \
+    qtc_packaging/debian_harmattan/compat \
+    qtc_packaging/debian_harmattan/changelog
 INCLUDEPATH += ../snes9x_asm_optimized
 
 symbian: {
+FORMS += ui_symbian/aboutdialog.ui \
+    ui_symbian/controlsettings.ui \
+    ui_symbian/videosettings.ui \
+    ui_symbian/keyconfigdialog.ui \
+    ui_symbian/audiosettings.ui \
+    ui_symbian/emusettings.ui \
+    ui_symbian/AntSnesQt.ui
 HEADERS += symb_adaptation.h \
            QRemoteControlKeys.h \
            AntAudio.h
@@ -52,6 +54,9 @@ HEADERS += symb_adaptation.h \
 SOURCES += symb_adaptation.cpp \
            QRemoteControlKeys.cpp \
            AntAudio.cpp
+
+RESOURCES += atnresources.qrc
+
 LIBS += -lantsnes.lib \
     -lscdv \
     -lws32 \
@@ -73,22 +78,24 @@ ICON = gfx/AntSnes_44.svg
 }
 
 unix:!symbian:!maemo5 {
-HEADERS += meegoAudio.h
-SOURCES += meegoAudio.cpp
+FORMS += ui_meego/aboutdialog.ui \
+    ui_meego/controlsettings.ui \
+    ui_meego/videosettings.ui \
+    ui_meego/keyconfigdialog.ui \
+    ui_meego/audiosettings.ui \
+    ui_meego/emusettings.ui \
+    ui_meego/AntSnesQt.ui
 
-OTHER_FILES += qtc_packaging/debian_harmattan/rules \
-    qtc_packaging/debian_harmattan/README \
-    qtc_packaging/debian_harmattan/copyright \
-    qtc_packaging/debian_harmattan/control \
-    qtc_packaging/debian_harmattan/compat \
-    qtc_packaging/debian_harmattan/changelog
+RESOURCES += meegoresources.qrc
+
+HEADERS += meegoAudio.h meegoAdaptation.h
+SOURCES += meegoAudio.cpp meegoAdaptation.cpp
 
 LIBS += ../snes9x_asm_optimized/libantsnesstatic.a
 
 target.path = /opt/AntSnesQt/bin
 INSTALLS += target
-}
 
 include(deployment.pri)
 qtcAddDeployment()
-
+}

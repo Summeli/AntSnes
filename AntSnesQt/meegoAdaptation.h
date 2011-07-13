@@ -1,6 +1,6 @@
 /* AntSnes
  *
- * Copyright (C) 2010 Summeli <summeli@summeli.fi>
+ * Copyright (C) 2011 Summeli <summeli@summeli.fi>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -17,24 +17,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef MIDDLEBUTTONS_H
-#define MIDDLEBUTTONS_H
+#ifndef __MEEGO_ADAPTATION
+#define __MEEGO_ADAPTATION
 
-#include <QtGui/QWidget>
+#include <QObject>
 
-class MiddleButtons : public QObject
+
+
+
+class meegoAdaptation : public QObject
 {
-    Q_OBJECT
+        Q_OBJECT
 
 public:
-    MiddleButtons(QObject *parent = 0);
-    ~MiddleButtons();
-    quint32 getSnesKey(int x, int y);
+        ~meegoAdaptation();
+        meegoAdaptation(QObject *parent = 0);
 
-signals:
-        void showMenu();
+
+public slots:
+        void allowSwipe();
+        void disableSwipe();
 
 private:
-};
+        void setSwipeEnabled(bool enabled);
 
-#endif // MIDDLEBUTTONS_H
+protected:
+        bool m_SwipeEnabled;
+
+};
+#endif //__ANT_AUDIO_H

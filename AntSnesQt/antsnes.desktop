@@ -3,9 +3,9 @@ Encoding=UTF-8
 Version=1.0
 Type=Application
 Terminal=false
-Name=newhello
-Exec=invoker --single-instance --type=d /opt/newhello/bin/newhello
-Icon=/usr/share/icons/hicolor/scalable/apps/newhello.svg
+Name=antsnes
+Exec=invoker --single-instance --type=d /opt/antsnes/bin/antsnes
+Icon=/usr/share/icons/hicolor/scalable/apps/antsnes.svg
 X-Window-Icon=
 X-HildonDesk-ShowInToolbar=true
 X-Osso-Type=application/x-executable

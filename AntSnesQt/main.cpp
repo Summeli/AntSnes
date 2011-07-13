@@ -27,7 +27,12 @@
 
 void loadStyleSheet()
 {
+#ifdef __SYMBIAN32__
     QFile file(":/style/summelistyle.qss");
+#else
+    QFile file(":/style/meegostyle.qss");
+#endif
+
     if(!file.open(QFile::ReadOnly))
         {
 		__DEBUG1("Unable to open file");
