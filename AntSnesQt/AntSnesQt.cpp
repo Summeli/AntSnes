@@ -42,10 +42,6 @@ uint KAntKeyTable[12]={SNES_UP_MASK,SNES_DOWN_MASK,SNES_LEFT_MASK,SNES_RIGHT_MAS
 AntSnesQt::AntSnesQt(QWidget *parent)
     : QGLWidget(parent), buf(NULL), iSnesKeys(0), iHardKeys(0)
 {
-  //  QMainWindow::setAttribute(Qt::WA_AcceptTouchEvents);
-
-    //setBackgroundRole ( QPalette::Window );
-    //setAutoFillBackground ( true );
 
     bitmapdata = new uint8_32[256 * 240 * 2];
     QWidget::setAttribute(Qt::WA_AcceptTouchEvents);
@@ -67,7 +63,6 @@ AntSnesQt::AntSnesQt(QWidget *parent)
 
 #ifndef __SYMBIAN32__ //meego
     meegoAdapt = new meegoAdaptation();
-    meegoAdapt->setActiveWidget(this);
     connect(this, SIGNAL(Start()), meegoAdapt, SLOT(disableSwipe()) );
     connect(this, SIGNAL(Stop()), meegoAdapt, SLOT(enableSwipe()) );
 #endif
@@ -257,6 +252,12 @@ bool AntSnesQt::event(QEvent *event)
         case QEvent::FocusOut:
         {
             showAntSnesMenu();
+        }
+        case QEvent::Gesture:
+        {
+            __DEBUG1("GESTURE EVENT");
+            event->accept();
+            return true;
         }
         default:
             break;

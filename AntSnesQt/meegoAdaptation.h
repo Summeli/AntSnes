@@ -22,7 +22,7 @@
 
 #include <QObject>
 #include <QWidget>
-
+#include <QTimer>
 
 
 class meegoAdaptation : public QObject
@@ -33,19 +33,18 @@ public:
         ~meegoAdaptation();
         meegoAdaptation(QObject *parent = 0);
 
-public:
-        void setActiveWidget( QWidget* widget );
-
 public slots:
         void enableSwipe();
         void disableSwipe();
+        void doEnableSwipe();
+        void doDisableSwipe();
 
 private:
-        void setSwipeEnabled(bool enabled, QWidget* widget);
+        void setSwipeEnabled(bool enabled );
 
 protected:
         bool m_SwipeEnabled;
-        QWidget* m_widget;
+        QTimer* m_timer;
 
 };
 #endif //__ANT_AUDIO_H

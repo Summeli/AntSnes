@@ -29,7 +29,7 @@
 #include <X11/Xlib.h>
 
 meegoAdaptation::meegoAdaptation(QObject *parent)
-    : QObject(parent), m_SwipeEnabled( true )
+    : QObject(parent), m_SwipeEnabled( true ), m_timer(NULL)
 {
 }
 
@@ -37,36 +37,51 @@ meegoAdaptation::~meegoAdaptation()
 {
 }
 
-void meegoAdaptation::setActiveWidget( QWidget* widget )
-{
-    m_widget = widget;
-}
-
 void meegoAdaptation::enableSwipe()
 {
     __DEBUG1("Enable swipe");
-    setSwipeEnabled( true, m_widget );
+    if( m_timer )
+        return;
+    m_timer = new QTimer(this);
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(doEnableSwipe()));
+    m_timer->start(2000);
+
 }
 
 void meegoAdaptation::disableSwipe()
 {
-    __DEBUG1("Disable swipe");
-    setSwipeEnabled( false, m_widget );
+    if( m_timer )
+        return;
+    m_timer = new QTimer(this);
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(doDisableSwipe()));
+    m_timer->start(3000);
+}
+
+void meegoAdaptation::doEnableSwipe()
+{
+        setSwipeEnabled( true );
+}
+
+void meegoAdaptation::doDisableSwipe()
+{
+        setSwipeEnabled( false );
 }
 
 //taken from mdeclarative screen
 //https://qt.gitorious.org/qt-components/qt-components/blobs/master/src/meego/mdeclarativescreen.cpp
-void meegoAdaptation::setSwipeEnabled(bool enabled, QWidget* widget)
+void meegoAdaptation::setSwipeEnabled(bool enabled )
 {
 
     if (enabled != m_SwipeEnabled) {
- //#ifdef Q_WS_X11
-        /* QWidget * activeWindow = QApplication::activeWindow();
+        QWidget * activeWindow = QApplication::activeWindow();
          if(!activeWindow) {
+             __DEBUG1("no active window");
              return;
-         }*/
+         }
+         if( !enabled )
+             __DEBUG1("NOW DISABLING THE SWIPE...");
          Display *dpy = QX11Info::display();
-         Window w = widget->effectiveWinId();//activeWindow->effectiveWinId();
+         Window w = activeWindow->effectiveWinId();
 
          unsigned long val = (enabled) ? 1 : 0;
 
@@ -89,7 +104,8 @@ void meegoAdaptation::setSwipeEnabled(bool enabled, QWidget* widget)
                  1);
 
          m_SwipeEnabled = enabled;
-//#endif
 
     }
+    delete m_timer;
+    m_timer = NULL;
 }
