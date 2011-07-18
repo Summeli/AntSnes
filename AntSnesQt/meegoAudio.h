@@ -22,6 +22,11 @@
 
 #include <QObject>
 
+#include <pulse/simple.h>
+#include <pulse/error.h>
+#include <pulse/gccmacro.h>
+
+#include "port.h"
 
 const int KSoundBuffers = 4;
 const int KBlockTime = 1000000 / 5; // hardcoded: 5 updates/sec
@@ -39,16 +44,20 @@ public:
 	
 public:
         void setAudioSettings(int aRate, bool aStereo, int aPcmFrames, int aVolume );
-        int* NextFrameL();
+        int8* NextFrameL();
         int FreeBufferCount();
 	void Stop();
 
 public slots:
 	void FrameMixed();
 	void Reset();
-	
 
 protected:
+
+    uint8_32* m_buf;
+
+    pa_simple *m_s;
+    int m_audioBufSize;
 
 };
 #endif //__MEEGO_AUDIO_H_

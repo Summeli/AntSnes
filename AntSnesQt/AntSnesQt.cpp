@@ -42,6 +42,8 @@ uint KAntKeyTable[12]={SNES_UP_MASK,SNES_DOWN_MASK,SNES_LEFT_MASK,SNES_RIGHT_MAS
 AntSnesQt::AntSnesQt(QWidget *parent)
     : QGLWidget(parent), buf(NULL), iSnesKeys(0), iHardKeys(0)
 {
+    grabGesture(Qt::PinchGesture);
+    grabGesture(Qt::SwipeGesture);
 
     bitmapdata = new uint8_32[256 * 240 * 2];
     QWidget::setAttribute(Qt::WA_AcceptTouchEvents);
@@ -62,9 +64,9 @@ AntSnesQt::AntSnesQt(QWidget *parent)
     control = new QSnesController( this, antaudio, this );
 
 #ifndef __SYMBIAN32__ //meego
-    meegoAdapt = new meegoAdaptation();
-    connect(this, SIGNAL(Start()), meegoAdapt, SLOT(disableSwipe()) );
-    connect(this, SIGNAL(Stop()), meegoAdapt, SLOT(enableSwipe()) );
+//    meegoAdapt = new meegoAdaptation();
+//    connect(this, SIGNAL(Start()), meegoAdapt, SLOT(disableSwipe()) );
+//    connect(this, SIGNAL(Stop()), meegoAdapt, SLOT(enableSwipe()) );
 #endif
     connect(this, SIGNAL(Start()), control, SLOT(Start()) );
     connect(this, SIGNAL(Stop()), control, SLOT(Stop()) );

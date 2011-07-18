@@ -56,13 +56,13 @@ preGCC:
   OBJ_PATH = $(OBJ_BASE)/gcce
   TARGET_MACRO = $(GCC_MACRO) $(GCC_WARNING_FLAGS)
 
-preDEBUG:
-   COMPFLAGS = -march=armv7-a -O0 -mapcs -pipe -nostdinc -c -g \
-   -MD $(DEB_MACRO)
+#preDEBUG:
+#   COMPFLAGS = -march=armv7-a -O0 -mapcs -pipe -nostdinc -c -g \
+#   -MD $(DEB_MACRO)
    
-#preREL:
-#   COMPFLAGS = -march=armv7-a -O2 -mapcs -pipe -nostdinc -c \
-#   -MD $(REL_MACRO) -include $(EPOCROOT2)/include/gcce/gcce.h
+preREL:
+   COMPFLAGS = -march=armv7-a -O2 -mapcs -pipe -nostdinc -c \
+   -MD $(REL_MACRO)
 
 preALL:
   CFLAGS += $(COMPFLAGS) $(UNICODE_MACRO) $(TARGET_MACRO) \

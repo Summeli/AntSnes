@@ -92,6 +92,7 @@ HEADERS += meegoAudio.h meegoAdaptation.h
 SOURCES += meegoAudio.cpp meegoAdaptation.cpp
 
 LIBS += ../snes9x_asm_optimized/antsnesstatic.a
+LIBS += -lpulse-simple
 
 target.path = /opt/AntSnesQt/bin
 INSTALLS += target

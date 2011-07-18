@@ -28,17 +28,55 @@
  *
  *******************************************/
 
-CAntAudio::CAntAudio()
+CAntAudio::CAntAudio():
+    m_buf(NULL), m_s(NULL),m_audioBufSize(0)
 {
 }
 
 
 CAntAudio::~CAntAudio()
 {
+    if( m_s ){
+        pa_simple_free(m_s);
+        m_s = NULL;
+    }
 }
 
 void CAntAudio::setAudioSettings(int aRate, bool aStereo, int aPcmFrames, int aVolume )
 {
+    __DEBUG1("set audio settings");
+    pa_sample_spec ss;
+    ss.format = PA_SAMPLE_S16NE;
+    ss.channels = aStereo ? 2 : 1;
+    ss.rate = aRate;
+
+    if( m_s ){
+        pa_simple_free(m_s);
+        m_s = NULL;
+    }
+
+    m_s = pa_simple_new(NULL,               // Use the default server.
+                   "antsnes",           // Our application's name.
+                   PA_STREAM_PLAYBACK,
+                   NULL,               // Use the default device.
+                   "gameaudio",            // Description of our stream.
+                   &ss,                // Our sample format.
+                   NULL,               // Use default channel map
+                   NULL,               // Use default buffering attributes.
+                   NULL               // Ignore error code.
+                   );
+
+    if ( m_s == NULL )
+        __DEBUG1("pulse audio creation failed!!");
+
+    if( m_buf ){
+        delete m_buf;
+        m_buf = NULL;
+    }
+
+    m_audioBufSize = aPcmFrames *2;
+    m_buf = new uint8_32[ m_audioBufSize ];
+    __DEBUG1("set audio settings SET");
 }
 
 void CAntAudio::Reset()
@@ -47,12 +85,18 @@ void CAntAudio::Reset()
 
 // returns a pointer to buffer for next frame,
 // to be used when iSoundBuffers are used directly
-int *CAntAudio::NextFrameL()
+int8 *CAntAudio::NextFrameL()
 {
+    return (int8*) m_buf;
 }
 
 void CAntAudio::FrameMixed()
 {
+    int error;
+
+    if (pa_simple_write(m_s, m_buf, (size_t) m_audioBufSize, &error) < 0) {
+      __DEBUG2("frame midex, audio error", error )
+    }
 }
 
 void CAntAudio::Stop()
@@ -62,3 +106,4 @@ void CAntAudio::Stop()
 int CAntAudio::FreeBufferCount()
 {
 }
+
