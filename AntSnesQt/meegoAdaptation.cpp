@@ -40,12 +40,8 @@ meegoAdaptation::~meegoAdaptation()
 void meegoAdaptation::enableSwipe()
 {
     __DEBUG1("Enable swipe");
-    if( m_timer )
-        return;
-    m_timer = new QTimer(this);
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(doEnableSwipe()));
-    m_timer->start(2000);
 
+    doEnableSwipe();
 }
 
 void meegoAdaptation::disableSwipe()
@@ -54,58 +50,50 @@ void meegoAdaptation::disableSwipe()
         return;
     m_timer = new QTimer(this);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(doDisableSwipe()));
-    m_timer->start(3000);
+    m_timer->start(2000);
 }
 
 void meegoAdaptation::doEnableSwipe()
 {
-        setSwipeEnabled( true );
+   //     setSwipeEnabled( true );
+    if( m_SwipeEnabled )
+        return;
+    QWidget * activeWindow = QApplication::activeWindow();
+    Display *dpy = QX11Info::display();
+    Atom atom;
+
+    atom = XInternAtom(dpy, "_MEEGOTOUCH_CUSTOM_REGION", False);
+    if(XDeleteProperty(dpy, activeWindow->effectiveWinId(), atom) < 0){
+      qWarning("XDeleteProperty for _MEEGOTOUCH_CUSTOM_REGION returns <0");
+      }
+    m_SwipeEnabled = true;
 }
 
 void meegoAdaptation::doDisableSwipe()
 {
-        setSwipeEnabled( false );
-}
-
-//taken from mdeclarative screen
-//https://qt.gitorious.org/qt-components/qt-components/blobs/master/src/meego/mdeclarativescreen.cpp
-void meegoAdaptation::setSwipeEnabled(bool enabled )
-{
-
-    if (enabled != m_SwipeEnabled) {
-        QWidget * activeWindow = QApplication::activeWindow();
-         if(!activeWindow) {
-             __DEBUG1("no active window");
-             return;
-         }
-         if( !enabled )
-             __DEBUG1("NOW DISABLING THE SWIPE...");
-         Display *dpy = QX11Info::display();
-         Window w = activeWindow->effectiveWinId();
-
-         unsigned long val = (enabled) ? 1 : 0;
-
-         Atom atom = XInternAtom(dpy, "_MEEGOTOUCH_CANNOT_MINIMIZE", false);
-
-         if (!atom) {
-
-             qWarning("Unable to obtain _MEEGOTOUCH_CANNOT_MINIMIZE. This example will only work "
-                      "with the MeeGo Compositor!");
-             return;
-         }
-
-         XChangeProperty (dpy,
-                 w,
-                 atom,
-                 XA_CARDINAL,
-                 32,
-                 PropModeReplace,
-                 reinterpret_cast<unsigned char *>(&val),
-                 1);
-
-         m_SwipeEnabled = enabled;
-
+    if( m_timer ){
+        disconnect(m_timer, SIGNAL(timeout()), this, SLOT(doDisableSwipe()));
+        delete m_timer;
+        m_timer = NULL;
     }
-    delete m_timer;
-    m_timer = NULL;
+    if( !m_SwipeEnabled )
+        return;
+
+    QWidget * activeWindow = QApplication::activeWindow();
+    Display *dpy = QX11Info::display();
+    Atom atom;
+
+    unsigned int customRegion[4];
+    customRegion[0] = 0;
+    customRegion[1] = 0;
+    customRegion[2] = 854;
+    customRegion[3] = 480;
+
+    atom = XInternAtom(dpy, "_MEEGOTOUCH_CUSTOM_REGION", False);
+    XChangeProperty(dpy, activeWindow->effectiveWinId(),
+            atom, XA_CARDINAL, 32, PropModeReplace,
+            reinterpret_cast<unsigned char *>(&customRegion[0]), 4);
+
+    m_SwipeEnabled = false;
+
 }

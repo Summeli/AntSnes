@@ -64,9 +64,9 @@ AntSnesQt::AntSnesQt(QWidget *parent)
     control = new QSnesController( this, antaudio, this );
 
 #ifndef __SYMBIAN32__ //meego
-//    meegoAdapt = new meegoAdaptation();
-//    connect(this, SIGNAL(Start()), meegoAdapt, SLOT(disableSwipe()) );
-//    connect(this, SIGNAL(Stop()), meegoAdapt, SLOT(enableSwipe()) );
+    meegoAdapt = new meegoAdaptation();
+    connect(this, SIGNAL(Start()), meegoAdapt, SLOT(disableSwipe()) );
+    connect(this, SIGNAL(Stop()), meegoAdapt, SLOT(enableSwipe()) );
 #endif
     connect(this, SIGNAL(Start()), control, SLOT(Start()) );
     connect(this, SIGNAL(Stop()), control, SLOT(Stop()) );

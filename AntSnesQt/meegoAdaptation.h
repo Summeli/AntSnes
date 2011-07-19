@@ -39,9 +39,6 @@ public slots:
         void doEnableSwipe();
         void doDisableSwipe();
 
-private:
-        void setSwipeEnabled(bool enabled );
-
 protected:
         bool m_SwipeEnabled;
         QTimer* m_timer;
