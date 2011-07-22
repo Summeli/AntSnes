@@ -174,7 +174,7 @@ Standards-Version: 3.7.3
 EOH
 
   # TODO Get these from debian/control
-  print DSC wrap('', ' ', "Maintainer: TBC <foo\@example.com>")."\n";
+  print DSC wrap('', ' ', "Maintainer: Antti Pohjola <summeli\@summeli.fi>")."\n";
   print DSC wrap('', ' ', "Build-Depends: debhelper (>= 5), libqt4-dev")."\n";
 
   my $checksums = "Checksums-Sha1: \n";

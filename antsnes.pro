@@ -3,7 +3,7 @@
 TEMPLATE = app
 TARGET = antsnes
 QT += core gui opengl
-
+VERSION = 0.8.6
 
 DEPENDPATH += AntSnesQt
 INCLUDEPATH += AntSnesQt
