@@ -1,0 +1,237 @@
+#!/usr/bin/perl
+#
+# mud2 - MeeGo Unified Distribution
+# ~~~~
+#
+# Help with packaging and distributing Maemo/MeeGo applications.
+#
+# Package a Qt Creator project into something suitable for sending to:
+#   * maemo.org Extras Autobuilder
+#   * meego.com Harmattan OBS
+#
+# Copyright (c) Andrew Flegg 2011. Released under the Artistic License.
+#               mailto:andrew@bleb.org
+
+use strict;
+use warnings;
+use Text::Wrap;
+
+$Text::Wrap::columns = 72;
+
+
+# -- Identify the project...
+#
+my @pros = <*.pro>;
+die "Found multiple .pro files in current directory\n" unless @pros == 1;
+
+my ($package)     = $pros[0] =~ m!(.*)\.pro$!;
+my $debianPackage = $package;
+my $meegoPackage  = $package;
+my $version       = "1.0.0";
+
+open(IN, "<$pros[0]") or die "Unable to read $pros[0]\n";
+while (<IN>) {
+  chomp;
+  $debianPackage = lc($1) if /^\s*TARGET\s*=\s*([\w-]+)\s*$/;
+  $meegoPackage  = lc($1) if /^\s*PACKAGE\s*=\s*([\w\.-]+)\s*$/;
+  $version       = $1     if /^\s*VERSION\s*=\s*([\w\.-]+)\s*$/;
+}
+close(IN);
+
+# -- Target for the output...
+#
+my $dir = "../$package-build-mud";
+mkdir $dir;
+
+# -- What packaging is available...
+#
+my $pkgDebianFremantle = -d "qtc_packaging/debian_fremantle";
+my $pkgDebianHarmattan = -d "qtc_packaging/debian_harmattan";
+my $pkgMeeGo           = 0;
+
+# -- Build source tarball...
+#
+system("tar", "cvzf", "$dir/${package}_${version}.orig.tar.gz",
+                      "--exclude-vcs",
+                      "--exclude=debian",
+                      "--exclude=qtc_packaging",
+                      ".");
+
+# -- Build packages...
+#
+&createDebian('fremantle', '1.0', sub {
+  &write('5', "$dir/fremantle/debian/compat");
+  # TODO Create as a patch
+}) if $pkgDebianFremantle;
+
+&createDebian('harmattan', '3.0 (quilt)', sub {
+  system("tar", "cvzf", "$dir/harmattan/${package}_${version}.debian.tar.gz",
+                        "-C", "$dir/harmattan",
+                        "--exclude-vcs",
+                        "debian");
+}) if $pkgDebianHarmattan;
+
+&createSpec('meego', sub {
+  # TODO Unsupported
+}) if $pkgMeeGo;
+
+exit;
+
+
+# ===========================================================================
+# createSpec - Make the .spec file ready for RPM
+# ---------------------------------------------------------------------------
+sub createSpec {
+  my ($dist, $content) = @_;
+
+  &$content;
+}
+
+
+# ===========================================================================
+# createDebian - Clone the debian directory and resolve it ready for updates
+# ---------------------------------------------------------------------------
+sub createDebian {
+  my ($dist, $format, $content) = @_;
+
+  # -- Copy the source and rationalise the debian folder...
+  #
+  &createDist($dist);
+  system("cp", "-Lr", "qtc_packaging/debian_$dist", "$dir/$dist/debian");
+  mkdir "$dir/$dist/debian/source";
+  &write($format, "$dir/$dist/debian/source/format");
+
+  # -- Fix debian/rules...
+  #
+  my $rules = &read("$dir/$dist/debian/rules");
+  my $configureStamp = &readMakefile($rules, 'configure-stamp');
+  my $buildStamp = &readMakefile($rules, 'build-stamp');
+  my $clean = &readMakefile($rules, 'clean');
+
+  # Add qmake
+  unless ($rules =~ m!^\tqmake PREFIX=/usr$!m) {
+    $rules =~ s!^(configure-stamp:.*[\r\n]*\tdh_testdir\s*$)
+               !$1\n\tqmake PREFIX=/usr\n!xm;
+    print "+++ Adding qmake\n";
+  }
+
+  # Add $(MAKE)
+  unless ($buildStamp =~ /^\t\$\(MAKE\)\s*$/m) {
+    $rules =~ s!^(build-stamp:.*[\r\n]*\tdh_testdir\s*$)
+               !$1\n\t\$(MAKE)\n!xm;
+    print "+++ Adding make\n";
+  }
+
+  # Make it "-$(MAKE) clean" as the makefile won't exist at first
+  $rules =~ s/^\t(\$\(MAKE\)\s+clean\s*)$/\t-$1/mg and
+    print "+++ Fixing clean\n";
+
+  # Enable dh_shlibdeps
+  unless ($rules =~ /^\tdh_shlibdeps\s*$/m) {
+    $rules =~ s!^(\tdh_installdeb\s*$)
+               !$1\n\tdh_shlibdeps\n!xm;
+    print "+++ Adding dh_shlibdeps\n";
+  }
+
+  &write($rules, "$dir/$dist/debian/rules");
+
+  # -- Execute custom content modifications...
+  #
+  &$content;
+
+  # -- Create the DSC file...
+  #
+  &mkDsc("$dir/$dist", $format, "${package}_${version}.dsc");
+}
+
+
+# ===========================================================================
+# createDist - Clone the source ready for packaging/distribution
+# ---------------------------------------------------------------------------
+sub createDist {
+  my ($dist) = @_;
+
+  system("rm", "-rf", "$dir/$dist");
+  mkdir "$dir/$dist";
+  link "$dir/${package}_${version}.orig.tar.gz", "$dir/$dist/${package}_${version}.orig.tar.gz";
+}
+
+
+# ===========================================================================
+# mkDsc - Create a Debian DSC file
+# ---------------------------------------------------------------------------
+sub mkDsc {
+  my ($dir, $format, $dsc) = @_;
+
+  open(DSC, ">$dir/$dsc") or die "Unable to write $dir/$dsc: $!\n";
+  print DSC <<EOH;
+Format: $format
+Source: $debianPackage
+Binary: $debianPackage
+Architecture: any
+Version: $version
+Standards-Version: 3.7.3
+EOH
+
+  # TODO Get these from debian/control
+  print DSC wrap('', ' ', "Maintainer: TBC <foo\@example.com>")."\n";
+  print DSC wrap('', ' ', "Build-Depends: debhelper (>= 5), libqt4-dev")."\n";
+
+  my $checksums = "Checksums-Sha1: \n";
+  my $files     = "Files: \n";
+  foreach my $file (<$dir/*>) {
+    next unless -f $file && $file !~ /\.dsc$/;
+
+    chomp(my $sha1 = `sha1sum "$file" | cut -d' ' -f1`);
+    chomp(my $md5  = `md5sum "$file" | cut -d' ' -f1`);
+    my $size = -s $file;
+
+    $file =~ s!.*/([^/]+)$!$1!;
+    $checksums .= " $sha1 $size $file\n";
+    $files .= " $md5 $size $file\n";
+  }
+  print DSC $checksums;
+  print DSC $files;
+  close(DSC) or die "Unable to close $dir/$dsc: $!\n";
+}
+
+
+# ===========================================================================
+# readMakefile - Read a specific target from a makefile
+# ---------------------------------------------------------------------------
+sub readMakefile {
+  my ($content, $target) = @_;
+
+  $content =~ /^(\Q$target\E:\s*.*?)^\w/sm;
+  return "$1\n";
+}
+
+
+# ===========================================================================
+# write - Write some content to a file, simply.
+# ---------------------------------------------------------------------------
+sub write {
+  my ($content, $file) = @_;
+
+  open(OUT, ">$file") or die "Unable to write to $file: $!\n";
+  print OUT $content;
+  close(OUT) or die "Unable to close $file: $!\n";
+}
+
+
+# ===========================================================================
+# read - Slurp all of a file in for processing
+# ---------------------------------------------------------------------------
+sub read {
+  my ($file) = @_;
+
+  my $content = '';
+  open(IN, "<$file") or die "Unable to open $file: $!\n";
+  while (<IN>) {
+    $content .= $_;
+  }
+
+  return $content;
+}
+
+
