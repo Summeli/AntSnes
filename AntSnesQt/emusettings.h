@@ -24,11 +24,13 @@
 #include "keyconfigdialog.h"
 #include "audiosettings.h"
 #include "AntSettings.h"
+#include "icontrolpadsettings.h"
 
 #include "qremotecontrolkeys.h"
 #include "videosettings.h"
 #include "controlsettings.h"
 #include "aboutdialog.h"
+
 
 class EmuSettings : public QMainWindow
 {
@@ -40,7 +42,8 @@ class EmuSettings : public QMainWindow
     	EMainWidget = 1,
     	EAudioWidget = 2,
     	EVideoWidget = 3,
-    	EKeyWidget = 4
+        EKeyWidget = 4,
+        EControlPadWidget = 5
     };
 public:
     EmuSettings(QWidget *parent = 0);
@@ -53,6 +56,7 @@ public slots:
     void loadROM();
     void keyConfig();
     void dpadSettings( int settings );
+    void showControlPadSettings();
     void keyconfigDone();
     void exit();
     void resetButtonClicked();
@@ -101,6 +105,7 @@ private:
     AudioSettings* audiosettings;
     videosettings* antvideosettings;
     controlsettings* keysettings;
+    iControlPadSettings* controlpadsettings;
     aboutdialog* about;
     
     int currentWidget;

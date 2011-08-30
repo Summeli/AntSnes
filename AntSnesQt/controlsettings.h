@@ -34,9 +34,12 @@ public:
 public slots: 
      void keyConfig();
      void setDPadSettings( int settings );
+     void controlPadClicked();
+
 signals:
      void runkeyconfig();
      void dpadSettings(int settings);
+     void controlPadSettings();
 
 private:
     Ui::controlsettingsClass ui;

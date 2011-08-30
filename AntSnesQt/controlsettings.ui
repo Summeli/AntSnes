@@ -33,7 +33,7 @@
    <property name="geometry">
     <rect>
      <x>360</x>
-     <y>40</y>
+     <y>10</y>
      <width>251</width>
      <height>61</height>
     </rect>
@@ -46,7 +46,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>40</y>
+     <y>10</y>
      <width>331</width>
      <height>61</height>
     </rect>
@@ -61,6 +61,19 @@
      <string>use 8 directions D-Pad</string>
     </property>
    </item>
+  </widget>
+  <widget class="QPushButton" name="controlPadButton">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>80</y>
+     <width>251</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>iControlPad</string>
+   </property>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

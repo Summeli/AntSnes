@@ -51,6 +51,14 @@ EmuSettings::EmuSettings(QWidget *parent)
     keysettings->setGeometry(QRect(0, 0, 640, 150));
     keysettings->hide();
 
+    keysettings =new controlsettings( antsettings.iDPadSettings, this );
+    keysettings->setGeometry(QRect(0, 0, 640, 150));
+    keysettings->hide();
+
+    controlpadsettings = new iControlPadSettings( this );
+    controlpadsettings->setGeometry(QRect(0, 0, 640, 150));
+    controlpadsettings->hide();
+
     currentWidget = EMainWidget;
 
     ui.saveSlotBox->setCurrentIndex(antsettings.iLastSlot);
@@ -85,6 +93,7 @@ EmuSettings::EmuSettings(QWidget *parent)
     //connect control settings
     connect( keysettings, SIGNAL(runkeyconfig()), this, SLOT( keyConfig() ));
     connect( keysettings, SIGNAL(dpadSettings(int)), this, SLOT( dpadSettings(int) ));
+    connect( keysettings, SIGNAL(controlPadSettings()), this, SLOT( showControlPadSettings() ));
 
     romloaded = false;
     settingsChanged = false;
@@ -161,6 +170,23 @@ void EmuSettings::dpadSettings( int settings )
 {
     settingsChanged = true;
     antsettings.iDPadSettings = settings;
+}
+
+void EmuSettings::showControlPadSettings()
+{
+    if( currentWidget == EControlPadWidget )
+        {
+        //hide controlpad Widget, and continue
+        controlpadsettings->hide();
+        ui.settingsViewWidget->show();
+        currentWidget = EMainWidget;
+        }
+    else
+        {
+        hidecurrentWidget();
+        controlpadsettings->show();
+        currentWidget = EControlPadWidget;
+        }
 }
 
 
@@ -407,6 +433,9 @@ void EmuSettings::hidecurrentWidget()
         break;
     case EKeyWidget:
         keysettings->hide();
+        break;
+    case EControlPadWidget:
+        controlpadsettings->hide();
         break;
     }
 }

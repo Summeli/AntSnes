@@ -27,6 +27,8 @@ controlsettings::controlsettings( int dpadSettings, QWidget *parent)
 
     connect(ui.keyconfigButton, SIGNAL(clicked()), this, SLOT(keyConfig()));
     connect(ui.dpadSettings, SIGNAL(currentIndexChanged(int)), this, SLOT(setDPadSettings(int)));
+    connect(ui.controlPadButton, SIGNAL(clicked()), this, SLOT(controlPadClicked()));
+
 }
 
 controlsettings::~controlsettings()
@@ -42,4 +44,9 @@ void controlsettings::keyConfig()
 void controlsettings::setDPadSettings( int settings )
 {
     emit( dpadSettings(settings) );
+}
+
+void controlsettings::controlPadClicked()
+{
+    emit( controlPadSettings() );
 }

@@ -275,7 +275,7 @@ bool AntSnesQt::event(QEvent *event)
             showAntSnesMenu();
         }
         default:
-            break;
+         break;
     }
     return QWidget::event(event);
 }

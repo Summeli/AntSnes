@@ -3,6 +3,10 @@ TARGET = AntSnes
 QT += core \
     gui \
     opengl
+
+CONFIG += mobility
+MOBILITY += connectivity
+
 HEADERS += buttonwidget.h \
 	dpadwidget.h \
 	QRemoteControlKeys.h \
@@ -18,7 +22,9 @@ HEADERS += buttonwidget.h \
     AntSettings.h \
     snescontroller.h \
     AntSnesQt.h \
-    middlebuttons.h
+    middlebuttons.h \
+    icontrolpadsettings.h \
+    icontrolpadclient.h
     
 SOURCES += buttonwidget.cpp \
 	dpadwidget.cpp \
@@ -37,7 +43,9 @@ SOURCES += buttonwidget.cpp \
     main.cpp \
     AntSnesQt.cpp \
     AntBlit.cpp \
-    middlebuttons.cpp
+    middlebuttons.cpp \
+    icontrolpadsettings.cpp \
+    icontrolpadclient.cpp
     
 FORMS += aboutdialog.ui \
     controlsettings.ui \
@@ -45,7 +53,8 @@ FORMS += aboutdialog.ui \
     keyconfigdialog.ui \
     audiosettings.ui \
     emusettings.ui \
-    AntSnesQt.ui
+    AntSnesQt.ui \
+    icontrolpadsettings.ui
 
 RESOURCES += atnresources.qrc
 
@@ -70,6 +79,6 @@ symbian:TARGET.EPOCHEAPSIZE = 0x200000 \
 
 symbian: TARGET.CAPABILITY = UserEnvironment
 symbian:ICON = gfx/AntSnes_44.svg
-symbian:INCLUDEPATH += ../snes9x_asm_optimized
+symbian:INCLUDEPATH += ../snes9x_asm_optimized /epoc32/include/mw
 
 OTHER_FILES += summelistyle.qss
