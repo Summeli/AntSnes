@@ -20,19 +20,40 @@
 #include "icontrolpadsettings.h"
 #include "ui_icontrolpadsettings.h"
 
-iControlPadSettings::iControlPadSettings(QWidget *parent) :
-    QWidget(parent)
+iControlPadSettings::iControlPadSettings(iControlPadClient* client, QWidget *parent) :
+    QWidget(parent), m_cpClient( client ), m_connected(false)
 {
     ui.setupUi(this);
     connect(ui.connectButton, SIGNAL(clicked()), this, SLOT(connectClicked()));
-
+    connect( m_cpClient, SIGNAL(connectedToiControlPad()), this, SLOT(connected()) );
+    connect( m_cpClient, SIGNAL(iControlPadNotFound()), this, SLOT(discoveryFinished()) );
 }
 
 iControlPadSettings::~iControlPadSettings()
 {
+
 }
 
 void iControlPadSettings::connectClicked()
 {
+    if( !m_connected){
+        ui.textLabel->setText("Seaching iControlpad.... ");
+        m_cpClient->discoverAndConnect( iControlPadClient::iCPReadDigital );
+    }
+    else
+        m_cpClient->disconnect();
+}
 
+void iControlPadSettings::connected()
+{
+    m_connected = true;
+    ui.textLabel->setText("iControlPad Connected \n Run keyconfig if needed ");
+    ui.connectButton->setText("Disconnect");
+}
+
+void iControlPadSettings::discoveryFinished()
+{
+    m_connected = false;
+    ui.textLabel->setText("iControlPad not Found \n Did you start it in the SPP mode? ");
+    ui.connectButton->setText("Connect");
 }

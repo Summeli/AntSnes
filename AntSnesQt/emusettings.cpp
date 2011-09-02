@@ -27,8 +27,10 @@
 
 #define KAntSettingsVersion 9
 
-EmuSettings::EmuSettings(QWidget *parent)
-    : QMainWindow(parent)
+EmuSettings::EmuSettings(QRemoteControlKeys* remote, iControlPadClient* client, QWidget *parent)
+    : QMainWindow(parent),
+    remotecontrol(remote),
+    cpClient(client)
 {
     loadSettings();
 
@@ -55,7 +57,7 @@ EmuSettings::EmuSettings(QWidget *parent)
     keysettings->setGeometry(QRect(0, 0, 640, 150));
     keysettings->hide();
 
-    controlpadsettings = new iControlPadSettings( this );
+    controlpadsettings = new iControlPadSettings( cpClient, this );
     controlpadsettings->setGeometry(QRect(0, 0, 640, 150));
     controlpadsettings->hide();
 
@@ -107,12 +109,6 @@ EmuSettings::~EmuSettings()
     delete keysettings;
     delete antvideosettings;
     delete audiosettings;
-}
-
-void EmuSettings::setRemoteControl( QRemoteControlKeys* remote, iControlPadClient* client )
-{
-    remotecontrol = remote;
-    cpClient = client;
 }
 
 void EmuSettings::loadROM()

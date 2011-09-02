@@ -21,8 +21,8 @@
 (0x2001E61C), 4, 7, 3, {"Qt"}
 
 ; Executable and default resource files
-"/QtSDK/Symbian/SDKs/Symbian3Qt473/epoc32/release/armv5/udeb/AntSnes.exe"    - "!:/sys/bin/AntSnes.exe"
-"/QtSDK/Symbian/SDKs/Symbian3Qt473/epoc32/data/z/resource/apps/AntSnes.rsc"    - "!:/resource/apps/AntSnes.rsc"
-"/QtSDK/Symbian/SDKs/Symbian3Qt473/epoc32/data/z/private/10003a3f/import/apps/AntSnes_reg.rsc"    - "!:/private/10003a3f/import/apps/AntSnes_reg.rsc"
-"/QtSDK/Symbian/SDKs/Symbian3Qt473/epoc32/data/z/resource/apps/AntSnes.mif"    - "!:/resource/apps/AntSnes.mif"
+"/QtSDK/Symbian/SDKs/SymbianSR1Qt474/epoc32/release/armv5/udeb/AntSnes.exe"    - "!:/sys/bin/AntSnes.exe"
+"/QtSDK/Symbian/SDKs/SymbianSR1Qt474/epoc32/data/z/resource/apps/AntSnes.rsc"    - "!:/resource/apps/AntSnes.rsc"
+"/QtSDK/Symbian/SDKs/SymbianSR1Qt474/epoc32/data/z/private/10003a3f/import/apps/AntSnes_reg.rsc"    - "!:/private/10003a3f/import/apps/AntSnes_reg.rsc"
+"/QtSDK/Symbian/SDKs/SymbianSR1Qt474/epoc32/data/z/resource/apps/AntSnes.mif"    - "!:/resource/apps/AntSnes.mif"
 ; Manual PKG post-rules from PRO files

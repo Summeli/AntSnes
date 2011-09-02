@@ -46,11 +46,8 @@ class EmuSettings : public QMainWindow
         EControlPadWidget = 5
     };
 public:
-    EmuSettings(QWidget *parent = 0);
+    EmuSettings(QRemoteControlKeys* remote, iControlPadClient* client,QWidget *parent = 0);
     ~EmuSettings();
-
-public:
-    void setRemoteControl( QRemoteControlKeys* remote, iControlPadClient* client );
     
 public slots:
     void loadROM();
@@ -85,6 +82,7 @@ public slots:
     
     void showControlSettings();
     void closeAboutDialog();
+
 signals:
     void LoadROM( QString rom, TAntSettings antSettings );
     void LoadState( int state );

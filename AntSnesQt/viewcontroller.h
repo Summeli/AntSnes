@@ -44,7 +44,7 @@ public slots:
     void SaveState( int state );
     void reset();
     void continueGame();
-    
+
 private:
     AntSnesQt* emuView;
     EmuSettings* settingsView;

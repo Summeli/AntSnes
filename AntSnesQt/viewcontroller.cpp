@@ -58,8 +58,7 @@ ViewController::ViewController()
     emuView->setRemoteControl( remotekeys,cpClient );
     emuView->hide();
     
-    settingsView = new EmuSettings();
-    settingsView->setRemoteControl(remotekeys,cpClient);
+    settingsView = new EmuSettings(remotekeys,cpClient);
     settingsView->show();
     
     connect(settingsView, SIGNAL(LoadROM( QString,TAntSettings)), this, SLOT(loadROM( QString,TAntSettings)));
@@ -70,7 +69,7 @@ ViewController::ViewController()
     connect(settingsView, SIGNAL(continueGame()), this, SLOT(continueGame()));
     
     connect(settingsView, SIGNAL(updateSettings(TAntSettings)), emuView, SLOT(updateSettings(TAntSettings)));
-    
+
     connect(emuView, SIGNAL(showmenu()), this, SLOT(showSettings()));
 }
 

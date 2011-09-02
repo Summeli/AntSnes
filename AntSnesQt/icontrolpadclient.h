@@ -51,7 +51,7 @@ public:
     iControlPadClient( QObject* parent = 0 );
     ~iControlPadClient();
 
-public slots:
+public:
     void discoverAndConnect( iCPReadableKeyEvent readKeys );
     void subscribeKeyEvent(QObject* aObject );
 

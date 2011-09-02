@@ -20,22 +20,28 @@
 #ifndef ICONTROLPADSETTINGS_H
 #define ICONTROLPADSETTINGS_H
 
-#include <QWidget>
+#include <QtGui/QWidget>
 #include "ui_icontrolpadsettings.h"
+
+#include "icontrolpadclient.h"
+
 class iControlPadSettings : public QWidget
 {
     Q_OBJECT
 
 public:
-     iControlPadSettings(QWidget *parent = 0);
+     iControlPadSettings(iControlPadClient* client, QWidget *parent = 0);
     ~iControlPadSettings();
 
 public slots:
     void connectClicked();
+    void discoveryFinished();
+    void connected();
 
 private:
     Ui::iControlPadSettings ui;
-
+    iControlPadClient* m_cpClient;
+    bool m_connected;
 };
 
 #endif // ICONTROLPADSETTINGS_H

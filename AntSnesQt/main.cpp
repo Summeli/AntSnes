@@ -38,7 +38,8 @@ void loadStyleSheet()
 
 int main(int argc, char *argv[])
 {
-   initdebug();
+    qDebug() << "Starting the app ";
+
     QApplication a(argc, argv);
  
     loadStyleSheet();
