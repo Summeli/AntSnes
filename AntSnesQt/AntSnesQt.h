@@ -36,6 +36,7 @@
 #include "dpadwidget.h"
 #include "buttonwidget.h"
 #include "middlebuttons.h"
+#include "icontrolpadclient.h"
 
 class QSnesController;
 
@@ -48,7 +49,7 @@ public:
     ~AntSnesQt();
 
 public:
-    void setRemoteControl( QRemoteControlKeys* remote );
+    void setRemoteControl( QRemoteControlKeys* remote, iControlPadClient* client );
     void keyPressEvent( QKeyEvent * event);
     void keyReleaseEvent(QKeyEvent* event);
     bool event(QEvent *event);
@@ -98,6 +99,7 @@ private:
     TAntSettings iAntSettings;
     QList<antKeyEvent> iPressedKeys;
     QRemoteControlKeys* remotecontrol;
+    iControlPadClient* cpClient;
     DPadWidget* dpad;
     buttonwidget* buttons;
     MiddleButtons* middlebutton;

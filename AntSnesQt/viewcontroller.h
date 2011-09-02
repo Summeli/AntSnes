@@ -28,6 +28,7 @@
 #include "antsnesqt.h"
 #include "emusettings.h"
 #include "QRemoteControlKeys.h"
+#include "icontrolpadclient.h"
 
 class ViewController : public QObject
 {
@@ -56,6 +57,7 @@ private:
     qint32 iMenuKeyHandle2;
     qint32 iCameraKeyHandle;
 #endif
+    iControlPadClient* cpClient;
     
     
 };

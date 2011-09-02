@@ -109,10 +109,12 @@ EmuSettings::~EmuSettings()
     delete audiosettings;
 }
 
-void EmuSettings::setRemoteControl( QRemoteControlKeys* remote )
+void EmuSettings::setRemoteControl( QRemoteControlKeys* remote, iControlPadClient* client )
 {
     remotecontrol = remote;
+    cpClient = client;
 }
+
 void EmuSettings::loadROM()
 {
     __DEBUG_IN
@@ -136,6 +138,7 @@ void EmuSettings::keyConfig()
     keydialog = new keyconfigdialog( this );
     connect(keydialog, SIGNAL(configDone()), this, SLOT(keyconfigDone()));
     remotecontrol->subscribeKeyEvent( keydialog );
+    cpClient->subscribeKeyEvent( keydialog );
     keydialog->show();
     keydialog->setFocus();
 }
@@ -288,6 +291,7 @@ void EmuSettings::keyconfigDone()
         }
     //take the keyevents away, so it doesn't crash
     remotecontrol->subscribeKeyEvent( this );
+    cpClient->subscribeKeyEvent( this );
     //Delete the dialog
     keydialog->hide();
     delete keydialog;

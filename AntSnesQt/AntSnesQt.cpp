@@ -280,9 +280,10 @@ bool AntSnesQt::event(QEvent *event)
     return QWidget::event(event);
 }
 
-void AntSnesQt::setRemoteControl( QRemoteControlKeys* remote )
+void AntSnesQt::setRemoteControl( QRemoteControlKeys* remote, iControlPadClient* client )
 {
     remotecontrol = remote;
+    cpClient = client;
 }
 
 void AntSnesQt::keyPressEvent( QKeyEvent * event)
@@ -406,5 +407,6 @@ quint32 AntSnesQt::getSnesKeys()
 void AntSnesQt::listencontrols()
 {
     remotecontrol->subscribeKeyEvent(this);
+    cpClient->subscribeKeyEvent(this);
 }
 

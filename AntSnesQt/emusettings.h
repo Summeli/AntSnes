@@ -30,7 +30,7 @@
 #include "videosettings.h"
 #include "controlsettings.h"
 #include "aboutdialog.h"
-
+#include "icontrolpadclient.h"
 
 class EmuSettings : public QMainWindow
 {
@@ -50,7 +50,7 @@ public:
     ~EmuSettings();
 
 public:
-    void setRemoteControl( QRemoteControlKeys* remote );
+    void setRemoteControl( QRemoteControlKeys* remote, iControlPadClient* client );
     
 public slots:
     void loadROM();
@@ -114,6 +114,7 @@ private:
     bool settingsChanged;
     TAntSettings antsettings;
     QRemoteControlKeys* remotecontrol;
+    iControlPadClient* cpClient;
 };
 
 #endif // EMUSETTINGS_H

@@ -52,14 +52,14 @@ ViewController::ViewController()
 #endif
     
     remotekeys = new QRemoteControlKeys();
-	 
+    cpClient = new iControlPadClient( this );
     emuView = new AntSnesQt();
    // emuView->setGeometry(QRect(0, 0, 640, 360));
-    emuView->setRemoteControl( remotekeys );
+    emuView->setRemoteControl( remotekeys,cpClient );
     emuView->hide();
     
     settingsView = new EmuSettings();
-    settingsView->setRemoteControl( remotekeys );
+    settingsView->setRemoteControl(remotekeys,cpClient);
     settingsView->show();
     
     connect(settingsView, SIGNAL(LoadROM( QString,TAntSettings)), this, SLOT(loadROM( QString,TAntSettings)));
