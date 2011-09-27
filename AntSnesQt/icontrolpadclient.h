@@ -76,6 +76,7 @@ private:
 
 private:
      enum eDataRequested{
+        eNoDataRequested = 0,
         eDigitalButtons = 1,
         eAnalogButtons =2
      };
@@ -83,7 +84,9 @@ private:
 protected:
     bool m_connected;
     int m_readProperties;
-    QList<eDataRequested> m_dataRequested;
+    int m_retryCount;
+
+    eDataRequested m_dataRequested;
 
     QObject* m_receiver;
     QTimer* m_timer;

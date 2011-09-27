@@ -39,7 +39,7 @@ void loadStyleSheet()
 int main(int argc, char *argv[])
 {
     qDebug() << "Starting the app ";
-
+    QApplication::setGraphicsSystem("openvg");
     QApplication a(argc, argv);
  
     loadStyleSheet();

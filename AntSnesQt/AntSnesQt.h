@@ -40,7 +40,7 @@
 
 class QSnesController;
 
-class AntSnesQt : public QGLWidget, MEmulatorAdaptation
+class AntSnesQt : public QWidget, MEmulatorAdaptation
 {
     Q_OBJECT
 

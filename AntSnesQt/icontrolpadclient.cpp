@@ -31,6 +31,8 @@
 #include <qbluetoothaddress.h>
 
 #define KiControlPadPollInterval 25
+#define KMaxRetryAttemts 4
+
 #define KDigitalButtonsBytes 2
 #define KAnalogButtonsBytes 4
 const QString KiCPServiceName("iCP-SPP");
@@ -65,7 +67,8 @@ iControlPadClient::iControlPadClient( QObject* parent ) :
     m_socket( NULL ),
     m_DigitalButtons(0),
     m_AnalogButtons(0),
-    m_readProperties(0)
+    m_readProperties(0),
+    m_dataRequested(eNoDataRequested)
 {
     connect(m_discoveryAgent, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)),
                  this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
@@ -93,46 +96,54 @@ void iControlPadClient::subscribeKeyEvent(QObject* aObject )
 
 void iControlPadClient::readControlPadKeys()
 {
+    if( m_retryCount > KMaxRetryAttemts ) {
+        //something has went wrong, reset
+        qDebug() << "RESET RESET RESET RESET RESET RESET ";
+        m_dataRequested = eNoDataRequested;
+    }
+
+    // don't ask for more data, if we have pending request
+    if( m_dataRequested != eNoDataRequested ){
+       m_retryCount++;
+       return;
+    }
+    m_retryCount = 0;
+
     //read digital
     if( m_readProperties & iCPReadDigital ){
         quint16 buttonData;
         //send get request to the iCP
         m_socket->write( (char*)&getDigitalKeys );
-        m_dataRequested.append(eDigitalButtons);
-    }
-
-    //read analog
-    //something is still wrong with the analog logic...
-    /*
-     if( m_readProperties & iCPReadAnalog ){
-        quint32 nubs;
-         m_socket->write( (char*)&getAnaloglNubs );
-         m_dataRequested.append(eAnalogButtons);
-     }*/
+        m_dataRequested = eDigitalButtons;
+    } else if( m_readProperties & iCPReadAnalog ){
+       quint32 nubs;
+       m_socket->write( (char*)&getAnaloglNubs );
+       m_dataRequested = eAnalogButtons;
+     }
 }
 void iControlPadClient::readSocket()
 {
-    while( m_socket->bytesAvailable() ){
-        if( m_dataRequested.isEmpty() ){
-            //should not be empty, if so, then flush the socket
-            m_socket->readAll();
-        }
-        else if( m_dataRequested.first() == eDigitalButtons ){
-            quint16 buttonData;
-            m_socket->read((char*) &buttonData, KDigitalButtonsBytes);
-            updateDigitalButtons(buttonData);
-            m_dataRequested.removeFirst();
-        }
-        else if( m_dataRequested.first() == eAnalogButtons  ){
+    quint64 bytesAvailable = m_socket->bytesAvailable();
+    if( m_dataRequested == eNoDataRequested ){
+        //don't know what kind of data to expect, flush the socket
+        qDebug() << "iCP is out of sync, expect some problems!!";
+        m_socket->readAll();
+    } else if( m_dataRequested == eDigitalButtons && bytesAvailable >= KDigitalButtonsBytes ) {
+        quint16 buttonData;
+        m_socket->read((char*) &buttonData, KDigitalButtonsBytes);
+        updateDigitalButtons(buttonData);
+        //if also analogs were requested, read them in here...
+        m_dataRequested = eNoDataRequested;
+        if( m_readProperties & iCPReadAnalog ){
             quint32 nubs;
-            m_socket->read((char*) &nubs, KAnalogButtonsBytes);
-            updateAnalogNubs(nubs);
-            m_dataRequested.removeFirst();
-        }
-        else{
-            //should not happen, flush socket, to continue...
-            m_socket->readAll();
-        }
+            m_socket->write( (char*)&getAnaloglNubs );
+            m_dataRequested = eAnalogButtons;
+         }
+    } else if ( m_dataRequested == eAnalogButtons && bytesAvailable >= KAnalogButtonsBytes ){
+        quint32 nubs;
+        m_socket->read((char*) &nubs, KAnalogButtonsBytes);
+        updateAnalogNubs(nubs);
+        m_dataRequested = eNoDataRequested;
     }
 
 }
@@ -203,7 +214,7 @@ void iControlPadClient::updateDigitalButtons( quint16 keys )
     if( keys == m_DigitalButtons )
         return;
 
-    //qDebug() << "prev keys " << m_DigitalButtons << "new keys " << keys;
+    qDebug() << "prev keys " << m_DigitalButtons << "new keys " << keys;
 
     //update released buttons
     quint16 tmp =  m_DigitalButtons & ~keys;

@@ -62,7 +62,7 @@ uint KAntKeyTable[12]={SNES_UP_MASK,SNES_DOWN_MASK,SNES_LEFT_MASK,SNES_RIGHT_MAS
 		SNES_X_MASK,SNES_Y_MASK,SNES_B_MASK,SNES_START_MASK,SNES_SELECT_MASK,SNES_TL_MASK,SNES_TR_MASK};
 
 AntSnesQt::AntSnesQt(QWidget *parent)
-    : QGLWidget(parent), buf(NULL), iSnesKeys(0), iHardKeys(0)
+    : QWidget(parent), buf(NULL), iSnesKeys(0), iHardKeys(0)
 {
   //  QMainWindow::setAttribute(Qt::WA_AcceptTouchEvents);
 
@@ -139,7 +139,6 @@ void AntSnesQt::paintEvent(QPaintEvent *)
 
     QPainter painter;
     painter.begin(this);
-
 
     if ( (buf == NULL) || (stretch != iAntSettings.iStretch) ) 
         stretch = iAntSettings.iStretch;
