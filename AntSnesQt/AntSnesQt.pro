@@ -37,7 +37,6 @@ SOURCES += buttonwidget.cpp \
     keyconfigdialog.cpp \
     viewcontroller.cpp \
     emusettings.cpp \
-    debug.cpp \
     symb_adaptation.cpp \
     snescontroller.cpp \
     main.cpp \

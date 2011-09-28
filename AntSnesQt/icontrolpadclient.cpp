@@ -30,7 +30,7 @@
 #include <qbluetoothdeviceinfo.h>
 #include <qbluetoothaddress.h>
 
-#define KiControlPadPollInterval 25
+#define KiControlPadPollInterval 30
 #define KMaxRetryAttemts 4
 
 #define KDigitalButtonsBytes 2
@@ -154,6 +154,7 @@ void iControlPadClient::discoverAndConnect(iCPReadableKeyEvent readKeys)
             m_discoveryAgent->stop();
 
     m_readProperties = readKeys;
+     m_discoveryAgent->setUuidFilter( QBluetoothUuid(QBluetoothUuid::SerialPort) );
     m_discoveryAgent->start();
 }
 
