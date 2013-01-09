@@ -75,8 +75,8 @@ symbian:LIBS += -lantsnes.lib \
     = \
     0xE4270701
 symbian:TARGET.EPOCHEAPSIZE = 0x200000 \
-    0x1000000
-
+    0x600000
+symbian:TARGET.EPOCSTACKKSIZE = 0x20000
 #symbian: TARGET.CAPABILITY = UserEnvironment
 symbian:TARGET.CAPABILITY += SwEvent
 symbian:ICON = gfx/AntSnes_44.svg
