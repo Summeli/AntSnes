@@ -72,7 +72,7 @@ symbian:LIBS += -lantsnes.lib \
     
  symbian:TARGET.UID3 \
     = \
-    0xE4270701
+    0x2006e845
 symbian:TARGET.EPOCHEAPSIZE = 0x200000 \
     0x1000000
 

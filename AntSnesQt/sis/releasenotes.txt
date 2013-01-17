@@ -1,4 +1,4 @@
-AntSnesQt v. 0.8.7
+AntSnesQt v. 1.0.0
 
 Follow my blog for updates:
 http://www.summeli.fi
