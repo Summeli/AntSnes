@@ -72,7 +72,7 @@ symbian:LIBS += -lantsnes.lib \
     
  symbian:TARGET.UID3 \
     = \
-    0x2006e845
+	0x2006e845 // Nokia UID:0x2006e845 own UID:0xE4270701
 symbian:TARGET.EPOCHEAPSIZE = 0x200000 \
     0x1000000
 

@@ -2,6 +2,7 @@
 &EN
 
 ; SIS header: name, uid, version
+; store UID: 0x2006e845 nonstore 0xE4270701
 #{"AntSnes"},(0x2006e845),1,0,0
 
 ; Localised Vendor name
