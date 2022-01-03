@@ -8,7 +8,7 @@ AtnSnes is Snes9x emulator for Symbian. It is actually based on  [DrPocketSNES][
 Building
 ----------
 The snes9x stuff is build separately with QtSDK1.1, and the AntSnesQt is build with the usual Qt flags.
-See my blog post how to set up the environement with QtSDK [www.summeli.fi] (http://www.summeli.fi/?p=2277)
+See my blog post how to set up the environement with QtSDK [https://summeli.com] (https://summeli.com/2277)
 
 License
 -------
@@ -28,5 +28,5 @@ Credits
 
 [snes9x]: http://www.snes9x.com/ "Snes9x Homepage"
 [drpsnes]: http://reesy.gp32x.de/DrPocketSnes.html "DrPocketSNES"
-[summeli]: www.summeli.fi
+[summeli]: https://summeli.com
 [SnesOid]: https://github.com/Pretz/SNesoid
